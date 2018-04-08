@@ -28,7 +28,8 @@ function genLoaders(lang) {
     if (isProd) {
         // 生产环境需要提取CSS
         loaders = ExtractTextPlugin.extract({
-            use: loaders
+            use: loaders,
+            publicPath:'../'
         });
     } else {
         // 开发环境需要vue-style-loader将CSS提取到页面头部
@@ -72,8 +73,8 @@ exports.genHtmlPlugins = function () {
             new HtmlWebpackPlugin({
                 filename: isProd ? path.resolve(__dirname, '../' + name + '.html') : name + '.html',
                 template: 'index.tpl.html',
-                chunks: isProd ? ['vendor', 'manifest', name] : [name],
-                inject: true
+                chunks: isProd ? ['manifest','vendor', name] : [name],
+                inject: true,
             }))
     })
     return plugins

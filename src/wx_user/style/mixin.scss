@@ -1,0 +1,7 @@
+$mainColor:#ff6e15;
+
+@mixin text_over {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

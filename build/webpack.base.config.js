@@ -8,7 +8,8 @@ function resolve(relPath) {
 
 module.exports = {
     entry: {
-        index: resolve('../src/main.js')
+        index:["babel-polyfill", resolve('../src/wx_user/main.js')],
+        bizindex: resolve('../src/wx_biz/main.js')
     },
     output: {
         filename: 'js/[name].js',
@@ -18,8 +19,7 @@ module.exports = {
         extensions: ['.js', '.vue', '.json'],
         alias: {
             '@': resolve('../src'),
-            '~': resolve('../src/assets'),
-            'imgs':resolve('../src/images')
+            '~': resolve('../src/assets')
         }
     },
     module: {

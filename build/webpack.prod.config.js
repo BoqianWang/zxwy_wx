@@ -12,7 +12,7 @@ module.exports = merge(baseWebpackConfig, {
     output: {
         path: config.prod.outputPath,
         publicPath: config.prod.outputPublicPath,
-        filename: 'js/[name].js?[chunkhash]'
+        filename: 'js/[name].[hash].js'
     },
     module: {
         rules: utils.styleLoaders()

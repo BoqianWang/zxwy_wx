@@ -7,7 +7,8 @@ var server = new webpackDevServer(compiler, {
     hot: true,
     quiet: true,
     publicPath: config.dev.outputPublicPath,
-    stats: { colors: true }
+    stats: { colors: true },
+    disableHostCheck: true
 });
 server.listen(config.dev.port, "0.0.0.0");
 var url = `http://localhost:${config.dev.port}/`;
