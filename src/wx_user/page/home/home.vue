@@ -139,12 +139,12 @@ import { Toast,Indicator} from 'mint-ui'
       }
     },
     created(){
-      sessionStorage.tabbar_text = "商家";
+      localStorage.tabbar_text = "商家";
     },
     mounted(){
       this.currentAddress = "获取当前地址...";
       var _this = this;
-      if(sessionStorage.token){
+      if(Tools.getCookie('zx_token')){
         // 百度地图API功能
       var geolocation = new BMap.Geolocation();
       var geoc = new BMap.Geocoder();

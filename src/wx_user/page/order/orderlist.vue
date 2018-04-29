@@ -42,7 +42,7 @@ import { Toast,Indicator} from 'mint-ui'
       }
     },
     created(){
-      sessionStorage.tabbar_text = "订单";
+      localStorage.tabbar_text = "订单";
     },
     mounted(){
       this.loadPageList();

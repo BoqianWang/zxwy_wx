@@ -188,5 +188,12 @@ export default{
 
       bindBank(bankId,bankCard,bankAccount,bankAddress){
         return fetch.fetchPost('bill/bindBank',{bankId:bankId,bankCard:bankCard,bankAccount:bankAccount,bankAddress:bankAddress});
+      },
+
+      /**
+       * 提交code
+       */
+      commitCode(code) {
+        return fetch.fetchGet('grant/v1.2/getWxOpenid', {code: code});
       }
 }

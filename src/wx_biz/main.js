@@ -17,6 +17,7 @@ var router = new VueRouter(routerConfig)
 Vue.use(VueRouter);
 Vue.use(MintUI);
 
+
 new Vue({
     el: '#app',
     router: router,

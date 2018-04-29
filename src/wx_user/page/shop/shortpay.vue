@@ -1,7 +1,12 @@
 <template lang="html">
   <div class="pay_body">
+    <div class="shop-name" style="display: flex; justify-content: center; background: #fff;">
+       <mt-cell :title="orderdata.shopName">
+         <img slot="icon" :src="orderdata.shopLogo" width="24" height="24">
+       </mt-cell>
+    </div>
     <div class="pay_input">
-      <keyword v-model="val" :isClick="isClick" @sure="surePay" @show_keyboard="showKeyboard"></keyword>
+      <keyword v-model="val" label='金额' :isClick="isClick" @sure="surePay" @show_keyboard="showKeyboard"></keyword>
        <!-- <label for="" style="color:#333;width:80px;">消费金额</label>
        <p style="font-size:24px;"><span style="color:#999;" v-show="val.length>0">￥</span>{{val}}</p>
        <span class="animate" :style="{visibility: linkShow ? 'visible' : 'hidden'}"></span>
@@ -10,10 +15,8 @@
       <!-- <wc-keyboard v-model="val" inter="5" decimal="2" placeholder="询问服务员后输入" label="消费金额"/> -->
     </div>
     <div class="jisuan_div">
-      <mt-cell :title="orderdata.shopName">
-        <img slot="icon" :src="orderdata.shopLogo" width="24" height="24">
-      </mt-cell>
-      <mt-cell :title="orderdata.personalIntegralStr">
+      <!-- 积分抵扣 -->
+      <mt-cell v-if="orderdata.personalIntegral > 0" :title="orderdata.personalIntegralStr">
         <span>-￥{{jikoJifen}}</span>
       </mt-cell>
       <mt-cell :title="manjiandata.manjianText" v-show="!(orderdata.isFirstOrder&&firstjianData.firstjianArr.length>0)&&manjiandata.manjianArr.length>0">
@@ -22,24 +25,25 @@
       <mt-cell :title="firstjianData.firstjianText" v-show="orderdata.isFirstOrder&&firstjianData.firstjianArr.length>0">
         <span>-￥{{firstjianData.firstjianprice}}</span>
       </mt-cell>
-      <mt-cell title="代金券" is-link @click.native="popupClick">
-        <span v-if="ksydjjList.length==0">暂无可用</span>
+      <mt-cell v-if="ksydjjList.length > 0" title="代金券" is-link @click.native="popupClick">
+        <!-- <span v-if="ksydjjList.length==0">暂无可用</span> -->
         <span v-if="ksydjjList.length>0&&chooseItem.discount==0" style="color:#ff6e15;">{{ksydjjList.length}}张可用</span>
         <span v-if="ksydjjList.length>0&&chooseItem.discount>0" style="color:#ff6e15;">-￥{{chooseItem.discount}}</span>
       </mt-cell>
-      <mt-cell title="实付金额">
+      <mt-cell v-if="orderdata.personalIntegral > 0 || ksydjjList.length > 0" title="实付金额">
         <span style="color:rgba(255,110,21,1);">￥{{realpay}}</span>
       </mt-cell>
-      <mt-cell title="支付方式" :value="payname" is-link  @click.native="handleClick"></mt-cell>
+      <!-- <mt-cell title="支付方式" :value="payname" is-link  @click.native="handleClick"></mt-cell> -->
     </div>
     <div class="sure_pay">
 
       <div class="login_btn" @click = "surePay" v-show="showkeyboard">
         确认支付
       </div>
+      <!-- <input style="padding: 10px;" type="button" value="清除cookies(用于测试)" @click='clearCookie'> -->
     </div>
 <!-- <keyword @watchVal="watchVal" @confirmEvent="surePay" :isClick="isClick"></keyword> -->
-    <mt-popup
+   <!--  <mt-popup
       v-model="popupVisible"
       position="bottom">
       <div class="pop_body">
@@ -59,7 +63,7 @@
           <img src="../../images/checked_small@2x.png" alt="" v-show='paytype=="yue"'>
         </div>
       </div>
-    </mt-popup>
+    </mt-popup> -->
 
     <mt-popup v-model="popupdjj" position="right">
       <div class="">
@@ -161,9 +165,9 @@
           朕知道了
         </div>
       </div>
-
     </div>
-
+    
+    <div class="error-shop-info" v-if="errorShopInfo"></div>
   </div>
 </template>
 
@@ -216,7 +220,8 @@ export default {
         discount:0,
         startBizId:'',
         shareGiftsId:''
-      }
+      },
+      errorShopInfo: false
     }
   },
   watch:{
@@ -315,7 +320,6 @@ export default {
       }
       //  this.chooseItem.discount = 0;
       //  this.chooseItem.shareGiftsId = '';
-    console.log(this.ksydjjList);
     }
   },
   created(){
@@ -340,7 +344,8 @@ export default {
         this.payname = '支付宝';
       }
       var bizId = this.$route.query.bizId;
-      if(!sessionStorage.token){
+      // if(!localStorage.zx_token){
+      if(!Tools.getCookie('zx_token')) {
         return;
       }
       Indicator.open();
@@ -377,6 +382,10 @@ export default {
 
       })
       .catch(error=>{
+        //无该店铺信息
+        if(error == 1) {
+           this.errorShopInfo = true;
+        }
         // if(error==2){
         //   this.$router.push('/login');
         // }
@@ -395,33 +404,31 @@ export default {
       this.djjList  = [];
       api.useyouhuilist(1,true)
       .then(cts=>{
-        console.log('res'+cts);
         for (var z in cts.data.lists) {
             var djjitem = cts.data.lists[z];
             // if(djjitem.startBizId==this.orderdata.bizId){
               this.djjList = this.djjList.concat(djjitem);
-              console.log(this.djjList);
             // }
         }
       })
     },
-    payType:function(type,name){
-      console.log(type);
-      if(type=='yue'){
-        if(this.realpay > this.orderdata.personalBalance){
-          this.popupVisible = false;
-            Toast('余额不足');
-            return;
-        }
-      }
-      this.paytype = type;
-      this.popupVisible = false;
-      this.payname = name;
+    // payType:function(type,name){
+    //   console.log(type);
+    //   if(type=='yue'){
+    //     if(this.realpay > this.orderdata.personalBalance){
+    //       this.popupVisible = false;
+    //         Toast('余额不足');
+    //         return;
+    //     }
+    //   }
+    //   this.paytype = type;
+    //   this.popupVisible = false;
+    //   this.payname = name;
 
-    },
-    handleClick:function(){
-      this.popupVisible = true;
-    },
+    // },
+    // handleClick:function(){
+    //   this.popupVisible = true;
+    // },
     popupClick:function(){
       this.popupdjj = true;
       var nouserList = [];
@@ -561,7 +568,6 @@ export default {
       this.isClick = false;
       api.orderSubmit(this.orderdata.bizId,originalCost,this.realpay,this.jikoJifen,discount,activityBelong,activityId,paymentMode,randomDisAmount,this.chooseItem.shareGiftsId)
       .then(res=>{
-        console.log(res);
         this.afterDataVO = res.data.afterDataVO;
         if(res.data.orderStatus==1){
           if(this.paytype=="wx"){
@@ -572,27 +578,42 @@ export default {
             div.innerHTML = res.data.form;
             document.body.appendChild(div);
             document.forms.punchout_form.submit();
+            // document.addEventListener('AlipayJSBridgeReady', this.tradePay(res.data.tradeNo), false);
           }
         }else if(res.data.orderStatus == 6){
-          this.$router.push({path:'/paysuccess',query:{getIntegral:res.data.afterDataVO.getIntegral,
-                                                       actualCost:res.data.afterDataVO.actualCost,
-                                                       personalIntegral:res.data.afterDataVO.personalIntegral,
-                                                       vouchersCount:res.data.afterDataVO.vouchersCount}});
+             this.paySuccess();
+          // this.$router.push({path:'/paysuccess',query:{getIntegral:res.data.afterDataVO.getIntegral,
+          //                                              actualCost:res.data.afterDataVO.actualCost,
+          //                                              personalIntegral:res.data.afterDataVO.personalIntegral,
+          //                                              vouchersCount:res.data.afterDataVO.vouchersCount}});
           // if(res.data.firstOrder){
-          //     window.location.href = 'http://userside.zhongxiang51.com/order/toRandomPrizePage?token='+sessionStorage.token+'&getpoint='+res.data.givePersonalIntegral;
+          //     window.location.href = 'http://userside.zhongxiang51.com/order/toRandomPrizePage?zx_token='+localStorage.zx_token+'&getpoint='+res.data.givePersonalIntegral;
           // }else{
           //   this.$router.push({path:'/paysuccess',query:{getpoint:res.data.givePersonalIntegral}});
           // }
         }
       })
       .catch(error=>{
-        console.log(error);
         this.isClick = true;
         if(error == "2"){
-          this.$router.push('/login');
+          // this.$router.push('/login');
         }
       })
 
+    },
+    //支付宝支付
+    tradePay: function(tradeNO) {
+       let vm = this;
+       AlipayJSBridge.call("tradePay", {
+            tradeNO: tradeNO
+       }, function (data) {
+           if ("9000" == data.resultCode) {
+               vm.paySuccess();
+           } else {
+               vm.isClick = true;
+               // alert('支付失败:' + JSON.stringify(data));
+           }
+       });
     },
     weixinPay:function(data){
         var vm= this;
@@ -621,20 +642,33 @@ export default {
           function(res){
             // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
             if(res.err_msg == "get_brand_wcpay_request:ok"){
-              vm.$router.push({path:'/paysuccess',query:{getIntegral:vm.afterDataVO.getIntegral,
-                                                         actualCost:vm.afterDataVO.actualCost,
-                                                         personalIntegral:vm.afterDataVO.personalIntegral,
-                                                         vouchersCount:vm.afterDataVO.vouchersCount}});
-              // if(vm.isFirst){
-              //   window.location.href = 'http://userside.zhongxiang51.com/order/toRandomPrizePage?token='+sessionStorage.token+'&getpoint='+vm.getpoint;
-              // }else{
-              //   vm.$router.push({path:'/paysuccess',query:{getpoint:vm.getpoint}});
-              // }
+                  vm.paySuccess();
+              // vm.$router.push({path:'/paysuccess',query:{getIntegral:vm.afterDataVO.getIntegral,
+              //                                            actualCost:vm.afterDataVO.actualCost,
+              //                                            personalIntegral:vm.afterDataVO.personalIntegral,
+              //                                            vouchersCount:vm.afterDataVO.vouchersCount}});
             }else{
               vm.isClick = true;
             }
           }
         );
+      },
+      // 清除cookies
+      // clearCookie() {
+      //     alert('已清除缓存');
+      //     Tools.clearCookies('zx_token');
+      // },
+      //支付成功后跳转
+      paySuccess: function() {
+          this.$router.push({
+            path: '/paysuccess',
+            query: {
+              getIntegral: this.afterDataVO.getIntegral,
+              actualCost: this.afterDataVO.actualCost,
+              personalIntegral: this.afterDataVO.personalIntegral,
+              vouchersCount: this.afterDataVO.vouchersCount
+            }
+          });
       }
   }
 }
@@ -642,16 +676,28 @@ export default {
 
 <style lang="scss">
 @import "../../style/mixin";
+.shop-name > .mint-cell:last-child {
+  background: transparent;
+}
 .pay_body{
+ .error-shop-info {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, .5);
+    z-index: 2;
+ }
 .mint-cell-text{
-  font-size:0.15rem;
+  font-size:0.16rem;
   font-family:PingFang-SC-Medium;
   color:#000;
   // letter-spacing:2px;
 }
 .pay_input{
-  width: 3.51rem;
-  height: 0.6rem;
+  /*width: 3.51rem;*/
+  height: 1rem;
   background-color: white;
   margin: 0.12rem 0.125rem;
   padding: 0.12rem;

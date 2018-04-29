@@ -5,7 +5,7 @@ import { Toast,Indicator} from 'mint-ui'
 // axios 配置
 axios.defaults.timeout = 1000000;    //响应时间
 // axios.defaults.withCredentials=true;
-// axios.defaults.headers.token = sessionStorage.token;
+// axios.defaults.headers.token = localStorage.zx_token;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 // axios.defaults.baseURL = 'http://web.gooker.net'; //配置接口地址
 
@@ -19,9 +19,10 @@ axios.interceptors.request.use((config) => {
     config.headers = {
       'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'
     }
-    // console.log(sessionStorage.token);
-    if(sessionStorage.token){
-         config.headers['token']  = sessionStorage.token;
+    // console.log(localStorage.zx_token);
+    if(Tools.getCookie('zx_token')) {
+    // if(localStorage.zx_token){
+         config.headers['zx_token']  = Tools.getCookie('zx_token');//localStorage.zx_token;
     }
     return config;
 }, (error) => {
@@ -54,11 +55,11 @@ axios.interceptors.request.use((config) => {
 export default {
     //fetchPost  请求方式
     fetchPost: function(url, params) {
-      if(sessionStorage.token){
+      if(Tools.getCookie('zx_token')){
         if(params){
-          params.token = sessionStorage.token;
+          params.zx_token = Tools.getCookie('zx_token');
         }else{
-          params = {token:sessionStorage.token};
+          params = {zx_token: Tools.getCookie('zx_token')};
         }
       }
        console.log(params);
@@ -87,11 +88,11 @@ export default {
     //GET 请求方式
     fetchGet: function(url, params) {
       // console.log(params);
-      if(sessionStorage.token){
+      if(Tools.getCookie('zx_token')){
         if(params){
-          params.token = sessionStorage.token;
+          params.zx_token = Tools.getCookie('zx_token');
         }else{
-          params = {token:sessionStorage.token};
+          params = {zx_token:Tools.getCookie('zx_token')};
         }
       }
       // console.log(params);

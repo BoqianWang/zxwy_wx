@@ -22,7 +22,7 @@ export default {
     }
   },
   mounted(){
-    if(!sessionStorage.token){
+    if(!Tools.getCookie('zx_token')){
       return;
     }
     Indicator.open();

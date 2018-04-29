@@ -2,33 +2,39 @@
 	.keyboard {
 		font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", STHeiti, "Microsoft Yahei", Tahoma, Simsun, sans-serif;
 		user-select: none;
-		font-size: 16px;
+		font-size: .3rem;
 		width: 100%;
 	}
 	.input-box {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		line-height: 24px;
 		.label {
+			/*font-size: .2rem;*/
 			color: #333;
-			width:100px;
 		}
 		.content {
 			display: flex;
-			min-width: 220px;
+			/*min-width: 220px;*/
+			flex: 1;
 			justify-content: flex-end;
+			text-align: right;
 			.input {
-				font-size: 20px;
+				font-size: .44rem;
 				color: #313131;
+				font-weight: bold;
 			}
 			.cursor {
 				background-color: #4788c5;
-				width: 2px;
+				width: 4px;
 				margin-left: 2px;
 			}
 			.placeholder {
 				color: #ccc;
+			}
+			.input-money,.currency {
+				font-size: 18px;
+				line-height: .52rem;
 			}
 			.currency {
 				color: #c1c1c1;
@@ -48,11 +54,11 @@
 					<span class="currency" v-show="val">¥</span>
 					{{val}}
 				</p>
-				<p class="placeholder" v-show="val.length === 0">
+				<p class="cursor" :style="{visibility: cursor ? 'visible' : 'hidden'}"></p>
+				<p class="placeholder input-money" v-show="val.length === 0">
 					{{placeholder}}
 				</p>
 				<!-- 光标 -->
-				<p class="cursor" :style="{visibility: cursor ? 'visible' : 'hidden'}"></p>
 			</div>
 		</div>
 		<!-- 自定义键盘 -->
