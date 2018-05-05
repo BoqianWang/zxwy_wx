@@ -16,7 +16,7 @@
     </div>
     <div class="jisuan_div">
       <!-- 积分抵扣 -->
-      <mt-cell v-if="orderdata.personalIntegral > 0" :title="orderdata.personalIntegralStr">
+      <mt-cell v-if="orderdata.personalIntegralMoney > 0" :title="orderdata.personalIntegralStr">
         <span>-￥{{jikoJifen}}</span>
       </mt-cell>
       <mt-cell :title="manjiandata.manjianText" v-show="!(orderdata.isFirstOrder&&firstjianData.firstjianArr.length>0)&&manjiandata.manjianArr.length>0">
@@ -25,12 +25,12 @@
       <mt-cell :title="firstjianData.firstjianText" v-show="orderdata.isFirstOrder&&firstjianData.firstjianArr.length>0">
         <span>-￥{{firstjianData.firstjianprice}}</span>
       </mt-cell>
-      <mt-cell v-if="ksydjjList.length > 0" title="代金券" is-link @click.native="popupClick">
+      <mt-cell title="代金券" is-link @click.native="popupClick">
         <!-- <span v-if="ksydjjList.length==0">暂无可用</span> -->
         <span v-if="ksydjjList.length>0&&chooseItem.discount==0" style="color:#ff6e15;">{{ksydjjList.length}}张可用</span>
         <span v-if="ksydjjList.length>0&&chooseItem.discount>0" style="color:#ff6e15;">-￥{{chooseItem.discount}}</span>
       </mt-cell>
-      <mt-cell v-if="orderdata.personalIntegral > 0 || ksydjjList.length > 0" title="实付金额">
+      <mt-cell v-if="orderdata.personalIntegralMoney > 0 || ksydjjList.length > 0" title="实付金额">
         <span style="color:rgba(255,110,21,1);">￥{{realpay}}</span>
       </mt-cell>
       <!-- <mt-cell title="支付方式" :value="payname" is-link  @click.native="handleClick"></mt-cell> -->
@@ -40,7 +40,7 @@
       <div class="login_btn" @click = "surePay" v-show="showkeyboard">
         确认支付
       </div>
-      <!-- <input style="padding: 10px;" type="button" value="清除cookies(用于测试)" @click='clearCookie'> -->
+      <mt-button type="danger" @click='clearCookie'>清除cookies(用于测试)</mt-button>
     </div>
 <!-- <keyword @watchVal="watchVal" @confirmEvent="surePay" :isClick="isClick"></keyword> -->
    <!--  <mt-popup
@@ -219,7 +219,8 @@ export default {
       chooseItem:{
         discount:0,
         startBizId:'',
-        shareGiftsId:''
+        shareGiftsId:'',
+        receiveId: ''
       },
       errorShopInfo: false
     }
@@ -343,17 +344,18 @@ export default {
         this.paytype = 'zfb';
         this.payname = '支付宝';
       }
-      var bizId = this.$route.query.bizId;
+      // var bizId = this.$route.query.bizId;
+      var params = {
+        bizId : this.$route.query.bizId || '',
+        merNo: this.$route.query.merNo || ''
+      }
       // if(!localStorage.zx_token){
       if(!Tools.getCookie('zx_token')) {
         return;
       }
       Indicator.open();
-      // var t = Date.now();
-      // console.log(t);
-      api.shortpay(bizId)
+      api.shortpay(params)
       .then(res=>{
-        // alert(JSON.stringify(res));
         this.orderdata = res.data;
         this.isFirst = res.data.isFirstOrder;
         // 加载可用代金券
@@ -513,6 +515,7 @@ export default {
     user_payMoney:function(item){
       this.chooseItem = item;
       this.popupdjj = false;
+      this.chooseItem.receiveId = item.receiveId;
       // 重新计算金额以及积分抵扣
       this.jikoJifen = 0;
       var youhuiMoney = this.val - this.manjiandata.fullprice - this.firstjianData.firstjianprice-this.chooseItem.discount; //优惠后的金额
@@ -566,7 +569,7 @@ export default {
       discount = discount + this.chooseItem.discount;
       Indicator.open();
       this.isClick = false;
-      api.orderSubmit(this.orderdata.bizId,originalCost,this.realpay,this.jikoJifen,discount,activityBelong,activityId,paymentMode,randomDisAmount,this.chooseItem.shareGiftsId)
+      api.orderSubmit(this.orderdata.bizId,originalCost,this.realpay,this.jikoJifen,discount,activityBelong,activityId,paymentMode,randomDisAmount, this.chooseItem.shareGiftsId, this.chooseItem.receiveId)
       .then(res=>{
         this.afterDataVO = res.data.afterDataVO;
         if(res.data.orderStatus==1){
@@ -574,11 +577,15 @@ export default {
             this.weixinPay(res.data.retMap);
             // this.isFirst = res.data.firstOrder;
           }else if(this.paytype=='zfb'){
-            const div = document.createElement('div');
-            div.innerHTML = res.data.form;
-            document.body.appendChild(div);
-            document.forms.punchout_form.submit();
-            // document.addEventListener('AlipayJSBridgeReady', this.tradePay(res.data.tradeNo), false);
+            if(res.data.form) {
+              const div = document.createElement('div');
+              div.innerHTML = res.data.form;
+              document.body.appendChild(div);
+              document.forms.punchout_form.submit();
+            } else {
+              //支付宝浏览器api支付
+              document.addEventListener('AlipayJSBridgeReady', this.tradePay(res.data.tradeNo), false);
+            }
           }
         }else if(res.data.orderStatus == 6){
              this.paySuccess();
@@ -654,10 +661,10 @@ export default {
         );
       },
       // 清除cookies
-      // clearCookie() {
-      //     alert('已清除缓存');
-      //     Tools.clearCookies('zx_token');
-      // },
+      clearCookie() {
+          alert('已清除缓存');
+          Tools.clearCookies('zx_token');
+      },
       //支付成功后跳转
       paySuccess: function() {
           this.$router.push({

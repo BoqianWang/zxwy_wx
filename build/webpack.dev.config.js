@@ -10,7 +10,7 @@ var htmlPlugins = [];
 // 热替换
 Object.keys(baseWebpackConfig.entry).forEach(function (name) {
     baseWebpackConfig.entry[name] = [
-        `webpack-dev-server/client?http://localhost:${config.dev.port}/`,
+        `webpack-dev-server/client?http://${config.dev.host}:${config.dev.port}/`,
         "webpack/hot/dev-server"
     ].concat(baseWebpackConfig.entry[name])
 });

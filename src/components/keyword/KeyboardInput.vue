@@ -1,4 +1,4 @@
-<style scoped lang="less">
+<style lang="less">
 	.keyboard {
 		font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", STHeiti, "Microsoft Yahei", Tahoma, Simsun, sans-serif;
 		user-select: none;

@@ -62,12 +62,10 @@ export default {
           params = {zx_token: Tools.getCookie('zx_token')};
         }
       }
-       console.log(params);
         return new Promise((resolve, reject) => {
             axios.post(url, params)
                 .then(response => {
                   Indicator.close();
-                  console.log(response.data);
                     if(response.data.code==0){
                       resolve(response.data);
                     }else {

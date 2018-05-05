@@ -1,0 +1,571 @@
+<template>
+	<div class="pay-body p-ten">
+		<!-- 支付内容 -->
+		<div class="pay-container">
+			<div class="pay-title">
+				<div class="shop-img flex-box m-b-ten">
+					<img :src="shopInfo.shopLogo">
+				</div>
+				<div class="shop-name text-center m-b-ten">
+					<span>{{ shopInfo.shopName }}</span>
+				</div>
+				<div v-show="true" class="shop-discount flex-box shop-img m-b-ten">
+					<span v-for="item in moneyOffGather['activitys']">{{item.activityDescription}}</span>
+					<!-- <span>满50减6</span>
+					<span>优惠名称</span> -->
+				</div>		
+			</div>
+			<div class="pay-content">
+				<div class="pay-con-detail flex-box space-between">
+					<!-- <span>消费金额</span>
+					<span>¥16</span> -->
+					<keyword v-model="money" 
+					:isClick="isClick" 
+					@sure="surePay"
+					@show_keyboard="showKeyboard"
+					label="金额"
+					></keyword>
+				</div>
+			</div>
+			<div class="pay-footer">
+				<!-- 代金券 -->
+				<mt-cell title="代金券" is-link  @click.native="showHidePopup(popupVisible)">
+				  <span class="pay-foot-discount white-f" v-if="!choseVocher['discount']">{{ userfulVocherCount }}张可用</span>
+				  <span v-else>{{'- ¥' + choseVocher['discount']}}</span>
+				</mt-cell>
+				<!-- 积分抵扣 -->
+				<mt-cell 
+				:title="shopInfo.personalIntegralStr" 
+				:value="'- ¥' + integral['discount']"></mt-cell>
+				<!-- 满减 -->
+				<mt-cell 
+				v-show="moneyOff.discount" 
+				:title="moneyOff.activityDescription" 
+				:value="'- ¥' + moneyOff.discount"></mt-cell>
+			</div>
+			<div class="pay-current">
+				<mt-cell title="实付金额" :value="'¥' + surePayMoney"></mt-cell>
+			</div>
+			<div class="text-center">
+				<mt-button v-show="sureBtn" class="pay-sure white-f" type="default" @click="surePay">确认支付</mt-button>
+			</div>
+		</div>
+		<div class="text-center" style="margin-top: 20px;">
+		    <mt-button type="danger" @click='clearCookie'>清除cookies(用于测试)</mt-button>
+		</div>
+		<!-- 代金券 -->
+		<mt-popup class="popup" v-model="popupVisible" position="right" :modal="false">
+			<mt-header fixed title="选择代金券" style="height: 44px;">
+	          <div slot='left' @click="showHidePopup(popupVisible)">
+	          	<mt-button icon="back"></mt-button>
+	          </div>
+	          <div slot='right' @click="choseVocherEevnt(1)">暂不使用</div>
+	        </mt-header>
+	        <div class="popup-container p-ten">
+		        <ul>
+		        	<li v-for="info in voucherList" @click="choseVocherEevnt(2, info)">
+						<div class="voucher">
+							<div class="voucher-above white-f" :style="{background: info.isUserful == 1 ? '' : 'rgba(204,204,204,1)'}">
+								<p class="flex-box space-between above-title m-b-ten">
+									<span>{{ info.voucherTitle }}</span>
+									<span>¥{{ info.discount }}</span>
+								</p>
+								<p class="flex-box space-between font-12">
+									<span>{{ info.beginDateStr }}至{{ info.endDateStr }}</span>
+									<span>满{{ info.fullMoney }}可用</span>
+								</p>
+							</div>
+							<div class="voucher-middle"></div>
+							<div class="voucher-below font-12">
+								<p>仅限{{ info['districtCodeVOs'][0]['shopName'] }},可用</p>
+								<p>消费金额需满{{ info.fullMoney }}元可用</p>
+							</div>
+						</div>
+		        	</li>
+		        	<!-- <li>
+						<div class="voucher">
+							<div class="voucher-above white-f">
+								<p class="flex-box space-between above-title m-b-ten">
+									<span>商家代金券</span>
+									<span>¥5</span>
+								</p>
+								<p class="flex-box space-between font-12">
+									<span>2017-12-12至2017-01-12</span>
+									<span>满20可用</span>
+								</p>
+							</div>
+							<div class="voucher-middle"></div>
+							<div class="voucher-below font-12">
+								<p>仅限芊芊果园,可用</p>
+								<p>消费金额需满20元可用</p>
+							</div>
+						</div>
+		        	</li> -->
+		        </ul>
+	        </div>
+		</mt-popup>
+	</div>
+</template>
+<style>
+	.pay-body {
+		background: #fff;
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+	.flex-box {
+		display: flex;
+	}
+	.space-between {
+		align-items: center; 
+		justify-content: space-between;
+	}
+	.text-center {
+		text-align: center;
+	}
+	.p-ten {
+		padding: .1rem;	
+	}
+	.white-f {
+		color: #fff;
+	}
+	.font-12 {
+		font-size: .12rem;
+	}
+	.m-b-ten {
+		margin-bottom: .1rem;
+	}
+	.shop-img {
+		justify-content: center;
+	}
+	.shop-img > img {
+		width: .58rem;
+		height: .58rem;
+		border-radius: 50%;
+		overflow: hidden;
+	}
+	.shop-name {
+		font-size: .18rem;
+		color: #000;
+		font-weight: bold;
+	}
+	.shop-discount > span {
+		color: #FF6E15;
+		padding: .02rem .05rem;
+		border: 1px solid #FF6E15;
+		font-size: .09rem;
+		margin-left: .05rem;
+	}
+	.pay-content {
+		padding: .1rem 0;
+	}
+	.pay-con-detail {
+		/*height: .6rem;*/
+		padding: .05rem .1rem;
+		border: 1px solid #FF6E15;
+		border-radius: 4px;
+	}
+	.pay-footer .mint-cell-title{
+		font-size: .15rem;
+		color: #777;
+	}
+	.pay-footer .mint-cell-value {
+		color: #333;
+	}
+	.pay-footer .pay-foot-discount {
+		 background: #FF6F15;
+		 padding: .05rem .1rem;
+		 font-size: .14rem;
+		 border-radius: 5px;
+	}
+	.pay-footer .mint-cell {
+		background-image: linear-gradient(0deg,#EEE,#EEE 50%,transparent 0);
+		background-size: 100% 1px;
+        background-repeat: no-repeat;
+        background-position: bottom;
+	}
+	.pay-current .mint-cell {
+		background-image: none;
+	}
+	.pay-current .mint-cell .mint-cell-wrapper {
+		font-size: .18rem;
+	}
+	.pay-current .mint-cell .mint-cell-value {
+		color: #333;
+	}
+	.pay-body .pay-sure {
+		margin-top: .5rem;
+		background: linear-gradient(90deg,#ff6e15,#ffb911);
+		background: -webkit-linear-gradient(left, #ff6e15, #ffb911);
+		box-shadow: 0.014rem 0.014rem 0.14rem rgba(233,91,5,0.3);
+		width: 2.3rem;
+		height: .4rem;
+		color: #fff;
+	}
+
+	/*代金券内容*/
+	.popup {
+		width: 100%;
+		height: 100%;
+		background: #F9F9F9;
+		/*overflow: auto;*/
+	}
+	.popup .mint-header {
+		background: #ff6e15;
+	}
+	.popup .popup-container {
+		margin-top: 40px;
+		height: 100%;
+		overflow: auto;
+	}
+	.popup-container > ul {
+		padding-bottom: .4rem;
+	}
+	.popup-container > ul > li {
+		margin-bottom: .14rem;
+		box-shadow: 0 0.045rem 0.12rem rgba(255,110,21,.26);
+	}
+	
+	.voucher-above {
+		padding: .2rem;
+		background: -webkit-linear-gradient(left, #FFB911, #FF6E15);
+		border-radius: 5px 5px 0 0;
+	}
+	.voucher-above .above-title {
+		font-size: .18rem;
+	}
+	.voucher-middle {
+		height: 5px;
+		background: url('../../images/pic_xiaojuchi@2x.png');
+		background-size:30px 5px;
+		margin-top: -5px;
+	}
+	.voucher-below {
+		padding: .1rem .2rem;
+		background: #fff;
+		border-radius:  0 0 5px 5px;
+		color: #777;
+	}
+	.pay-con-detail .input-box .content .input {
+		font-size: .4rem;
+	}
+</style>
+<script>
+	import api from '@/config/api';
+	import keyword from '@/components/keyword/KeyboardInput.vue';
+	import brower from '@/config/browser';
+	export default {
+		components: {
+			keyword
+		},
+		data() {
+			return {
+				// 代金券显示状态
+				popupVisible: false,
+				//输入金额
+				money: '',
+				//实付金额
+				surePayMoney: 0,
+				// 虚拟键盘确认支付按钮
+				isClick: true,
+				//页面确认支付按钮
+				sureBtn: false,
+				// 商户id
+				// bizId: this.$route.query.bizId,
+				// 代金券原始数据
+				// voucherListData: [],
+				//代金券列表
+				voucherList: [],
+				//可用代金券数量
+				userfulVocherCount: 0,
+				//选择代金券的金额
+				// choseVocherMoney: 0,
+				
+				// 店铺详情
+				shopInfo: {},
+				//满减集合
+				moneyOffGather: {},
+				//选择代金券
+				choseVocher: {},
+				//适合使用的满减活动
+				moneyOff: {},
+				//积分
+				integral: {
+					all: 0,
+					//积分抵扣
+					discount: 0
+				},
+				paytype: brower.IsWeixinOrAlipay() == 'false' ? 'Alipay' : brower.IsWeixinOrAlipay(),
+				afterDataVO: {}
+			}
+		},
+		computed: {
+
+		},
+		watch: {
+			money(currenValue) {
+				//监听能够使用的代金券;
+				this.canUserVoucherList(this.voucherList, currenValue);
+				//监听适合的满减
+				this.canUserMoneyOff(currenValue);
+				//实付金额
+				this.surePayMoneyHandle(currenValue);
+			}
+		},
+		mounted() {
+			this.getShopDetail();
+		},
+		methods:{
+			// 清除cookies
+		    clearCookie() {
+		        alert('已清除缓存');
+		        Tools.clearCookies('zx_token');
+		    },
+			//显示或者隐藏代金券
+			showHidePopup(type) {
+				this.popupVisible = !this.popupVisible
+			},
+			//虚拟键盘显示或隐藏后的回调
+			showKeyboard(val) {
+				this.sureBtn = !val;
+			},
+			//确认支付
+			surePay() {
+				let bizId = this.shopInfo['bizId'],
+					originalCost = this.money,
+					actualCost = this.surePayMoney,
+					deductedCost = this.integral['discount'],
+					discount = Math.abs((this.money -  this.surePayMoney - this.integral['discount']).toFixed(2)),
+					activityBelong = this.moneyOffGather['activityBelong'] || '',
+					activityId = this.moneyOff['activityId'] || '',
+					//1表示微信, 2表示支付宝
+					paymentMode = this.paytype == 'WeiXin' ? 1 :  2,
+					randomDisAmount = 0,
+					shareGiftsId = this.choseVocher['shareGiftsId'] || '',
+					receiveId = this.choseVocher['receiveId'] || '';
+				if(this.money <= 0 || this.money == '') {
+					this.$toast('请输入金额')
+					return;
+				}
+				this.isClick = false;
+				this.$indicator.open();
+				api.orderSubmit(bizId, originalCost, actualCost, deductedCost, discount, activityBelong, activityId,
+					paymentMode, randomDisAmount, shareGiftsId, receiveId)
+				.then(res => {
+					this.afterDataVO = res.data.afterDataVO;
+					if(res.data.orderStatus == 6) {
+						this.paySuccess();
+					} 
+					else if(res.data.orderStatus==1) {
+						if(this.paytype == 'WeiXin') {
+							this.weixinPay(res.data.retMap);
+						}
+						else if(this.paytype == 'Alipay') {
+							 if(res.data.form) {
+				              const div = document.createElement('div');
+				              div.innerHTML = res.data.form;
+				              document.body.appendChild(div);
+				              document.forms.punchout_form.submit();
+				            } else {
+				              //支付宝浏览器api支付
+				              document.addEventListener('AlipayJSBridgeReady', this.tradePay(res.data.tradeNo), false);
+				            }
+						}
+					}
+				}).catch(res => {
+					this.isClick = true;
+				})
+			},
+			//支付宝支付
+		    tradePay: function(tradeNO) {
+		       AlipayJSBridge.call("tradePay", {
+		            tradeNO: tradeNO
+		       },  (data) => {
+		           if ("9000" == data.resultCode) {
+		               this.paySuccess();
+		           } else {
+		               this.isClick = true;
+		           }
+		       });
+		    },
+			weixinPay(data){
+		        if (typeof WeixinJSBridge == "undefined") {//微信浏览器内置对象。参考微信官方文档
+		          if(document.addEventListener) {
+		            document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(data), false);
+		          }
+		          else if (document.attachEvent) {
+		            document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady(data));
+		            document.attachEvent('onWeixinJSBridgeReady',this.onBridgeReady(data));
+		          }
+		        } 
+		        else{
+		          this.onBridgeReady(data);
+		        }
+		      },
+		      onBridgeReady(data){
+		        WeixinJSBridge.invoke(
+		          'getBrandWCPayRequest',{
+		            "appId":data.appId,     //公众号名称，由商户传入
+		            "timeStamp":data.timeStamp, //时间戳，自1970年以来的秒数
+		            "nonceStr":data.nonceStr, //随机串
+		            "package":data.package,
+		            "signType":data.signType, //微信签名方式：
+		            "paySign":data.paySign //微信签名
+		          },(res) => {
+		            // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+		            if(res.err_msg == "get_brand_wcpay_request:ok"){
+		                  this.paySuccess();
+		            }else{
+		              this.isClick = true;
+		            }
+		          }
+		        );
+		    },
+			//支付成功后跳转
+		    paySuccess: function() {
+		          this.$router.push({
+		            path: '/paysuccess',
+		            query: {
+		              getIntegral: this.afterDataVO.getIntegral,
+		              actualCost: this.afterDataVO.actualCost,
+		              personalIntegral: this.afterDataVO.personalIntegral,
+		              vouchersCount: this.afterDataVO.vouchersCount
+		            }
+		          });
+		    },
+			//计算实付金额
+			surePayMoneyHandle(currenValue) {
+				let moneyOffDiscount = 0;
+				// 使用满减
+				if(this.moneyOff.discount) {
+					moneyOffDiscount = this.moneyOff.discount;
+				}
+
+				this.surePayMoney = currenValue - moneyOffDiscount;
+
+				// 使用代金券
+				if(this.choseVocher['isUserful'] == 1) {
+					this.surePayMoney -= this.choseVocher['discount'];
+				}
+
+				// 使用积分
+				if(this.integral['all'] > 0 && this.surePayMoney > 0) {
+					if(this.surePayMoney >= this.integral['all']) {
+						this.surePayMoney -= this.integral['all'];
+						this.integral['discount'] = this.integral['all'];
+					} 
+					else {
+						this.integral['discount'] = this.surePayMoney;
+						this.surePayMoney = 0;
+					}
+				}
+				if(currenValue == '') {
+					this.integral['discount'] = 0;
+				}
+
+				if(this.surePayMoney <= 0) {
+					this.surePayMoney = 0;
+				} 
+				else {
+					this.surePayMoney = this.surePayMoney.toFixed(2);
+				}
+				
+			},
+			//选择使用代金券
+			choseVocherEevnt(type, info) {
+				if(type == 1) {
+					this.choseVocher = {};
+					this.showHidePopup();
+				} else {
+					if(info['isUserful'] == 1) {
+						this.choseVocher = info;
+						this.showHidePopup();
+					} 
+				}
+				this.surePayMoneyHandle(this.money);
+			},
+			//商店优惠活动
+			shopDiscounts() {
+				let discountList = this.shopInfo['activitysVO'];
+				for(let item of discountList) {
+					// 满减
+					if(item.activityType == 0) {
+						this.moneyOffGather = item;
+					}
+				}
+			},
+			// 监听适合的满减活动
+			canUserMoneyOff(currentMoney) {
+				this.moneyOff = {};
+				if(this.moneyOffGather['activitys']) {
+					for(let item of this.moneyOffGather['activitys']) {
+						if(currentMoney >= item.fullMoney ) {
+							this.moneyOff = item;
+						}
+					}
+				}
+			},
+			// 监听适合能用的代金券
+			canUserVoucherList(list, currentMoney) {
+				for(let item of list) {
+					//活动类型为店铺
+					if(item.activityLevel == 5) {
+						if(item.voucherStatus < 1 && 
+							this.shopInfo['bizId'] == item['districtCodeVOs'][0]['districtCode'] &&
+							currentMoney >= item.fullMoney) {
+							item['isUserful'] = 1;
+						} else {
+							item['isUserful'] = 0;
+						}
+					}
+				}
+				this.searchVocherLength(list);
+			},
+			// 监听能用代金券数量
+			searchVocherLength(list) {
+				let count = 0,
+					arr = [];
+				for(let item of list) {
+					if(item['isUserful'] == 1) {
+						count++;
+						arr.unshift(item);
+					} else {
+						arr.push(item)
+					}
+				};
+				this.choseVocher = {};
+				this.userfulVocherCount = count;
+				this.voucherList = arr;
+			},
+			//获取店铺信息
+			getShopDetail() {
+				let params = {
+					bizId: this.$route.query.bizId || '',
+					merNo: this.$route.query.merNo || ''
+				}
+				this.$indicator.open();
+				api.shortpay(params).then(res => {
+					this.shopInfo = res.data;
+					this.integral['all'] = this.shopInfo['personalIntegralMoney'];
+
+					this.getVoucherList();
+					// 处理商店优惠活动
+					this.shopDiscounts();
+				}).catch(res => {
+
+				})
+			},
+			//获取代金券
+			getVoucherList() {
+				this.$indicator.open();
+				api.useyouhuilist(1, true).then(res => {
+					this.voucherList = res.data.lists;
+				}).catch(res => {
+
+				})
+			}
+		}
+	}
+</script>

@@ -39,8 +39,8 @@ export default{
     /**
      * 快捷买单
      */
-     shortpay(bizId) {
-        return fetch.fetchPost('order/ShopDetails', {bizId:bizId});
+     shortpay(params) {
+        return fetch.fetchPost('order/ShopDetails', params);
     },
 
     /**
@@ -53,8 +53,20 @@ export default{
     /**
      * 提交订单
      */
-     orderSubmit(bizId,originalCost,actualCost,deductedCost,discount,activityBelong,activityId,paymentMode,randomDisAmount,shareGiftsId) {
-        return fetch.fetchPost('order/orderSubmitShortcut',{bizId:bizId,originalCost:originalCost,actualCost:actualCost,deductedCost:deductedCost,discount:discount,activityBelong:activityBelong,activityId:activityId,paymentMode:paymentMode,randomDisAmount:randomDisAmount,shareGiftsId:shareGiftsId});
+     orderSubmit(bizId,originalCost,actualCost,deductedCost,discount,activityBelong,activityId,paymentMode,randomDisAmount,shareGiftsId, receiveId) {
+        return fetch.fetchPost('order/orderSubmitShortcut',{
+          bizId: bizId,
+          originalCost: originalCost,
+          actualCost: actualCost,
+          deductedCost: deductedCost,
+          discount: discount, 
+          activityBelong: activityBelong,
+          activityId: activityId,
+          paymentMode: paymentMode,
+          randomDisAmount: randomDisAmount,
+          shareGiftsId: shareGiftsId,
+          receiveId: receiveId
+        });
     },
 
     /**

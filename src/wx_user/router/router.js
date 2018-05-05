@@ -47,7 +47,7 @@ const oneThousand = r => require.ensure([], () => r(require('../page/activity/to
 const newyouhui = r => require.ensure([], () => r(require('../page/my/youhui/newYouHui.vue')), 'newyouhui');
 // import newyouhui  from  '../page/my/youhui/newYouHui.vue'
 
-// const shortpay = r => require.ensure([], () => r(require('../page/shop/shortpay.vue')), 'shortpay');
+const newShortpay = r => require.ensure([], () => r(require('../page/shop/newShortpay.vue')), 'newShortpay');
 export default{
   routes:[{
     path:'/',
@@ -111,11 +111,12 @@ export default{
         component:shortpay,
         meta:{title:'快捷买单'}
       },
-      // {
-      //   path: 'test',
-      //   component: test,
-      //   meta: { title: '测试' }
-      // }
+      //新版支付界面
+      {
+        path: 'newShortpay',
+        component: newShortpay,
+        meta: { title: '快捷买单' }
+      }
     ]
   },{
     path:'/paysuccess',
