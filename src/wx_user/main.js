@@ -43,18 +43,17 @@ router.beforeEach((to, from, next) => {
     next()
   }else{
     if(to.query.openid){
-      console.log('openId:'+ to.query.openid);
       Tools.setCookies('zx_token', to.query.openid);
       next()
     }else {
-      // var url =  to.fullPath;
-      // api.author(url)
-      // .then(res => {
-      //   window.location.href = res.data;
-      // })
+      var url =  to.fullPath;
+      api.author(url)
+      .then(res => {
+        window.location.href = res.data;
+      })
 
-      Tools.setCookies('zx_token', 'oV3Y2s_R0ZDF9Xqj5Wp1FapeK70s');
-      next();
+      // Tools.setCookies('zx_token', 'oV3Y2s_R0ZDF9Xqj5Wp1FapeK70s');
+      // next();
     }
   }
 

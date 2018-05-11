@@ -31,3 +31,48 @@ html,body{
   color: #666;
   margin-top: 20px;
 }
+.flex-box {
+  display: flex;
+}
+.bg-white {
+   background: #fff;
+}
+.flex-1 {
+  flex: 1;
+}
+.p-ten {
+  padding: .1rem; 
+}
+.p-t-ten {
+  padding-top: .1rem;
+}
+.p-l-ten  {
+  padding-left: .1rem;
+}
+.p-l-ten {
+  padding-right: .1rem;
+}
+.white-f {
+  color: #fff;
+}
+.font-12 {
+  font-size: .12rem;
+}
+.m-b-ten {
+  margin-bottom: .1rem;
+}
+.m-r-ten {
+  margin-right: .1rem;
+}
+.m-t-ten {
+  margin-top: .1rem;
+}
+.rel {
+  position: relative;
+}
+.abs {
+  position: absolute;
+}
+.text-center {
+  text-align: center;
+}

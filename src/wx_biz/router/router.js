@@ -5,13 +5,15 @@ import centerm from  '../page/centerM.vue'
 import finance from '../page/financeHome.vue'
 import yuetixian from '../page/yuetixian.vue'
 import yuelist from '../page/yueList.vue'
-import bankdetail from '../page/bankdetail.vue'
+import bankdetail from '../page/bankdetail.vue';
 //营销协议
 // import marketProtocol from '../page/marketProtocol.vue';
 const marketProtocol = r => require.ensure([], () => r(require('../page/marketProtocol.vue')), 'marketProtocol');
 //注册协议
 // import registerProtocol from '../page/registerProtocol.vue';
 const registerProtocol = r => require.ensure([], () => r(require('../page/registerProtocol.vue')), 'registerProtocol');
+//结算协议
+const accountProtocol = r => require.ensure([], () => r(require('../page/accountProtocol.vue')), 'accountProtocol');
 
 export default{
   routes:[
@@ -58,6 +60,11 @@ export default{
       //注册协议
       path: '/registerProtocol',
       component: registerProtocol
+    },
+    {
+      //注册协议
+      path: '/accountProtocol',
+      component: accountProtocol
     }
   ]
 }

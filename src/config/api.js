@@ -53,7 +53,7 @@ export default{
     /**
      * 提交订单
      */
-     orderSubmit(bizId,originalCost,actualCost,deductedCost,discount,activityBelong,activityId,paymentMode,randomDisAmount,shareGiftsId, receiveId) {
+     orderSubmit(bizId,originalCost,actualCost,deductedCost,discount,activityBelong,activityId,paymentMode,randomDisAmount,shareGiftsId, receiveId, marketServiceCost) {
         return fetch.fetchPost('order/orderSubmitShortcut',{
           bizId: bizId,
           originalCost: originalCost,
@@ -65,7 +65,8 @@ export default{
           paymentMode: paymentMode,
           randomDisAmount: randomDisAmount,
           shareGiftsId: shareGiftsId,
-          receiveId: receiveId
+          receiveId: receiveId,
+          marketServiceCost: marketServiceCost
         });
     },
 

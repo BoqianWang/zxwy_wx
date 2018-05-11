@@ -201,4 +201,20 @@ body,html{height:100%;width:100%;background-color:#f9f9f9;font-size:16px
 .font-14{font-size:14px
 }
 .register-protocol{line-height:25px
+}
+.text-center{text-align:center
+}
+.p-ten{padding:10px
+}
+.p-t-ten{padding-top:10px
+}
+.p-b-ten{padding-bottom:10px
+}
+.paragraph{text-indent:20px
+}
+.p-section{padding:20px 0;font-size:20px;font-weight:700
+}
+.font-14{font-size:14px
+}
+.register-protocol{line-height:25px
 }a,article,aside,b,body,button,dd,div,dl,dt,figcaption,figure,footer,h1,h2,h3,h4,h5,h6,header,i,input,li,nav,p,section,select,span,textarea,ul{padding:0;margin:0;list-style:none;font-style:normal;text-decoration:none;border:none;box-sizing:border-box;font-family:PingFangSC-Medium,sans-serif;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}a:focus,article:focus,aside:focus,b:focus,body:focus,button:focus,dd:focus,div:focus,dl:focus,dt:focus,figcaption:focus,figure:focus,footer:focus,h1:focus,h2:focus,h3:focus,h4:focus,h5:focus,h6:focus,header:focus,i:focus,input:focus,li:focus,nav:focus,p:focus,section:focus,select:focus,span:focus,textarea:focus,ul:focus{outline:none}body,html{height:100%;width:100%;background-color:#f9f9f9;font-size:16px}
