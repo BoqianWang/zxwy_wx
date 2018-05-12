@@ -34,6 +34,9 @@ html,body{
 .flex-box {
   display: flex;
 }
+.overflew {
+  overflow: hidden;
+}
 .bg-white {
    background: #fff;
 }
@@ -49,14 +52,29 @@ html,body{
 .p-l-ten  {
   padding-left: .1rem;
 }
-.p-l-ten {
+.p-r-ten {
   padding-right: .1rem;
+}
+.p-b-ten {
+  padding-bottom: .1rem;
 }
 .white-f {
   color: #fff;
 }
+.color-3 {
+  color: #333;
+}
+.color-7 {
+  color: #777;
+}
+.color-9 {
+  color: #999
+}
 .font-12 {
   font-size: .12rem;
+}
+.font-15 {
+  font-size: .15rem;
 }
 .m-b-ten {
   margin-bottom: .1rem;
@@ -67,6 +85,9 @@ html,body{
 .m-t-ten {
   margin-top: .1rem;
 }
+.m-l-ten {
+  margin-left: .1rem;
+}
 .rel {
   position: relative;
 }
@@ -76,3 +97,14 @@ html,body{
 .text-center {
   text-align: center;
 }
+
+.text_over {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clearfix:after {
+  content: "";
+  display: block;
+  clear: both;
+} 

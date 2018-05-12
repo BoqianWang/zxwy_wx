@@ -341,8 +341,11 @@
 			//确认支付
 			surePay() {
 				let bizId = this.shopInfo['bizId'],
+					// 输入金额
 					originalCost = this.money,
+					//实付
 					actualCost = this.surePayMoney,
+					//积分
 					deductedCost = this.integral['discount'],
 					//满减 + 代金券 
 					// discount = Math.abs((this.money -  this.surePayMoney - this.integral['discount'] + this.serverMoney).toFixed(2)),

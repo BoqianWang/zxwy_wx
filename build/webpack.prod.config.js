@@ -38,6 +38,6 @@ module.exports = merge(baseWebpackConfig, {
             names:'manifest',
             chunks: ['vendor']
         }),
-        ...utils.genHtmlPlugins()
+        ...utils.genHtmlPlugins(),
     ]
 })

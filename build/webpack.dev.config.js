@@ -5,6 +5,7 @@ var utils = require('./utils');
 var config = require('./config');
 var FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 
+
 var htmlPlugins = [];
 
 // 热替换
@@ -27,6 +28,7 @@ module.exports = merge(baseWebpackConfig, {
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),
         ...utils.genHtmlPlugins(),
-        new FriendlyErrorsPlugin()
+        new FriendlyErrorsPlugin(),
+        
     ]
 })
