@@ -47,8 +47,8 @@
 	</div>
 </template>
 <style scoped lang="scss">
-	@import '../wx_user/style/mixin.scss';
-	@import '../wx_user/style/iconfont/iconfont.css';
+	@import '../../../style/mixin.scss';
+	@import '../../../style/iconfont/iconfont.css';
 	.add-menu {
 		align-items: center;
 	}

@@ -296,7 +296,7 @@
 				<div class="shop-detial" :style="{height: height - 42 + 'px',display: 'none'}">
 					<div class="p-ten">
 						<div class="flex-box p-b-ten m-t-ten addresss-wrap">
-							<div class="flex-box address align-justify">
+							<div class="flex-box align-justify">
 								<span class="iconfont icon-map p-r-ten address-m color-9">
 								</span>
 								<span class="font-15 color-3">  
@@ -317,21 +317,21 @@
 						</div>
 						<div class="shop-cell m-t-ten">
 							<div class="flex-box align-justify p-t-ten p-b-ten shop-cell-list">
-								<p class="flex-box cell-wrap">
+								<p class="flex-box align-center">
 									<span class="iconfont icon-webicon203 cell-safe color-9"></span>
 									<span class="color-3 font-15">查看店铺安全档案</span>
 								</p>
 								<p class="iconfont icon-more color-9"></p>
 							</div>
 							<div class="flex-box align-justify p-t-ten p-b-ten shop-cell-list">
-								<p class="flex-box cell-wrap">
+								<p class="flex-box align-center">
 									<span class="cell-server color-9 iconfont icon-shigongrenyuan p-r-ten"></span>
 									<span class="color-3 font-15">配送服务: 高品质配送服务</span>
 								</p>
 								<!-- <p class="iconfont icon-more color-9"></p> -->
 							</div>
 							<div class="flex-box align-justify p-t-ten p-b-ten shop-cell-list">
-								<p class="flex-box cell-wrap">
+								<p class="flex-box align-center">
 									<span class="cell-server color-9 iconfont icon-task-management p-r-ten"></span>
 									<span class="color-3 font-15">配送时间: 10:00-23:00</span>
 								</p>
@@ -358,7 +358,6 @@
 			}
 			.address {
 				border-right: 1px solid #eee;
-				align-items: center;
 			}
 		}
 		.shop-detial-img {
@@ -372,9 +371,6 @@
 			}
 		}
 		.shop-cell {
-			.cell-wrap {
-				align-items: center;
-			}
 			.cell-safe {
 				font-size: .3rem;
 			}
@@ -577,7 +573,7 @@
 </style>
 <script>
 	// import "@/wx_user/style/iconfont/iconfont.css";
-	import addMenu from '@/components/addMenu.vue';
+	import addMenu from './children/addMenu.vue';
 	export default {
 		components: {
 		    addMenu

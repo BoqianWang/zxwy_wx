@@ -48,7 +48,14 @@ const newyouhui = r => require.ensure([], () => r(require('../page/my/youhui/new
 
 // 外卖模块
 const takeOutShop = r => require.ensure([], () => r(require('@/wx_user/page/takeout/takeOutShop.vue')), 'takeOutShop');
-
+//提交订单
+const takeOutOrder = r => require.ensure([], () => r(require('@/wx_user/page/takeout/takeOutOrder.vue')), 'takeOutOrder');
+//选择收货地址
+const choseAddress = r => require.ensure([], () => r(require('@/wx_user/page/takeout/children/choseAddress.vue')), 'choseAddress');
+//添加收货地址
+const addAddress = r => require.ensure([], () => r(require('@/wx_user/page/takeout/children/addAddress.vue')), 'addAddress');
+//添加收货地址
+// const newHome = r => require.ensure([], () => r(require('@/wx_user/page/home/newHome.vue')), 'newHome');
 // import newyouhui  from  '../page/my/youhui/newYouHui.vue'
 
 // const newShortpay = r => require.ensure([], () => r(require('../page/shop/newShortpay.vue')), 'newShortpay');
@@ -135,11 +142,39 @@ export default{
       meta:{title:'领取1000积分'}
     },
     {
-       path: '/takeout/takeOutShop',
-       component: takeOutShop,
-       meta: {
-          title: '外卖商家'
-       }
-    }
+      path: '/takeout/takeOutShop',
+      component: takeOutShop,
+      meta: {
+        title: '外卖商家'
+      }
+    },
+    {
+      path: '/takeout/takeOutOrder',
+      component: takeOutOrder,
+      meta: {
+        title: '提交订单'
+      }
+    },
+    {
+      path: '/takeout/choseAddress',
+      component: choseAddress,
+      meta: {
+        title: '选择收货地址'
+      }
+    },
+    {
+      path: '/takeout/addAddress',
+      component: addAddress,
+      meta: {
+        title: '添加收货地址'
+      }
+    },
+    // {
+    //   path: '/newHome',
+    //   component: newHome,
+    //   meta: {
+    //     title: '首页'
+    //   }
+    // }
   ]
 }

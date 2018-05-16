@@ -353,8 +353,8 @@
 					activityBelong = this.moneyOffGather['activityBelong'] || '',
 					activityId = this.moneyOff['activityId'] || '',
 					//1表示微信, 2表示支付宝, 0表示余额
-					// paymentMode = this.paytype == 'WeiXin' ? 1 :  2,
-					paymentMode = 0,
+					paymentMode = this.paytype == 'WeiXin' ? 1 :  2,
+					// paymentMode = 0,
 					randomDisAmount = 0,
 					shareGiftsId = this.choseVocher['shareGiftsId'] || '',
 					receiveId = this.choseVocher['receiveId'] || '',
@@ -393,7 +393,7 @@
 				})
 			},
 			//支付宝支付
-		    tradePay: function(tradeNO) {
+		    tradePay(tradeNO) {
 		       AlipayJSBridge.call("tradePay", {
 		            tradeNO: tradeNO
 		       },  (data) => {
@@ -439,7 +439,7 @@
 		        );
 		    },
 			//支付成功后跳转
-		    paySuccess: function() {
+		    paySuccess() {
 		          this.$router.push({
 		            path: '/paysuccess',
 		            query: {
@@ -493,13 +493,19 @@
 				// }
 
 				//收取服务费
-				if(this.shopInfo['serviceFeeObject'] == 0 && (this.integral['discount'] + this.choseVocher['discount']) >= this.shopInfo['standardFee']) {
-					this.serverMoney = 0.5;
+				let serverMoney = this.integral['discount'] + this.choseVocher['discount'];
+				if(this.shopInfo['serviceFeeObject'] == 0 && serverMoney >= this.shopInfo['standardFee']) {
+					if(this.shopInfo['marketType'] == 0) {
+						this.serverMoney = parseFloat(this.shopInfo['serviceRate']);
+					} 
+					else if(this.shopInfo['marketType'] == 1) {
+						this.serverMoney = (parseFloat(this.shopInfo['serviceRate']) * serverMoney).toFixed(2);
+					}
 				} else {
 					this.serverMoney = 0;
 				}
 
-				this.surePayMoney = (this.surePayMoney + this.serverMoney).toFixed(2);
+				this.surePayMoney = (this.surePayMoney + parseFloat(this.serverMoney)).toFixed(2);
 			},
 			//选择使用代金券
 			choseVocherEevnt(type, info) {
