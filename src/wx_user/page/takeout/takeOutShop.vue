@@ -1,37 +1,51 @@
 <template>
-	<div class="bg-white" style="height: 667px; overflow-x: hidden;">
-		
-		<div class="takeout-wrap">
-			<div class="shop-title rel">
-				<p class="abs" style="background-image: url(https://fuss10.elemecdn.com/e/7d/9854d2f95050092a008b4e3ee29e6png.png?imageMogr/format/webp/thumbnail/!130x130r/gravity/Center/crop/130x130/);">
-				</p>
-			</div>
-			<div class="shop-desc">
-				<p class="text-center">
-					<span class="shop-tag white-f">外卖</span>
-					<b class="shop-name">九毛九(华强茂业店)</b>
-				</p>
-				<div class="text-center shop-desc-detail">
-					<div class="p-t-ten detail-sales color-3">
-						<span>4.7</span>
-						<span>月首999</span>
-						<span>八卦岭商圈</span>
-						<span>4.7km 30分钟</span>
-					</div>
-					<div class="p-t-ten font-12 color-7">
-						欢迎光临，用餐高峰期请提前下单，谢谢	
-					</div>
-					<div class="p-t-ten color-6">
-						<span class="shop-tag white-f m-r-ten">首</span>
-						新用户首单立减(不与其他活动同享)
+	<div class="bg-white">
+		<div class="takeout-wrap" id="takeout-wrap">
+			<div class="takeout-shop-t-w" @click="showShopDetial">
+				<!-- 头部 -->
+				<div class="shop-title rel" :style="{backgroundImage: 'url(' + defaultImg + ')'}">
+					<!-- <p class="abs" style="background-image: url(https://fuss10.elemecdn.com/e/7d/9854d2f95050092a008b4e3ee29e6png.png?imageMogr/format/webp/thumbnail/!130x130r/gravity/Center/crop/130x130/);">
+					</p> -->
+					<p class="abs" :style="{backgroundImage: 'url(' + shopInfo['shopLogo'] ? shopInfo['shopLogo'] : 'http://s16.sinaimg.cn/mw690/003gRgrCzy73OGZAV434f&690' + ')'}">
+					</p>
+				</div>
+				<!-- 描述 -->
+				<div class="shop-desc">
+					<p class="text-center">
+						<b class="shop-name">{{shopInfo['shopName']}}</b>
+						<span class="tips tips-takeout" v-if="shopInfo['isWm'] == 1"></span>
+					</p>
+					<div class="text-center shop-desc-detail">
+						<div class="p-t-ten detail-sales color-3">
+							<!-- <span>4.7</span> -->
+							<span>销量{{shopInfo['goodsSales']}}</span>
+							<span>{{shopInfo['businessName']}}</span>
+							<span>{{shopInfo['distance']}} {{shopInfo['expectTime']}}分钟</span>
+						</div>
+						<div class="p-t-ten font-12 color-7">
+							<!-- 欢迎光临，用餐高峰期请提前下单，谢谢	 -->
+							{{shopInfo['shopIntro']}}
+						</div>
+						<div class="p-t-ten color-6">
+							<span class="tips tips-first"></span>
+							<span>
+								新用户首单立减(不与其他活动同享)
+							</span>
+							<span class="color-9 font-12 p-l-ten rel">
+							  <span class="shop-down iconfont icon-sanjiaoxing-down abs"></span>
+							  <span class="p-l-ten">4个活动</span>
+							</span>
+						</div>
 					</div>
 				</div>
 			</div>
+			<!-- 推荐 -->
 			<div class="p-l-ten p-r-ten m-t-ten flex-box text-center selected">
-				<span class="flex-1">商品</span>
+				<span class="flex-1 actived">商品</span>
 				<span class="flex-1">评价</span>
-				<span class="flex-1 actived">商家</span>
+				<span class="flex-1">商家</span>
 			</div>
+			<!-- 菜单详情 -->
 			<div class="shop-container">
 				<!-- <div class="shop-recommend p-ten">
 					<p class="color-3 p-b-ten">商家推荐</p>
@@ -51,235 +65,1006 @@
 				</div> -->
 				<div :style="{display: 'block'}">
 					<div class="shop-con-wrap flex-box" :style="{height: height - 42 + 'px'}">
-						<ul class="font-12 color-7">
-							<li>
-								<span>折扣</span>
-							</li>
-							<li>
-								<span>分类名称</span>
-							</li>
+						<ul class="font-12 color-7" id="classify-list">
 							<li class="active">
-								<span style="-webkit-box-orient: vertical;">芝心芝普装比萨胜多负少撒旦法胜多负少的说</span>
+								<span>分类名称1</span>
 							</li>
 							<li>
-								<span>分类名称</span>
+								<span>分类名称2</span>
 							</li>
 							<li>
-								<span>分类名称胜多负少但是</span>
+								<span style="-webkit-box-orient: vertical;">分类名称3</span>
 							</li>
 							<li>
-								<span>芝心芝普装比萨胜多</span>
-							</li>
-							<li>
-								<span>分类名称</span>
-							</li>
-							<li>
-								<span>分类名称胜多负少但是</span>
-							</li>
-							<li>
-								<span style="-webkit-box-orient: vertical;">芝心芝普装比萨胜多负少撒旦法胜多负少的说</span>
-							</li>
-							<li>
-								<span>分类名称</span>
-							</li>
-							<li>
-								<span>分类名称胜多负少但是</span>
+								<span style="-webkit-box-orient: vertical;">分类名称4</span>
 							</li>
 						</ul>
-						<section class="flex-1 p-ten section-menu">
-							<p class="color-3 con-wrap-title">分类名称</p>
-							<div>
-								<div class="wrap-block flex-box p-t-ten p-b-ten">
-									<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-										
-									</div>
-									<div class="flex-1 p-l-ten menu-detail">
-										<p class="color-3 menu-d-title text_over">
-											<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
-										</p>
-										<p class="font-12 color-6 menu-d-desc text_over">
-											<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
-										</p>
-										<p class="font-12 color-6">
-											<span>月首355</span>
-										</p>
-										<p class="menu-d-tag">
-											<span class="tag-desc">商品标签</span>
-											<!-- <span class="tag-desc">6折</span>
-											<span>每单限2份</span>
-											<span class="tag-residue">剩9分</span> -->
-										</p>
-										<div class="p-t-ten flex-box align-justify">
-											<div>
-												<span class="price">¥38.6</span>
-												<span class="color-7" style="font-size: 8px;">
-													/份 <del>¥44</del>
-												</span>
+						<section class="flex-1 p-ten section-menu" id="section-menu">
+							<div class="scoller-list">
+								<p class="color-3 con-wrap-title">分类名称1</p>
+								<div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
 											</div>
-											<addMenu></addMenu>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
+											</div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
+											</div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu>
+											 --></div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu>
+											 --></div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu>
+											 --></div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu> -->
+											</div>
 										</div>
 									</div>
 								</div>
-								<div class="wrap-block flex-box p-t-ten p-b-ten">
-									<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-										
-									</div>
-									<div class="flex-1 p-l-ten menu-detail">
-										<p class="color-3 menu-d-title">
-											<span>菜品名称</span>
-										</p>
-										<p class="font-12 color-6 menu-d-desc text_over">
-											<span>菜品描述菜品描述菜品描述</span>
-										</p>
-										<p class="font-12 color-6">
-											<span>月首355</span>
-										</p>
-										<p class="menu-d-tag">
-											<span class="tag-desc">商品标签</span>
-											<span class="tag-desc">6折</span>
-											<span>每单限2份</span>
-											<span class="tag-residue">剩9分</span>
-										</p>
-										<div class="p-t-ten flex-box align-justify">
-											<div>
-												<span class="price">¥38.6</span>
-												<span class="color-7" style="font-size: 8px;">
-													/盘 <del>¥44</del>
-												</span>
+							</div>
+							<div class="scoller-list">
+								<p class="color-3 con-wrap-title">分类名称2</p>
+								<div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
 											</div>
-											<!-- <addMenu></addMenu>
-										 --></div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
+											</div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
+											</div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
+											</div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu>
+											 --></div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu>
+											 --></div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu>
+											 --></div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu> -->
+											</div>
+										</div>
 									</div>
 								</div>
-								<div class="wrap-block flex-box p-t-ten p-b-ten">
-									<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-										
-									</div>
-									<div class="flex-1 p-l-ten menu-detail">
-										<p class="color-3 menu-d-title">
-											<span>菜品名称</span>
-										</p>
-										<p class="font-12 color-6 menu-d-desc text_over">
-											<span>菜品描述菜品描述菜品描述</span>
-										</p>
-										<p class="font-12 color-6">
-											<span>月首355</span>
-										</p>
-										<p class="menu-d-tag">
-											<span class="tag-desc">商品标签</span>
-											<span class="tag-desc">6折</span>
-											<span>每单限2份</span>
-											<span class="tag-residue">剩9分</span>
-										</p>
-										<div class="p-t-ten flex-box align-justify">
-											<div>
-												<span class="price">¥38.6</span>
-												<span class="color-7" style="font-size: 8px;">
-													/盘 <del>¥44</del>
-												</span>
+							</div>
+							<div class="scoller-list">
+								<p class="color-3 con-wrap-title">分类名称3</p>
+								<div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
 											</div>
-											<!-- <addMenu></addMenu>
-										 --></div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
+											</div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
+											</div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
+											</div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu>
+											 --></div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu>
+											 --></div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu>
+											 --></div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu> -->
+											</div>
+										</div>
 									</div>
 								</div>
-								<div class="wrap-block flex-box p-t-ten p-b-ten">
-									<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-										
-									</div>
-									<div class="flex-1 p-l-ten menu-detail">
-										<p class="color-3 menu-d-title">
-											<span>菜品名称</span>
-										</p>
-										<p class="font-12 color-6 menu-d-desc text_over">
-											<span>菜品描述菜品描述菜品描述</span>
-										</p>
-										<p class="font-12 color-6">
-											<span>月首355</span>
-										</p>
-										<p class="menu-d-tag">
-											<span class="tag-desc">商品标签</span>
-											<span class="tag-desc">6折</span>
-											<span>每单限2份</span>
-											<span class="tag-residue">剩9分</span>
-										</p>
-										<div class="p-t-ten flex-box align-justify">
-											<div>
-												<span class="price">¥38.6</span>
-												<span class="color-7" style="font-size: 8px;">
-													/盘 <del>¥44</del>
-												</span>
+							</div>
+							<div class="scoller-list">
+								<p class="color-3 con-wrap-title">分类名称4</p>
+								<div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
 											</div>
-											<!-- <addMenu></addMenu>
-										 --></div>
+										</div>
 									</div>
-								</div>
-								<div class="wrap-block flex-box p-t-ten p-b-ten">
-									<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-										
-									</div>
-									<div class="flex-1 p-l-ten menu-detail">
-										<p class="color-3 menu-d-title">
-											<span>菜品名称</span>
-										</p>
-										<p class="font-12 color-6 menu-d-desc text_over">
-											<span>菜品描述菜品描述菜品描述</span>
-										</p>
-										<p class="font-12 color-6">
-											<span>月首355</span>
-										</p>
-										<p class="menu-d-tag">
-											<span class="tag-desc">商品标签</span>
-											<span class="tag-desc">6折</span>
-											<span>每单限2份</span>
-											<span class="tag-residue">剩9分</span>
-										</p>
-										<div class="p-t-ten flex-box align-justify">
-											<div>
-												<span class="price">¥38.6</span>
-												<span class="color-7" style="font-size: 8px;">
-													/盘 <del>¥44</del>
-												</span>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
 											</div>
-											<!-- <addMenu></addMenu>
-										 --></div>
+										</div>
 									</div>
-								</div>
-								<div class="wrap-block flex-box p-t-ten p-b-ten">
-									<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-										
-									</div>
-									<div class="flex-1 p-l-ten menu-detail">
-										<p class="color-3 menu-d-title">
-											<span>菜品名称</span>
-										</p>
-										<p class="font-12 color-6 menu-d-desc text_over">
-											<span>菜品描述菜品描述菜品描述</span>
-										</p>
-										<p class="font-12 color-6">
-											<span>月首355</span>
-										</p>
-										<p class="menu-d-tag">
-											<span class="tag-desc">商品标签</span>
-											<span class="tag-desc">6折</span>
-											<span>每单限2份</span>
-											<span class="tag-residue">剩9分</span>
-										</p>
-										<div class="p-t-ten flex-box align-justify">
-											<div>
-												<span class="price">¥38.6</span>
-												<span class="color-7" style="font-size: 8px;">
-													/盘 <del>¥44</del>
-												</span>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
 											</div>
-											<!-- <addMenu></addMenu> -->
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title text_over">
+												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<!-- <span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span> -->
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/份 <del>¥44</del>
+													</span>
+												</div>
+												<addMenu></addMenu>
+											</div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu>
+											 --></div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu>
+											 --></div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu>
+											 --></div>
+										</div>
+									</div>
+									<div class="wrap-block flex-box p-t-ten p-b-ten">
+										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
+											
+										</div>
+										<div class="flex-1 p-l-ten menu-detail">
+											<p class="color-3 menu-d-title">
+												<span>菜品名称</span>
+											</p>
+											<p class="font-12 color-6 menu-d-desc text_over">
+												<span>菜品描述菜品描述菜品描述</span>
+											</p>
+											<p class="font-12 color-6">
+												<span>月首355</span>
+											</p>
+											<p class="menu-d-tag">
+												<span class="tag-desc">商品标签</span>
+												<span class="tag-desc">6折</span>
+												<span>每单限2份</span>
+												<span class="tag-residue">剩9分</span>
+											</p>
+											<div class="p-t-ten flex-box align-justify">
+												<div>
+													<span class="price">¥38.6</span>
+													<span class="color-7" style="font-size: 8px;">
+														/盘 <del>¥44</del>
+													</span>
+												</div>
+												<!-- <addMenu></addMenu> -->
+											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						</section>
 					</div>
-					<footer class="shop-cart align-justify rel flex-box">
-						<div class="shop-cart-icon text-center abs">
+					<footer class="shop-cart align-justify rel flex-box" style="z-index: 9999;">
+						<div class="shop-cart-icon text-center abs" @click="showShopCartDetail">
 							<mt-badge class="abs cart-tips" type="error" size="small">3</mt-badge>
 							<span class="iconfont icon-cart white-f"></span>
 						</div>
@@ -341,12 +1126,131 @@
 					</div>
 				</div>
 			</div>
+			<!-- 店铺详情 -->
+			<mt-popup v-model="popupVisible" position="bottom">
+			  <div class="p-ten popup-shop-detail rel">
+			  	  <span class="shop-d-close abs iconfont icon-close p-ten"  @click="showShopDetial"></span>
+			  	  <p class="color-3 font-15 p-b-ten m-t-ten">优惠</p>
+			  	  <div>
+			  	  	<p class="p-b-ten">
+			  	  		<span class="tips tips-first"></span>
+			  	  		<span class="color-6 font-12">新用户首单立减(不与其他活动同享)</span>
+			  	  	</p>
+			  	  	<p class="p-b-ten">
+			  	  		<span class="tips tips-sub"></span>
+			  	  		<span class="color-6 font-12">满减活动</span>
+			  	  	</p>
+			  	  	<p class="p-b-ten">
+			  	  		<span class="tips tips-ticket"></span>
+			  	  		<span class="color-6 font-12">代金券优惠</span>
+			  	  	</p>
+			  	  	<p class="p-b-ten">
+			  	  		<span class="tips tips-intergral"></span>
+			  	  		<span class="color-6 font-12">现金积分</span>
+			  	  	</p>
+			  	  </div>
+			  	  <p class="color-3 font-15 shop-d-top">配送</p>
+				  <div class="color-6 font-12">
+				   	 <p>
+				   	 	<span>起送¥{{shopInfo['startSendFee']}} </span>
+				   	 	<span>配送¥{{shopInfo['expressFee']}} </span>  
+				   	 	<span>{{shopInfo['expectTime']}}分钟</span>
+				   	 </p>
+				   	 <p v-if="shopInfo['distributionTime']">
+				   	 	配送时间: 
+				   	    {{shopInfo['distributionTime'][0]}},
+				   		{{shopInfo['distributionTime'][1]}}
+				     </p>
+				  </div>
+			  	  <p class="color-3 font-15 shop-d-top">公告</p>
+				  <div class="color-6 font-12">
+				  	   {{shopInfo['shopNotices']}}
+				  	  <!-- 欢迎光临,好高兴为您服务~~~欢迎光临，用餐高峰期请提前下单，谢谢。欢迎光临，用餐高峰期请提前下单，谢谢。欢迎光临，用餐高峰期请提前下单，谢谢。 -->
+				  </div>
+			  </div>
+			</mt-popup>
+			<!-- 购物车 -->
+			<mt-popup v-model="shopCartVisible" position="bottom">
+				<div class="popup-shop-detail popup-short-cat font-15">
+					<div class="p-ten flex-box justify-s-b p-short-c-t">
+						<p class="color-3 font-b">已选商品</p>
+						<p class="color-7">
+							<span class="iconfont icon-delete"></span>
+							<span>清空</span>
+						</p>
+					</div>
+					<div class="short-cart-block p-l-ten p-r-ten">
+						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
+							<span>小锅焖面</span>
+							<span>
+								<span class="moeny price">¥38.5</span>
+								<add-menu></add-menu>
+							</span>
+						</li>
+						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
+							<span>小锅焖面</span>
+							<span>
+								<span class="moeny price">¥38.5</span>
+								<add-menu></add-menu>
+							</span>
+						</li>
+						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
+							<span>小锅焖面</span>
+							<span>
+								<span class="moeny price">¥38.5</span>
+								<add-menu></add-menu>
+							</span>
+						</li>
+						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
+							<span>小锅焖面</span>
+							<span>
+								<span class="moeny price">¥38.5</span>
+								<add-menu></add-menu>
+							</span>
+						</li>
+					</div>
+					<p class="p-t-ten" style="background: #F9F9F9;"></p>
+					<div class="flex-box align-center justify-s-b p-ten">
+						<p>打包盒</p>
+						<p class="price p-r-ten">¥3</p>
+					</div>
+				</div>
+			</mt-popup>
 		</div>
 	</div>
 </template>
 <style scoped lang="scss">
 @import "../../style/mixin";
 @import "../../style/iconfont/iconfont.css";
+	body {
+		height: auto;
+	}
+	.popup-short-cat {
+		padding-bottom: .7rem;
+		.p-short-c-t {
+			background: #F9F9F9;
+		}
+		.moeny {
+			padding-right: .3rem;
+		}
+		.short-cart-block {
+			li {
+				border-bottom: 1px solid #F9F9F9;
+			}
+		}
+	}
+	.popup-shop-detail {
+		width: 3.76rem;
+		.shop-d-top {
+			padding: .2rem 0 .1rem 0;
+		}
+		.shop-d-close {
+			font-size: .2rem;
+			right: 0;
+			top: 0;
+			font-weight: bold;
+		}
+	}
 	.shop-detial {
 		.addresss-wrap {
 			border-bottom: 1px solid #eee;
@@ -385,9 +1289,6 @@
 			}
 		}
 	}
-	.color-9 {
-		color: #999;
-	}
 	.align-justify {
 		align-items: center;
 		justify-content: space-between;
@@ -399,6 +1300,7 @@
 		width: 100%;
 		height: .52rem;
 		background: #313131;
+		z-index: 3333;
 		/*align-items: center;
 		justify-content: space-between;*/
 		.shop-cart-money {
@@ -445,13 +1347,13 @@
 	}
 	.takeout-wrap {
 		width: 100%;
-		height: 667px;
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch;
 	}
 	.shop-title {
 		height: 1.2rem;
-		background: #FF6E15;
+/*		background: #FF6E15;
+*/		background-size: cover;
 	}
 	.shop-title > p {
 		width: .8rem;
@@ -464,17 +1366,16 @@
 	.shop-desc {
 		padding: .4rem .1rem 0;
 	}
-	.shop-tag {
-		padding: .02rem .05rem;
-		background: #9BDE56;
-		font-size: .1rem;
-	}
 	.shop-name {
 		color: #333;
 		font-size: .2rem;
 	}
 	.shop-desc-detail {
 		font-size: .118rem;
+		.shop-down {
+			left: .05rem;
+			top: 0.01rem;	
+		}
 	}
 	.shop-desc-detail .detail-sales span + span:before {
 		content: "|";
@@ -523,9 +1424,9 @@
 		}
 		ul li span {
 			display: -webkit-box;
-			-webkit-box-orient: vertical;
 			-webkit-line-clamp: 3;
 			overflow: hidden;
+			-webkit-box-orient: vertical;
 		}
 	}
 	.section-menu {
@@ -552,11 +1453,11 @@
 			color: $mainColor;
 			font-size: .08rem;
 		}
-		.price {
-			color: #FF2618;
-			font-size: .15rem;
-		}
 		
+	}
+	.price {
+		color: #FF2618;
+		font-size: .15rem;
 	}
 	.tag-desc {
 		border:1px solid $mainColor;
@@ -574,23 +1475,111 @@
 <script>
 	// import "@/wx_user/style/iconfont/iconfont.css";
 	import addMenu from './children/addMenu.vue';
+	import fetch from '@/config/fetch.js';
 	export default {
 		components: {
 		    addMenu
 		},
 		data() {
 			return {
-				height: 0
+				defaultImg: 'http://chuantu.biz/t6/313/1526552904x-1404793429.png',
+				height: 0,
+				titleWrapHeight: 0,
+				popupVisible: false,
+				shopCartVisible: true,
+				shopInfo: {}
 			}
 		},
 		mounted() {
-			this.clientHeight();
+			this.init();
 		},
 		methods: {
-			//计算屏幕高度
-			clientHeight() {
-				this.height = document.body.clientHeight;
-				// alert(this.height)
+			showShopDetial() {
+				this.popupVisible = !this.popupVisible;
+			},
+			showShopCartDetail() {
+				this.shopCartVisible = !this.shopCartVisible;
+			},
+			init() {
+				this.DOMOptions();
+				// this.getTakeOutShop();
+				// this.getTakeoutMenu();
+			},
+			//获取外卖菜单
+			getTakeoutMenu() {
+				fetch.fetchPost('/goods/v3.2/toGoodsList', {
+					shopAuthenticateId: 'e9e50cd971a6466681082098b9299259'
+				}).then(res => {
+
+				}).catch(res => {
+
+				})
+			},
+			//获取店铺资料
+			getTakeOutShop() {
+				fetch.fetchPost('/index/v3.2/toBizPage', {
+					shopAuthenticateId: 'e9e50cd971a6466681082098b9299259',
+					longitude: '113.116376',
+					latitude: '22.562875'
+				}).then(res => {
+					this.shopInfo = res.data;
+					this.shopInfo['distributionTime'] = JSON.parse(this.shopInfo['distributionTime']);
+				}).catch(res => {
+
+				})
+			},
+			//dom操作
+			DOMOptions() {
+				//计算屏幕高度
+				this.height = document.documentElement.clientHeight;
+				//菜单容器
+				this.sectionMenu = document.querySelector('#section-menu');
+				//左侧菜单列表
+				this.classifyList = document.querySelectorAll('#classify-list > li');
+				this.ListCount = this.classifyList.length;
+				//右侧菜单列表
+				this.sectionMenuList = this.sectionMenu.children;
+				// 菜单起始高度
+				this.MenuListInitTop = this.sectionMenuList[0].offsetTop;
+
+				this.sectionMenu.addEventListener('scroll', (e) => {
+					this.scollEvent();
+				});
+				this.clickEvent();
+			},
+			// 滚动事件
+			scollEvent() {
+				//body滚动条滚动
+				let scrollTop = document.documentElement.scrollTop || document.body.scrollTop,
+					MenuScrollTop = this.sectionMenu.scrollTop;
+
+				document.documentElement.scrollTop = document.body.scrollTop = MenuScrollTop;
+
+				for(let i = 0; i < this.ListCount; i++){
+					let MenuListTop = this.sectionMenuList[i].offsetTop - this.MenuListInitTop;
+					if(MenuScrollTop >= MenuListTop - 40) {
+						this.currentIndex = i;
+					}
+				}
+				this.showCurrentClassify(this.currentIndex, 'active');
+			},
+			//点击事件
+			clickEvent() {
+				let self = this;
+				for(let i = 0; i < this.ListCount; i++) {
+					this.classifyList[i]['index'] = i;
+					this.classifyList[i].onclick = function() {
+						self.showCurrentClassify(this.index, 'active');
+						self.sectionMenu.scrollTop = self.sectionMenuList[this.index].offsetTop - self.MenuListInitTop;
+					}
+				}
+			},
+			//高亮显示当前分类
+			showCurrentClassify(index, className) {
+				for(let i = 0; i < this.ListCount; i++) {
+					this.classifyList[i].className = '';
+				}
+				this.classifyList[index].className = className;
 			}
 		}
 	}

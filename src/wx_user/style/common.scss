@@ -13,9 +13,8 @@ body, div, span, header, footer, nav, section, aside, article, ul, dl, dt, dd, l
         outline: none;
     }
 }
-
 html,body{
-    height: 100%;
+    height: auto;
     width: 100%;
     background-color: #f5f5f5;
     font-size: 16px;
@@ -34,6 +33,8 @@ html,body{
 }
 .flex-box {
   display: flex;
+  display: -webkit-box;
+  display: -webkit-flex;
 }
 .align-center {
   align-items: center;
@@ -67,6 +68,9 @@ html,body{
 }
 .white-f {
   color: #fff;
+}
+.font-b {
+  font-weight: bold;
 }
 .color-3 {
   color: #333;
@@ -120,4 +124,30 @@ html,body{
   content: "";
   display: block;
   clear: both;
+} 
+.tips:before {
+    font-size: .1rem;
+    padding: .02rem .05rem;
+    color: #fff;
+    border-radius: 0.05rem;
+}
+.tips-takeout:before {
+  content: "外卖";
+  background: #9BDE56;
+}
+.tips-first:before {
+  content: "首";
+  background: #9BDE56;
+}
+.tips-sub:before {
+  content: "减";
+  background: #FF6E15;
+}
+.tips-ticket:before {
+  content: "券";
+  background: #FC6A6A;
+}
+.tips-intergral:before {
+  content: "积";
+  background: #FFC000;
 } 

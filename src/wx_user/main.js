@@ -22,10 +22,10 @@ import "../assets/css/font/iconfont.css"
 import api from '../config/api'
 
 import axios from 'axios'
-axios.defaults.baseURL = 'https://userside.zhongxiang51.com'; //正式配置接口地址
+// axios.defaults.baseURL = 'https://userside.zhongxiang51.com'; //正式配置接口地址
 
 //本地配置接口地址
-// axios.defaults.baseURL = 'http://192.169.18.77:8081/zxwy-userside'; 
+axios.defaults.baseURL = 'http://192.169.18.88:8083/zxwy-userside'; 
 
 // 测试配置接口地址
 // axios.defaults.baseURL = 'https://test.zhongxiang51.com/zxwy-userside'; 
@@ -46,14 +46,14 @@ router.beforeEach((to, from, next) => {
       Tools.setCookies('zx_token', to.query.openid);
       next()
     }else {
-      // var url =  to.fullPath;
-      // api.author(url)
-      // .then(res => {
-      //   window.location.href = res.data;
-      // })
+      var url =  to.fullPath;
+      api.author(url)
+      .then(res => {
+        window.location.href = res.data;
+      })
 
-      Tools.setCookies('zx_token', 'oV3Y2s_R0ZDF9Xqj5Wp1FapeK70s');
-      next();
+      // Tools.setCookies('zx_token', 'oV3Y2s_R0ZDF9Xqj5Wp1FapeK70s');
+      // next();
     }
   }
 

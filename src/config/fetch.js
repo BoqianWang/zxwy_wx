@@ -63,6 +63,7 @@ export default {
         }
       }
         return new Promise((resolve, reject) => {
+            Indicator.open();
             axios.post(url, params)
                 .then(response => {
                   Indicator.close();

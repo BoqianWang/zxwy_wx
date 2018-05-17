@@ -241,32 +241,6 @@
 		content: "|";
 		padding: 0 .1rem;
 	}
-	.tips:before {
-		font-size: .1rem;
-		padding: .02rem .05rem;
-		color: #fff;
-	}
-	.tips-takeout:before {
-		content: "外卖";
-		background: #9BDE56;
-	}
-	.tips-first:before {
-		content: "首";
-		background: #9BDE56;
-	}
-	.tips-sub:before {
-		content: "减";
-		background: #FF6E15;
-	}
-	.tips-ticket:before {
-		content: "券";
-		background: #FC6A6A;
-	}
-	.tips-intergral:before {
-		content: "积";
-		background: #FFC000;
-	} 
-
 	.shop-list-block {
 		.block-list-img {
 			width: .58rem;

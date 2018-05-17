@@ -54,8 +54,8 @@ const takeOutOrder = r => require.ensure([], () => r(require('@/wx_user/page/tak
 const choseAddress = r => require.ensure([], () => r(require('@/wx_user/page/takeout/children/choseAddress.vue')), 'choseAddress');
 //添加收货地址
 const addAddress = r => require.ensure([], () => r(require('@/wx_user/page/takeout/children/addAddress.vue')), 'addAddress');
-//添加收货地址
-// const newHome = r => require.ensure([], () => r(require('@/wx_user/page/home/newHome.vue')), 'newHome');
+//订单
+const orderlistNew = r => require.ensure([], () => r(require('@/wx_user/page/order/orderlistNew.vue')), 'orderlistNew');
 // import newyouhui  from  '../page/my/youhui/newYouHui.vue'
 
 // const newShortpay = r => require.ensure([], () => r(require('../page/shop/newShortpay.vue')), 'newShortpay');
@@ -69,14 +69,27 @@ export default{
         path:'home',
         component:home,
         meta:{title:'首页'},
-      },{
+      },
+      {
         path : 'orderlist',
         component: orderlist,
-        meta:{title:'订单列表'}
-      },{
+        meta:{
+          title:'订单列表'
+        }
+      },
+      {
+        path : 'orderlistNew',
+        component: orderlistNew,
+        meta:{
+          title:'订单列表'
+        }
+      },
+      {
         path: 'mycenter',
         component:mycenter,
-        meta:{title:'个人中心'}
+        meta:{
+          title:'个人中心'
+        }
       }]
     },{
       path:'/orderdetail',
