@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import App from './app.vue';
 import routerConfig from './router/router';
+import store from './store';
 import '../config/rem';
 
 //引入工具库
@@ -29,7 +30,6 @@ axios.defaults.baseURL = 'http://192.169.18.88:8083/zxwy-userside';
 
 // 测试配置接口地址
 // axios.defaults.baseURL = 'https://test.zhongxiang51.com/zxwy-userside'; 
-
 var router = new VueRouter(routerConfig)
 Vue.use(VueRouter);
 Vue.use(MintUI);
@@ -46,14 +46,14 @@ router.beforeEach((to, from, next) => {
       Tools.setCookies('zx_token', to.query.openid);
       next()
     }else {
-      var url =  to.fullPath;
-      api.author(url)
-      .then(res => {
-        window.location.href = res.data;
-      })
+      // var url =  to.fullPath;
+      // api.author(url)
+      // .then(res => {
+      //   window.location.href = res.data;
+      // })
 
-      // Tools.setCookies('zx_token', 'oV3Y2s_R0ZDF9Xqj5Wp1FapeK70s');
-      // next();
+      Tools.setCookies('zx_token', 'oV3Y2s_R0ZDF9Xqj5Wp1FapeK70s');
+      next();
     }
   }
 
@@ -62,7 +62,8 @@ router.beforeEach((to, from, next) => {
 
 new Vue({
     el: '#app',
-    router: router,
+    router,
+    store,
     render: h => h(App),
     data:{
       Bus:new Vue()

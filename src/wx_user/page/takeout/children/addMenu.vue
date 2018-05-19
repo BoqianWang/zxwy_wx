@@ -71,6 +71,7 @@
 	}
 	.size-wrap {
 		width: 3.76rem;
+		padding-bottom: .8rem;
 		.sure {
 			width: 100%;
 			background: -webkit-linear-gradient(left, #FFB911, $mainColor);

@@ -51,11 +51,13 @@ const takeOutShop = r => require.ensure([], () => r(require('@/wx_user/page/take
 //提交订单
 const takeOutOrder = r => require.ensure([], () => r(require('@/wx_user/page/takeout/takeOutOrder.vue')), 'takeOutOrder');
 //选择收货地址
-const choseAddress = r => require.ensure([], () => r(require('@/wx_user/page/takeout/children/choseAddress.vue')), 'choseAddress');
+const addressList = r => require.ensure([], () => r(require('@/wx_user/page/takeout/children/addressList.vue')), 'addressList');
 //添加收货地址
 const addAddress = r => require.ensure([], () => r(require('@/wx_user/page/takeout/children/addAddress.vue')), 'addAddress');
 //订单
 const orderlistNew = r => require.ensure([], () => r(require('@/wx_user/page/order/orderlistNew.vue')), 'orderlistNew');
+//搜索地址
+const searchAddress = r => require.ensure([], () => r(require('@/wx_user/page/takeout/children/children/searchAddress.vue')), 'searchAddress');
 // import newyouhui  from  '../page/my/youhui/newYouHui.vue'
 
 // const newShortpay = r => require.ensure([], () => r(require('../page/shop/newShortpay.vue')), 'newShortpay');
@@ -169,8 +171,8 @@ export default{
       }
     },
     {
-      path: '/takeout/choseAddress',
-      component: choseAddress,
+      path: '/takeout/addressList',
+      component: addressList,
       meta: {
         title: '选择收货地址'
       }
@@ -180,7 +182,16 @@ export default{
       component: addAddress,
       meta: {
         title: '添加收货地址'
-      }
+      },
+      children: [
+         {
+            path: '/takeout/addAddress/searchAddress',
+            component: searchAddress,
+            meta: {
+              title: '搜索地址'
+            }
+         }
+      ]
     },
     // {
     //   path: '/newHome',
