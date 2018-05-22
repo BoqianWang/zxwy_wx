@@ -487,30 +487,62 @@
 							<span>清空</span>
 						</p>
 					</div>
-					<div class="short-cart-block p-l-ten p-r-ten">
+					<div class="short-cart-block p-l-ten p-r-ten ">
 						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
-							<span>小锅焖面</span>
+							<div>
+								<p>小锅焖面</p>
+								<span class="font-12 color-9">加辣/大份/</span>
+							</div>
 							<span>
 								<span class="moeny price">¥38.5</span>
 								<add-menu></add-menu>
 							</span>
 						</li>
 						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
-							<span>小锅焖面</span>
+							<div>
+								<p>小锅焖面</p>
+								<span class="font-12 color-9">加辣/大份/</span>
+							</div>
 							<span>
 								<span class="moeny price">¥38.5</span>
 								<add-menu></add-menu>
 							</span>
 						</li>
 						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
-							<span>小锅焖面</span>
+							<div>
+								<p>小锅焖面</p>
+								<span class="font-12 color-9">加辣/大份/</span>
+							</div>
 							<span>
 								<span class="moeny price">¥38.5</span>
 								<add-menu></add-menu>
 							</span>
 						</li>
 						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
-							<span>小锅焖面</span>
+							<div>
+								<p>小锅焖面</p>
+								<span class="font-12 color-9">加辣/大份/</span>
+							</div>
+							<span>
+								<span class="moeny price">¥38.5</span>
+								<add-menu></add-menu>
+							</span>
+						</li>
+						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
+							<div>
+								<p>小锅焖面</p>
+								<span class="font-12 color-9">加辣/大份/</span>
+							</div>	
+							<span>
+								<span class="moeny price">¥38.5</span>
+								<add-menu></add-menu>
+							</span>
+						</li>
+						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
+							<div>
+								<p>小锅焖面</p>
+								<span class="font-12 color-9">加辣/大份/</span>
+							</div>
 							<span>
 								<span class="moeny price">¥38.5</span>
 								<add-menu></add-menu>
@@ -530,6 +562,9 @@
 <style scoped lang="scss">
 @import "../../style/mixin";
 @import "../../style/iconfont/iconfont.css";
+	.v-modal {
+		overflow: hidden;
+	}
 	.popup-short-cat {
 		/*padding-bottom: .7rem;*/
 		.p-short-c-t {
@@ -539,6 +574,8 @@
 			padding-right: .3rem;
 		}
 		.short-cart-block {
+			max-height: 244px;
+			overflow: auto;
 			li {
 				border-bottom: 1px solid #F9F9F9;
 			}

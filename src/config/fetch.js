@@ -96,6 +96,7 @@ export default {
       }
       // console.log(params);
         return new Promise((resolve, reject) => {
+            Indicator.open();
             axios.get(url, {
                     params: params
                 })

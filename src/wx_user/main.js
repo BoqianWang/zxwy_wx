@@ -26,7 +26,7 @@ import axios from 'axios'
 // axios.defaults.baseURL = 'https://userside.zhongxiang51.com'; //正式配置接口地址
 
 //本地配置接口地址
-axios.defaults.baseURL = 'http://192.169.18.88:8083/zxwy-userside'; 
+axios.defaults.baseURL = 'http://192.169.18.77:8081/zxwy-userside'; 
 
 // 测试配置接口地址
 // axios.defaults.baseURL = 'https://test.zhongxiang51.com/zxwy-userside'; 

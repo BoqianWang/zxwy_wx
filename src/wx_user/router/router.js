@@ -79,13 +79,13 @@ export default{
           title:'订单列表'
         }
       },
-      {
-        path : 'orderlistNew',
-        component: orderlistNew,
-        meta:{
-          title:'订单列表'
-        }
-      },
+      // {
+      //   path : 'orderlistNew',
+      //   component: orderlistNew,
+      //   meta:{
+      //     title:'订单列表'
+      //   }
+      // },
       {
         path: 'mycenter',
         component:mycenter,

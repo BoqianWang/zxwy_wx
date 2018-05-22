@@ -1,16 +1,32 @@
 <template>
 	<div class="bg-white">
-		<div class="home-title">
+		<div class="home-title rel">
 			<!-- 轮播图 -->
 			<mt-swipe class="swiper-wrap" :auto="3000">
 			  <mt-swipe-item v-for="item in imgDate" 
 			  :style="{backgroundImage: 'url(' + item.url + ')'}">
 			  </mt-swipe-item>
 			</mt-swipe>
+			<!-- 地址 -->
+			<div class="abs address-wrap flex-box justify-s-b white-f">
+				<div class="a-wrap-input flex-box align-center">
+					<span class="iconfont icon-map font-b"></span>
+					<input disabled="disabled" class="white-f font-15 font-b flex-1 p-r-ten" type="text" :value="address">
+				</div>
+				<div class="search-button font-b text-center">
+					<span class="iconfont icon-search"></span>
+				</div>
+			</div>
 		</div>
 		<!-- 导航栏 -->
 		<div class="home-nav p-ten clearfix font-12 color-3 text-center">
-			<li class="p-ten">
+			<li class="p-ten" v-for="item in industryList">
+				<div class="nav-img-wrap">
+					<img :src="item.industryUrl">
+				</div>
+				<p class="p-t-ten">{{item.industryName}}</p>
+			</li>
+			<!-- <li class="p-ten">
 				<div class="nav-img-wrap">
 					<img src="../../images/home/hom_fl_lrmf@2x.png">
 				</div>
@@ -69,7 +85,7 @@
 					<img src="../../images/home/hom_fl_qt@2x.png">
 				</div>
 				<p class="p-t-ten">其他</p>
-			</li>
+			</li> -->
 		</div>
 		<!-- 推荐 -->
 		<div class="home-recommend font-15 flex-box align-center res p-b-ten p-t-ten">
@@ -84,97 +100,154 @@
 				<span>销量最高</span>
 			</div>
 			<div class="home-shop-list p-ten">
-				<div class="shop-list-block flex-box p-t-ten p-b-ten">
-					<!-- <img src="https://fuss10.elemecdn.com/e/7d/9854d2f95050092a008b4e3ee29e6png.png?imageMogr/format/webp/thumbnail/!130x130r/gravity/Center/crop/130x130/"> -->
-					<div class="block-list-img" style="background-image: url(https://fuss10.elemecdn.com/e/7d/9854d2f95050092a008b4e3ee29e6png.png?imageMogr/format/webp/thumbnail/!130x130r/gravity/Center/crop/130x130/);"></div>
+				<div class="shop-list-block flex-box p-t-ten p-b-ten" v-for="item in bizList">
+					<div class="block-list-img" :style="'background-image: url(' + item.shopLogo + ');'"></div>
 					<div class="p-l-ten flex-1">
-						<p>
-							<span class="font-18 color-3">九毛九(华强茂业店)</span>
-							<span class="tips tips-takeout"></span>
-						</p>
-						<p class="color-3 font-12 flex-box justify-s-b block-list-order">
-							<span>
-							 	 <span>4.7</span>
-							 	 <span class="p-l-ten">月售9999单</span>
-							</span>	
-						 	 <span class="color-7">44分钟 661km</span>
-						 </p>
-						 <p class="color-3 font-12 block-list-desc">
-						 	<span>笋岗商圈</span>
-						 	<span>起送¥25</span>
-						 	<span>配送¥5</span>
-						 </p>
+						<div>
+							<p>
+								<span class="font-18 color-3">{{item.shopName}}</span>
+								<span class="tips tips-takeout" v-if="item.isWm == 1"></span>
+							</p>
+							<p class="color-3 font-12 flex-box justify-s-b block-list-order">
+								<span>
+								 	 <!-- <span class="p-r-ten">4.7</span> -->
+								 	 <span>月售{{item.monthSaleCount}}单</span>
+								</span>	
+							 	 <span class="color-7">
+							 	 	<span v-if="item.isWm == 1"></span> 
+							 	    {{item.distance}}
+							    </span>
+							 </p>
+							 <p class="color-3 font-12 block-list-desc">
+							 	<span>{{item.businessName}}</span>
+							 	<span v-if="item.isWm == 1">起送¥25</span>
+							 	<span v-if="item.isWm == 1">配送¥5</span>
+							 </p>
+						</div>
 						 <div class="color-3 font-12 block-list-active">
 							 <p class="flex-box justify-s-b">
 							 	<span>
 							 		<span class="tips tips-first"></span>
 							 		新用户首单立减
 							 	</span>
-							 	<span class="color-7 flex-box align-center">
-							 	  <span class="iconfont icon-sanjiaoxing-down"></span>3个活动
+							 	<span class="color-7 flex-box align-center l-a-title">
+							 	  <span class="iconfont icon-sanjiaoxing-down"></span>
+							 	  <span>3个活动</span>
 							 	</span>
+								<div style="display: none;">
+									 <p>
+									 	<span class="tips tips-sub"></span>
+									 	满减活动
+									 </p>
+									 <p>
+									 	<span class="tips tips-ticket"></span>
+									 	代金券优惠
+									 </p>
+									 <p>
+									 	<span class="tips tips-intergral"></span>
+									 	现金积分
+									 </p>
+								</div>
 							 </p>
-							 <div style="display: none;">
-								 <p>
-								 	<span class="tips tips-sub"></span>
-								 	满减活动
-								 </p>
-								 <p>
-								 	<span class="tips tips-ticket"></span>
-								 	代金券优惠
-								 </p>
-								 <p>
-								 	<span class="tips tips-intergral"></span>
-								 	现金积分
-								 </p>
-							 </div>
 						 </div>
 					</div>
 				</div>
 				<div class="shop-list-block flex-box p-t-ten p-b-ten">
-					<!-- <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526393563458&di=492f063402dafe3aeb1ab57df2d7c3f3&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20170601%2F826183f936d0454c8e43265ad26d5021_th.jpg"> -->
-					<div class="block-list-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526393563458&di=492f063402dafe3aeb1ab57df2d7c3f3&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20170601%2F826183f936d0454c8e43265ad26d5021_th.jpg);"></div>
+					<div class="block-list-img" style="background-image: url(https://fuss10.elemecdn.com/e/7d/9854d2f95050092a008b4e3ee29e6png.png?imageMogr/format/webp/thumbnail/!130x130r/gravity/Center/crop/130x130/);"></div>
 					<div class="p-l-ten flex-1">
-						<p>
-							<span class="font-18 color-3">九毛九(华强茂业店)</span>
-							<!-- <span class="tips tips-takeout"></span> -->
-						</p>
-						<p class="color-3 font-12 flex-box justify-s-b block-list-order">
-							<span>
-							 	 <span>4.7</span>
-							 	 <span class="p-l-ten">月售9999单</span>
-							</span>	
-						 	 <span class="color-7">44分钟 661km</span>
-						 </p>
-						 <p class="color-3 font-12 block-list-desc">
-						 	<span>笋岗商圈</span>
-						 	<span>起送¥25</span>
-						 	<span>配送¥5</span>
-						 </p>
+						<div>
+							<p>
+								<span class="font-18 color-3">九毛九(华强茂业店)</span>
+								<span class="tips tips-takeout"></span>
+							</p>
+							<p class="color-3 font-12 flex-box justify-s-b block-list-order">
+								<span>
+								 	 <span>4.7</span>
+								 	 <span class="p-l-ten">月售9999单</span>
+								</span>	
+							 	 <span class="color-7">44分钟 661km</span>
+							 </p>
+							 <p class="color-3 font-12 block-list-desc">
+							 	<span>笋岗商圈</span>
+							 	<span>起送¥25</span>
+							 	<span>配送¥5</span>
+							 </p>
+						</div>
 						 <div class="color-3 font-12 block-list-active">
 							 <p class="flex-box justify-s-b">
 							 	<span>
 							 		<span class="tips tips-first"></span>
 							 		新用户首单立减
 							 	</span>
-							 	<span class="color-7 flex-box align-center">
-							 	  <span class="iconfont icon-sanjiaoxing-down"></span>3个活动
+							 	<span class="color-7 flex-box align-center l-a-title">
+							 	  <span class="iconfont icon-sanjiaoxing-down"></span>
+							 	  3个活动
 							 	</span>
+								 <div style="display: none;">
+									 <p>
+									 	<span class="tips tips-sub"></span>
+									 	满减活动
+									 </p>
+									 <p>
+									 	<span class="tips tips-ticket"></span>
+									 	代金券优惠
+									 </p>
+									 <p>
+									 	<span class="tips tips-intergral"></span>
+									 	现金积分
+									 </p>
+								 </div>
 							 </p>
-							 <div style="display: block;">
-								 <p>
-								 	<span class="tips tips-sub"></span>
-								 	满减活动
-								 </p>
-								 <p>
-								 	<span class="tips tips-ticket"></span>
-								 	代金券优惠
-								 </p>
-								 <p>
-								 	<span class="tips tips-intergral"></span>
-								 	现金积分
-								 </p>
-							 </div>
+							 
+						 </div>
+					</div>
+				</div>
+				<div class="shop-list-block flex-box p-t-ten p-b-ten">
+					<div class="block-list-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526393563458&di=492f063402dafe3aeb1ab57df2d7c3f3&imgtype=0&src=http%3A%2F%2Fimg.mp.itc.cn%2Fupload%2F20170601%2F826183f936d0454c8e43265ad26d5021_th.jpg);"></div>
+					<div class="p-l-ten flex-1">
+						<div>
+							<p>
+								<span class="font-18 color-3">九毛九(华强茂业店)</span>
+								<!-- <span class="tips tips-takeout"></span> -->
+							</p>
+							<p class="color-3 font-12 flex-box justify-s-b block-list-order">
+								<span>
+								 	 <span>4.7</span>
+								 	 <span class="p-l-ten">月售9999单</span>
+								</span>	
+							 	 <span class="color-7">44分钟 661km</span>
+							 </p>
+							 <p class="color-3 font-12 block-list-desc">
+							 	<span>笋岗商圈</span>
+							 	<span>起送¥25</span>
+							 	<span>配送¥5</span>
+							 </p>
+						</div>
+						 <div class="color-3 font-12 block-list-active">
+							 <p class="flex-box justify-s-b">
+							 	<span>
+							 		<span class="tips tips-first"></span>
+							 		新用户首单立减
+							 	</span>
+							 	<span class="color-7 flex-box align-center l-a-title">
+							 	  <span class="iconfont icon-sanjiaoxing-down"></span>
+							 	  3个活动
+							 	</span>
+								 <div style="display: none;">
+									 <p>
+									 	<span class="tips tips-sub"></span>
+									 	满减活动
+									 </p>
+									 <p>
+									 	<span class="tips tips-ticket"></span>
+									 	代金券优惠
+									 </p>
+									 <p>
+									 	<span class="tips tips-intergral"></span>
+									 	现金积分
+									 </p>
+								 </div>
+							 </p>
 						 </div>
 					</div>
 				</div>
@@ -182,46 +255,49 @@
 					<!-- <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526393667465&di=caa2346f4acc7b414fbb4b92871defc9&imgtype=0&src=http%3A%2F%2Fwww.szquanli.com%2Fuploads%2Fallimg%2F160621%2F2-160621091242-51.png"> -->
 					<div class="block-list-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526393667465&di=caa2346f4acc7b414fbb4b92871defc9&imgtype=0&src=http%3A%2F%2Fwww.szquanli.com%2Fuploads%2Fallimg%2F160621%2F2-160621091242-51.png);"></div>
 					<div class="p-l-ten flex-1">
-						<p>
-							<span class="font-18 color-3">九毛九(华强茂业店)</span>
-							<span class="tips tips-takeout"></span>
-						</p>
-						<p class="color-3 font-12 flex-box justify-s-b block-list-order">
-							<span>
-							 	 <span>4.7</span>
-							 	 <span class="p-l-ten">月售9999单</span>
-							</span>	
-						 	 <span class="color-7">44分钟 661km</span>
-						 </p>
-						 <p class="color-3 font-12 block-list-desc">
-						 	<span>笋岗商圈</span>
-						 	<span>起送¥25</span>
-						 	<span>配送¥5</span>
-						 </p>
+						<div>
+							<p>
+								<span class="font-18 color-3">九毛九(华强茂业店)</span>
+								<span class="tips tips-takeout"></span>
+							</p>
+							<p class="color-3 font-12 flex-box justify-s-b block-list-order">
+								<span>
+								 	 <span>4.7</span>
+								 	 <span class="p-l-ten">月售9999单</span>
+								</span>	
+							 	 <span class="color-7">44分钟 661km</span>
+							 </p>
+							 <p class="color-3 font-12 block-list-desc">
+							 	<span>笋岗商圈</span>
+							 	<span>起送¥25</span>
+							 	<span>配送¥5</span>
+							 </p>
+						</div>
 						 <div class="color-3 font-12 block-list-active">
 							 <p class="flex-box justify-s-b">
 							 	<span>
 							 		<span class="tips tips-first"></span>
 							 		新用户首单立减
 							 	</span>
-							 	<span class="color-7 flex-box align-center">
-							 	  <span class="iconfont icon-sanjiaoxing-down"></span>3个活动
+							 	<span class="color-7 flex-box align-center l-a-title">
+							 	  <span class="iconfont icon-sanjiaoxing-down"></span>
+							 	  <span>3个活动</span>
 							 	</span>
+								 <div style="display: none;">
+									 <p>
+									 	<span class="tips tips-sub"></span>
+									 	满减活动
+									 </p>
+									 <p>
+									 	<span class="tips tips-ticket"></span>
+									 	代金券优惠
+									 </p>
+									 <p>
+									 	<span class="tips tips-intergral"></span>
+									 	现金积分
+									 </p>
+								 </div>
 							 </p>
-							 <div style="display: none;">
-								 <p>
-								 	<span class="tips tips-sub"></span>
-								 	满减活动
-								 </p>
-								 <p>
-								 	<span class="tips tips-ticket"></span>
-								 	代金券优惠
-								 </p>
-								 <p>
-								 	<span class="tips tips-intergral"></span>
-								 	现金积分
-								 </p>
-							 </div>
 						 </div>
 					</div>
 				</div>
@@ -231,6 +307,37 @@
 </template>
 <style lang="scss">
 	@import "../../style/mixin";
+	.icon-sanjiaoxing-up {
+		transform: rotate(180deg);
+	}
+	.icon-sanjiaoxing-down {
+		transition: transform .2s linear;
+	}
+	.address-wrap > div {
+		height: 30px;
+		background: rgba(0, 0, 0, .4);
+	}
+	.address-wrap {
+		width: 100%;
+		left: 0;
+		top: 0;
+		padding: .05rem .1rem;
+		.a-wrap-input {
+			width: 3rem;
+			border-radius: .4rem;
+			.icon-map {
+				padding: 0 .05rem;
+			}
+			input {
+				background: none;
+			}
+		}
+		.search-button {
+			width: .3rem;
+			border-radius: 50%;
+			line-height: 30px;
+		}
+	}
 	.block-list-order {
 		padding: .02rem 0;
 	}
@@ -325,6 +432,7 @@
 	}
 </style>
 <script>
+	import fetch from '@/config/fetch.js';
 	export default {
 		data() {
 			return {
@@ -334,14 +442,87 @@
 					{url: 'http://chuantu.biz/t6/311/1526372570x-1404792897.jpg'},
 					{url: 'http://chuantu.biz/t6/311/1526372600x-1404792897.jpg'},
 					{url: 'http://chuantu.biz/t6/311/1526372628x-1404792897.jpg'},
-				]
+				],
+				address: '正在定位...',
+				params: {},
+				industryList: {},
+				bizList: {}
 			}
 		},
+		created() {
+			this.showHideAcitve();
+		},
 		mounted() {
-
+			this.getPositon();
 		},
 		methods: {
+			//店铺列表
+			getIndexList() {
+				fetch.fetchGet('/index/v3.2/index', this.params).then(res => {
+					this.industryList = res.data.industryList;
+					this.bizList = res.data.bizList
+				}).catch(res => {
 
+				})
+			},
+			//定位回调
+			positionCallBack(type, result) {
+				console.log(result)
+				if(type == 'gps') {
+					this.address = result['formattedAddress'];
+					this.params['longitude'] = result['position']['lng'];
+					this.params['latitude'] = result['position']['lat'];
+				} else {
+					this.address = result['province'] + result['city'];
+					this.params['longitude'] = result['center'][0];
+					this.params['latitude'] = result['center'][1];
+				}
+				this.getIndexList();
+			},
+			//地理位置定位
+			getPositon() {
+				AMap.plugin(['AMap.Geolocation', 'AMap.CitySearch'], () => {
+					this.geolocation = new AMap.Geolocation({
+						timeout: 10000,
+					});
+					this.geolocation.getCurrentPosition((status, result) => {
+						if(status == 'complete') {
+							this.positionCallBack('gps', result)
+						} else {
+							this.geolocation.getCityInfo((status, result) => {
+								this.positionCallBack('ip', result)
+							})
+						}
+					})
+				})
+			},
+			//显示或者隐藏活动描述
+			showHideAcitve() {
+				document.body.onclick = (e) => {
+					let el = e.srcElement || e.target,
+						targetEl = null,
+						iconEl = null;
+					if(el.parentNode.className.indexOf('l-a-title') > -1) {
+						targetEl = el.parentNode.parentNode.nextElementSibling;
+						if(el.className.length > 0) {
+							iconEl = el;
+						} else {
+							iconEl = el.previousElementSibling;
+						}
+						this.targetShow(targetEl, iconEl);
+					}
+					// console.log(el);
+				}
+			},
+			targetShow(targetEl, el) {
+				if(targetEl.style.display == 'block') {
+					targetEl.style.display = 'none';
+					el.className = 'iconfont icon-sanjiaoxing-down';
+				} else {
+					targetEl.style.display = 'block';
+					el.className = 'iconfont icon-sanjiaoxing-down icon-sanjiaoxing-up'
+				}
+			}
 		},
 	}
 </script>
