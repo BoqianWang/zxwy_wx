@@ -1,7 +1,7 @@
 (function() {
 /**
  * JavaScript的工具库,方便使用
- * author   a_boy
+ * author   wzh
  * created  2018-4-7 18:06
  * update   2018-4-17 
  */
@@ -125,8 +125,55 @@
 		 */
 		clearCookies: function(name,options = {}) {
 			this.setCookies(name, '', -1, options);
-		}
-		
+		},
+		/**
+		 * 获取本地缓存
+		 * @param {[type]} key   	键         必填
+		 * @return {[type]} [description]
+		 */
+		getLocalStorage: function(key) {
+			var json = JSON.parse(localStorage.getItem(key));
+			if(json) {
+				if(json.expires) {
+					var timestamp = parseInt(+new Date() / 1000);
+					if(timestamp > json.expires) {
+						this.clearLocalStorage(key)
+						return null;
+					}
+				}
+				return json[key];
+			} else {
+				return null;
+			}
+		},
+		/**
+		 * 设置本地缓存(可设置过期时间)
+		 * @param {[type]} key   	键           必填
+		 * @param {[type]} value 	值		     必填
+		 * @param {[type]} expires  保存多少秒   可填(秒)
+		 */
+		setLocalStorage: function(key, value, expires) {
+			var json = {}
+			json[key] = value;
+			if(expires) {
+				var timestamp = parseInt(+new Date() / 1000) + expires;
+				json['expires'] = timestamp;  
+			}
+
+			localStorage.setItem(key, JSON.stringify(json));
+		},
+		/**
+		 * 清除本地缓存
+		 * @param {[type]} key 	键		可填(默认清除所有)
+		 * @return {[type]} [description]
+		 */
+		clearLocalStorage: function(key) {
+			if(key) {
+				localStorage.removeItem(key);
+			} else {
+				localStorage.clear();
+			}
+		},
 	};
 	// export default Tools;
 	window.Tools = Tools;

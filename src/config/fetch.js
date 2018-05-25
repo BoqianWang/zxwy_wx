@@ -56,11 +56,12 @@ export default {
     //fetchPost  请求方式
     fetchPost: function(url, params) {
       if(Tools.getCookie('zx_token')){
-        if(params){
-          params.zx_token = Tools.getCookie('zx_token');
-        }else{
-          params = {zx_token: Tools.getCookie('zx_token')};
-        }
+        // if(params){
+        //   params.zx_token = Tools.getCookie('zx_token');
+        // }else{
+        //   params = {zx_token: Tools.getCookie('zx_token')};
+        // }
+        params['zx_token'] = Tools.getCookie('zx_token')
       }
         return new Promise((resolve, reject) => {
             Indicator.open();
@@ -88,11 +89,12 @@ export default {
     fetchGet: function(url, params) {
       // console.log(params);
       if(Tools.getCookie('zx_token')){
-        if(params){
-          params.zx_token = Tools.getCookie('zx_token');
-        }else{
-          params = {zx_token:Tools.getCookie('zx_token')};
-        }
+        // if(params){
+        //   params.zx_token = Tools.getCookie('zx_token');
+        // }else{
+        //   params = {zx_token:Tools.getCookie('zx_token')};
+        // }
+        params['zx_token'] = Tools.getCookie('zx_token');
       }
       // console.log(params);
         return new Promise((resolve, reject) => {

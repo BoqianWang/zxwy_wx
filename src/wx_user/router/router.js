@@ -35,7 +35,6 @@ const shortpay = r => require.ensure([], () => r(require('../page/shop/shortpay.
 
 const pay = r => require.ensure([], () => r(require('../page/shop/pay.vue')), 'pay');
 const paySuccess = r => require.ensure([], () => r(require('../page/shop/paySuccess.vue')), 'paySuccess');
-const homeaddress = r => require.ensure([], () => r(require('../page/home/chooseAddress.vue')), 'homeaddress');
 
 const youhuilist = r => require.ensure([], () => r(require('../page/my/youhui/youhuilist.vue')), 'youhuilist');
 const wuxiaoYH = r => require.ensure([], () => r(require('../page/my/youhui/wuxiaoyH.vue')), 'wuxiaoYH');
@@ -45,6 +44,9 @@ const oneThousand = r => require.ensure([], () => r(require('../page/activity/to
 
 // 新用户领取三张券
 const newyouhui = r => require.ensure([], () => r(require('../page/my/youhui/newYouHui.vue')), 'newyouhui');
+
+//首页选择地址
+const homeaddress = r => require.ensure([], () => r(require('@/wx_user/page/home/children/chooseAddress.vue')), 'homeaddress');
 
 // 外卖模块
 const takeOutShop = r => require.ensure([], () => r(require('@/wx_user/page/takeout/takeOutShop.vue')), 'takeOutShop');
@@ -142,16 +144,23 @@ export default{
     },{
       path:'/paysuccess',
       component:paySuccess,
-      meta:{title:'支付成功'}
-    },{
-      path:'/homeaddress',
-      component:homeaddress,
-      meta:{title:'选择地址'}
-    },{
+      meta: {
+        title:'支付成功'
+      }
+    },
+    {
+      path: '/home/homeAddress',
+      component: homeaddress,
+      meta: {
+        title:'选择地址'
+      }
+    },
+    {
       path:'/fiveHundred',
       component:fiveHundred,
       meta:{title:'领取500积分'}
-    },{
+    },
+    {
       path:'/oneThousand',
       component:oneThousand,
       meta:{title:'领取1000积分'}

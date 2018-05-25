@@ -9,11 +9,11 @@
 			</mt-swipe>
 			<!-- 地址 -->
 			<div class="abs address-wrap flex-box justify-s-b white-f">
-				<div class="a-wrap-input flex-box align-center">
+				<div class="a-wrap-input flex-box align-center" @click="toLink('location')">
 					<span class="iconfont icon-map font-b"></span>
-					<input disabled="disabled" class="white-f font-15 font-b flex-1 p-r-ten" type="text" :value="address">
+					<input readonly="readonly" class="white-f font-15 font-b flex-1 p-r-ten" type="text" :value="address">
 				</div>
-				<div class="search-button font-b text-center">
+				<div class="search-button font-b text-center" @click="toLink('searchShop')">
 					<span class="iconfont icon-search"></span>
 				</div>
 			</div>
@@ -103,7 +103,7 @@
 				<div class="shop-list-block flex-box p-t-ten p-b-ten" v-for="item in bizList">
 					<div class="block-list-img" :style="'background-image: url(' + item.shopLogo + ');'"></div>
 					<div class="p-l-ten flex-1">
-						<div>
+						<div @click="toLink('shop', item)">
 							<p>
 								<span class="font-18 color-3">{{item.shopName}}</span>
 								<span class="tips tips-takeout" v-if="item.isWm == 1"></span>
@@ -120,39 +120,39 @@
 							 </p>
 							 <p class="color-3 font-12 block-list-desc">
 							 	<span>{{item.businessName}}</span>
-							 	<span v-if="item.isWm == 1">起送¥25</span>
-							 	<span v-if="item.isWm == 1">配送¥5</span>
+							 	<span v-if="item.isWm == 1">起送¥{{item.startSendFee}}</span>
+							 	<span v-if="item.isWm == 1">配送¥{{item.expressFee}}</span>
 							 </p>
 						</div>
 						 <div class="color-3 font-12 block-list-active">
-							 <p class="flex-box justify-s-b">
+							 <p class="flex-box justify-s-b active-show-hide rel">
 							 	<span>
 							 		<span class="tips tips-first"></span>
 							 		新用户首单立减
 							 	</span>
-							 	<span class="color-7 flex-box align-center l-a-title">
+							 	<span class="color-7 flex-box align-center abs active-count-wrap p-t-ten p-b-ten">
 							 	  <span class="iconfont icon-sanjiaoxing-down"></span>
 							 	  <span>3个活动</span>
 							 	</span>
-								<div style="display: none;">
-									 <p>
-									 	<span class="tips tips-sub"></span>
-									 	满减活动
-									 </p>
-									 <p>
-									 	<span class="tips tips-ticket"></span>
-									 	代金券优惠
-									 </p>
-									 <p>
-									 	<span class="tips tips-intergral"></span>
-									 	现金积分
-									 </p>
-								</div>
 							 </p>
+							<div style="display: none;">
+								 <p>
+								 	<span class="tips tips-sub"></span>
+								 	满减活动
+								 </p>
+								 <p>
+								 	<span class="tips tips-ticket"></span>
+								 	代金券优惠
+								 </p>
+								 <p>
+								 	<span class="tips tips-intergral"></span>
+								 	现金积分
+								 </p>
+							</div>
 						 </div>
 					</div>
 				</div>
-				<div class="shop-list-block flex-box p-t-ten p-b-ten">
+				<!-- <div class="shop-list-block flex-box p-t-ten p-b-ten">
 					<div class="block-list-img" style="background-image: url(https://fuss10.elemecdn.com/e/7d/9854d2f95050092a008b4e3ee29e6png.png?imageMogr/format/webp/thumbnail/!130x130r/gravity/Center/crop/130x130/);"></div>
 					<div class="p-l-ten flex-1">
 						<div>
@@ -174,7 +174,7 @@
 							 </p>
 						</div>
 						 <div class="color-3 font-12 block-list-active">
-							 <p class="flex-box justify-s-b">
+							 <p class="flex-box justify-s-b active-show-hide">
 							 	<span>
 							 		<span class="tips tips-first"></span>
 							 		新用户首单立减
@@ -183,7 +183,9 @@
 							 	  <span class="iconfont icon-sanjiaoxing-down"></span>
 							 	  3个活动
 							 	</span>
-								 <div style="display: none;">
+								
+							 </p>
+							 <div style="display: none;">
 									 <p>
 									 	<span class="tips tips-sub"></span>
 									 	满减活动
@@ -196,9 +198,7 @@
 									 	<span class="tips tips-intergral"></span>
 									 	现金积分
 									 </p>
-								 </div>
-							 </p>
-							 
+							 </div>
 						 </div>
 					</div>
 				</div>
@@ -208,7 +208,7 @@
 						<div>
 							<p>
 								<span class="font-18 color-3">九毛九(华强茂业店)</span>
-								<!-- <span class="tips tips-takeout"></span> -->
+								<span class="tips tips-takeout"></span>
 							</p>
 							<p class="color-3 font-12 flex-box justify-s-b block-list-order">
 								<span>
@@ -224,7 +224,7 @@
 							 </p>
 						</div>
 						 <div class="color-3 font-12 block-list-active">
-							 <p class="flex-box justify-s-b">
+							 <p class="flex-box justify-s-b active-show-hide">
 							 	<span>
 							 		<span class="tips tips-first"></span>
 							 		新用户首单立减
@@ -233,26 +233,25 @@
 							 	  <span class="iconfont icon-sanjiaoxing-down"></span>
 							 	  3个活动
 							 	</span>
-								 <div style="display: none;">
-									 <p>
-									 	<span class="tips tips-sub"></span>
-									 	满减活动
-									 </p>
-									 <p>
-									 	<span class="tips tips-ticket"></span>
-									 	代金券优惠
-									 </p>
-									 <p>
-									 	<span class="tips tips-intergral"></span>
-									 	现金积分
-									 </p>
-								 </div>
 							 </p>
+							 <div style="display: none;">
+								 <p>
+								 	<span class="tips tips-sub"></span>
+								 	满减活动
+								 </p>
+								 <p>
+								 	<span class="tips tips-ticket"></span>
+								 	代金券优惠
+								 </p>
+								 <p>
+								 	<span class="tips tips-intergral"></span>
+								 	现金积分
+								 </p>
+							 </div>
 						 </div>
 					</div>
 				</div>
 				<div class="shop-list-block flex-box p-t-ten p-b-ten">
-					<!-- <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526393667465&di=caa2346f4acc7b414fbb4b92871defc9&imgtype=0&src=http%3A%2F%2Fwww.szquanli.com%2Fuploads%2Fallimg%2F160621%2F2-160621091242-51.png"> -->
 					<div class="block-list-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526393667465&di=caa2346f4acc7b414fbb4b92871defc9&imgtype=0&src=http%3A%2F%2Fwww.szquanli.com%2Fuploads%2Fallimg%2F160621%2F2-160621091242-51.png);"></div>
 					<div class="p-l-ten flex-1">
 						<div>
@@ -274,7 +273,7 @@
 							 </p>
 						</div>
 						 <div class="color-3 font-12 block-list-active">
-							 <p class="flex-box justify-s-b">
+							 <p class="flex-box justify-s-b active-show-hide">
 							 	<span>
 							 		<span class="tips tips-first"></span>
 							 		新用户首单立减
@@ -283,7 +282,8 @@
 							 	  <span class="iconfont icon-sanjiaoxing-down"></span>
 							 	  <span>3个活动</span>
 							 	</span>
-								 <div style="display: none;">
+							 </p>
+							 <div style="display: none;">
 									 <p>
 									 	<span class="tips tips-sub"></span>
 									 	满减活动
@@ -296,18 +296,21 @@
 									 	<span class="tips tips-intergral"></span>
 									 	现金积分
 									 </p>
-								 </div>
-							 </p>
+							 </div>
 						 </div>
 					</div>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</div>
 </template>
 <style lang="scss">
 	@import "../../style/mixin";
-	.icon-sanjiaoxing-up {
+	.active-count-wrap {
+		right: 0;
+		top: -.05rem;
+	}
+	.icon-sanjiaoxing-up .icon-sanjiaoxing-down {
 		transform: rotate(180deg);
 	}
 	.icon-sanjiaoxing-down {
@@ -444,18 +447,56 @@
 					{url: 'http://chuantu.biz/t6/311/1526372628x-1404792897.jpg'},
 				],
 				address: '正在定位...',
-				params: {},
+				params: {
+					longitude: '12'
+				},
 				industryList: {},
 				bizList: {}
 			}
 		},
 		created() {
-			this.showHideAcitve();
+
 		},
 		mounted() {
+
 			this.getPositon();
+			this.showHideAcitve();
 		},
 		methods: {
+			// 点击跳转
+			toLink(type, info) {
+				console.log(type);
+				switch(type) {
+					case 'location': 
+						this.$router.push({
+							path: '/home/homeAddress'
+						})
+					break;
+					case 'searchShop':
+
+					break;
+					case 'shop':
+						if(info.isWm == 1) {
+							this.$router.push({
+								path: '/takeout/takeOutShop',
+								query: {
+									longitude: this.params['longitude'],
+									latitude: this.params['latitude'],
+									shopAuthenticateId: info['shopAuthenticateId']
+								}
+							})
+						} else {
+							this.$router.push({
+								path: '/bizdetail',
+								query: {
+									bizId: info['bizId']
+								}
+							})
+						}
+					break;
+				}
+
+			},
 			//店铺列表
 			getIndexList() {
 				fetch.fetchGet('/index/v3.2/index', this.params).then(res => {
@@ -465,22 +506,36 @@
 
 				})
 			},
+			//获取本地缓存定位信息
+			getLocalStoragePosition() {
+				let positionInfo = Tools.getLocalStorage('positionInfo');
+				this.params['longitude'] = positionInfo['longitude'];
+				this.params['latitude'] = positionInfo['latitude'];
+				this.address = positionInfo['address'];
+				this.getIndexList();
+			},
 			//定位回调
 			positionCallBack(type, result) {
-				console.log(result)
+				let positionInfo = {};
 				if(type == 'gps') {
-					this.address = result['formattedAddress'];
-					this.params['longitude'] = result['position']['lng'];
-					this.params['latitude'] = result['position']['lat'];
+					positionInfo['address'] = result['formattedAddress']
+					positionInfo['longitude'] = result['position']['lng'];
+					positionInfo['latitude'] = result['position']['lat'];
 				} else {
-					this.address = result['province'] + result['city'];
-					this.params['longitude'] = result['center'][0];
-					this.params['latitude'] = result['center'][1];
+					positionInfo['address'] =  result['province'] + result['city'];
+					positionInfo['longitude'] = result['center'][0];
+					positionInfo['latitude'] = result['center'][1];
 				}
-				this.getIndexList();
+				Tools.setLocalStorage('positionInfo', positionInfo);
+				sessionStorage.geoHash = 'finishLocation';
+				this.getLocalStoragePosition();
 			},
 			//地理位置定位
 			getPositon() {
+				if(sessionStorage.geoHash) {
+					this.getLocalStoragePosition();
+					return;
+				}
 				AMap.plugin(['AMap.Geolocation', 'AMap.CitySearch'], () => {
 					this.geolocation = new AMap.Geolocation({
 						timeout: 10000,
@@ -500,27 +555,30 @@
 			showHideAcitve() {
 				document.body.onclick = (e) => {
 					let el = e.srcElement || e.target,
-						targetEl = null,
-						iconEl = null;
-					if(el.parentNode.className.indexOf('l-a-title') > -1) {
-						targetEl = el.parentNode.parentNode.nextElementSibling;
-						if(el.className.length > 0) {
-							iconEl = el;
-						} else {
-							iconEl = el.previousElementSibling;
+						targetEl = el,
+						iconEl = null,
+						index = 0;
+					while(targetEl.className.indexOf('active-show-hide') <= -1) {
+						index++;
+						targetEl = targetEl.parentNode;
+						if( index >= 5 || targetEl.nodeName.toLowerCase() == 'body') {
+							targetEl = null;
+							index = 0;
+							break;
 						}
-						this.targetShow(targetEl, iconEl);
 					}
-					// console.log(el);
+					if(targetEl) {
+						this.targetShow(targetEl.nextElementSibling, targetEl.children[1]);
+					}
 				}
 			},
 			targetShow(targetEl, el) {
 				if(targetEl.style.display == 'block') {
 					targetEl.style.display = 'none';
-					el.className = 'iconfont icon-sanjiaoxing-down';
+					el.className = 'color-7 flex-box align-center';
 				} else {
 					targetEl.style.display = 'block';
-					el.className = 'iconfont icon-sanjiaoxing-down icon-sanjiaoxing-up'
+					el.className = 'color-7 flex-box align-center icon-sanjiaoxing-up'
 				}
 			}
 		},

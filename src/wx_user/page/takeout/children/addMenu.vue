@@ -1,9 +1,9 @@
 <template>
 	<div style="display: inline-block;">
 		<div class="flex-box add-menu text-center">
-			<p class="subtract iconfont icon-subtract"></p>
-			<p class="menu-num color-3">1</p>
-			<p class="add iconfont icon-add white-f" @click="size"></p>
+			<p class="subtract iconfont icon-subtract" v-show="count > 0" @click="delMenu"></p>
+			<p class="menu-num color-3" v-show="count > 0">{{count}}</p>
+			<p class="add iconfont icon-add white-f" @click="addMenu"></p>
 			<!-- <p @click="size">选规格</p> -->
 		</div>
 		<mt-popup
@@ -11,37 +11,40 @@
 		  position="bottom">
 		  <div class="size-wrap p-ten">
 		  	<div class="flex-box p-b-ten">
-		  		<div class="menu-img" style="background-image: url(http://img2.imgtn.bdimg.com/it/u=3023032273,2537755673&fm=27&gp=0.jpg);">
+		  		<div class="menu-img" :style="'background-image: url(' + menuData['goodsPic'] + ');'">
 		  		</div>
 		  		<div class="flex-1 p-l-ten flex-box menu-detail">
-		  			<div class="color-3">
-		  				<p>菜品名称</p>
-			  			<span class="color-3 font-12">已选:
+		  			<div class="color-3 width-100">
+		  				<p>{{menuData['goodsName']}}</p>
+			  			<!-- <span class="color-3 font-12">已选:
 							小 / 微辣 / 不要葱花 / 等等等
-			  			</span>
+			  			</span> -->
 		  			</div>
-		  			<p class="size-money">¥38.6</p>
+		  			<p class="size-money">¥{{menuData['sku'] && menuData['sku'][specificationIndex]['discountPrice']}}</p>
 		  		</div>
 		  	</div>
 		  	<div>
-		  		<p class="font-15 p-b-ten color-7">规格</p>
-		  		<div class="clearfix chose-size">
-		  			<span>规格名称</span>
-		  			<span>规格名称2</span>
-		  			<span>规格名称3</span>
-		  			<span>规格名称</span>
-		  			<span>规格名称2</span>
+		  		<div class="specification" v-if="menuData['sku'] && menuData['sku'].length > 1">
+			  		<p class="font-15 p-b-ten color-7">规格</p>
+			  		<div class="clearfix chose-size">
+			  			<span 
+			  			v-for="(item,index) in menuData['sku']" 
+			  			:class="{'item-selected': specificationIndex == index}"
+			  			@click="specificationIndex = index">{{item['spec']}}</span>
+			  			<!-- <span>规格名称2</span> -->
+			  		</div>
 		  		</div>
-		  		<p class="font-15 p-b-ten color-7">属性</p>
-		  		<div class="clearfix chose-size">
-		  			<span>规格名称</span>
-		  			<span>规格名称2</span>
-		  			<span>规格名称3</span>
-		  			<span>规格名称</span>
-		  			<span>规格名称2</span>
+		  		<div class="atribute" v-for="(item, parentIndex) in goodsAttribute">
+			  		<p class="font-15 p-b-ten color-7">{{item.name}}</p>
+			  		<div class="clearfix chose-size">
+			  			<span 
+			  			v-for="(info, subIndex) in item['value']" 
+			  			:class="{'item-selected': attributeIndexList[parentIndex] == subIndex}"
+			  			@click="choseAttributeINndex(parentIndex, subIndex)">{{info}}</span>
+			  		</div>
 		  		</div>
 		  	</div>
-		  	<mt-button class="sure" type="primary">选好了</mt-button>
+		  	<mt-button class="sure" type="primary" @click="confirm">选好了</mt-button>
 		  </div>
 		</mt-popup>
 	</div>
@@ -49,6 +52,7 @@
 <style scoped lang="scss">
 	@import '../../../style/mixin.scss';
 	@import '../../../style/iconfont/iconfont.css';
+	
 	.add-menu {
 		align-items: center;
 	}
@@ -90,6 +94,10 @@
 			color: #FF2618;
 			font-size: .24rem;
 		}
+		.chose-size span.item-selected {
+			color: #FF6E15;
+			background:rgba(255,110,21,.2);
+		}
 		.chose-size span {
 			float: left;
 			font-size: .15rem;
@@ -102,18 +110,114 @@
 	}
 </style>
 <script>
+	/**
+	 * 按钮组件
+	 */
 	export default {
+		props: {
+			menuData: {
+				default: () => {
+					return {};
+				}
+			}
+		},
 		data() {
 			return {
-				popupVisible: false
+				popupVisible: false,
+				// count: 0,
+				specificationIndex: 0,
+				attributeIndexList: {},
+				goodsAttribute: [],
+
+			}
+		},
+		computed: {
+			//监听购物车数据
+			shopCart() {
+				return this.$store.state.cartList;
+			},
+			//购买数量
+			count() {
+				let shopMenuList = this.shopCart[this.menuData['shopAuthenticateId']],
+					count = 0;
+				if(shopMenuList) {
+					shopMenuList['detailList'].forEach((item, arr) => {
+						if(item['goodsId'] == this.menuData['goodsId']) {
+							count += item['goodsNum'];
+						}
+					})
+					return count;
+				}
+				return count;
 			}
 		},
 		mounted() {
-
+			if(this.menuData['goodsAttribute'] && this.menuData['goodsAttribute'] != 'null') {
+				let re = /[^,/，]+/g;
+				this.goodsAttribute = JSON.parse(this.menuData['goodsAttribute']);
+				for(let i in this.goodsAttribute) {
+					this.goodsAttribute[i]['value'] = this.goodsAttribute[i]['value'].match(re);
+					this.$set(this.attributeIndexList, i, 0);
+				}
+			}
 		},
 		methods: {
-			size() {
-				this.popupVisible = true;
+			//删除商品
+			delMenu() {
+				if((this.menuData['sku'] && this.menuData['sku'].length > 1) || this.goodsAttribute.length > 0) {
+					if(this.count > 1) {
+						this.$toast('多规格商品只能在购物车删除');
+					} else {
+						console.log('数量只有1个多规格');
+					}
+				} else {
+					this.$store.commit('delShopCart', this.menuData);
+				}
+			},
+			//点击添加按钮
+			addMenu() {
+				if((this.menuData['sku'] && this.menuData['sku'].length > 1) || this.goodsAttribute.length > 0) {
+					this.popupVisible = true;
+				} else {
+					let skuDetail = this.menuData['sku'][this.specificationIndex];
+					this.addCart(skuDetail, '');
+				}
+				
+			},
+			//选择属性
+			choseAttributeINndex(parentIndex, subIndex) {
+				this.attributeIndexList[parentIndex] = subIndex;
+			},
+			//点击选好了
+			confirm() {
+				let skuDetail = this.menuData['sku'][this.specificationIndex],
+				attributeStr = [],
+				spec = '';
+				if(skuDetail['spec'] != null) {
+					spec = skuDetail['spec'];
+				}
+				for(let i in this.attributeIndexList) {
+					attributeStr.push(this.goodsAttribute[i]['value'][this.attributeIndexList[i]]);
+				}
+				this.addCart(skuDetail, `${spec},${attributeStr.join(',')}`);
+				this.popupVisible = false;
+			},
+			//添加购物车
+			addCart(skuDetail, goodsTaste) {
+				let params = {
+					shopAuthenticateId: this.menuData['shopAuthenticateId'],
+					goodsId: this.menuData['goodsId'],
+					skuId: skuDetail['skuId'],
+					goodsName: this.menuData['goodsName'],
+					goodsNum: 1,
+					originalPrice: skuDetail['price'],
+					discountPrice: skuDetail['discountPrice'],
+					boxNum: skuDetail['boxNum'],
+					boxPrice: skuDetail['boxPrice'],
+					goodsTaste: goodsTaste
+				}
+				// console.log(params);
+				this.$store.commit('addShopCart', params);
 			}
 		}
 	}

@@ -47,7 +47,8 @@
 				title="清分费" 
 				:value="'+ ¥' + serverMoney"></mt-cell>
 			</div>
-			<div class="pay-current" v-show="moneyOff.discount || integral['all'] > 0 || userfulVocherCount > 0">
+			<!-- <div class="pay-current" v-show="moneyOff.discount || integral['all'] > 0 || userfulVocherCount > 0"> -->
+			<div class="pay-current" v-show="isShowSureMoney">
 				<mt-cell title="实付金额" :value="'¥' + surePayMoney"></mt-cell>
 			</div>
 			<div class="text-center">
@@ -297,6 +298,10 @@
 				choseVocher: {},
 				//适合使用的满减活动
 				moneyOff: {},
+				// mpney_off:{
+				// 	discount:0,
+				// 	activityId:''
+				// }
 				//积分
 				integral: {
 					all: 0,
@@ -305,7 +310,9 @@
 				},
 				paytype: brower.IsWeixinOrAlipay() == 'false' ? 'Alipay' : brower.IsWeixinOrAlipay(),
 				afterDataVO: {},
-				errorShopInfo: false
+				errorShopInfo: false,
+				// 是否显示实付
+				isShowSureMoney: false
 			}
 		},
 		computed: {
@@ -353,8 +360,8 @@
 					activityBelong = this.moneyOffGather['activityBelong'] || '',
 					activityId = this.moneyOff['activityId'] || '',
 					//1表示微信, 2表示支付宝, 0表示余额
-					// paymentMode = this.paytype == 'WeiXin' ? 1 :  2,
-					paymentMode = 0,
+					paymentMode = this.paytype == 'WeiXin' ? 1 :  2,
+					// paymentMode = 0,
 					randomDisAmount = 0,
 					shareGiftsId = this.choseVocher['shareGiftsId'] || '',
 					receiveId = this.choseVocher['receiveId'] || '',
@@ -488,11 +495,17 @@
 				if(this.surePayMoney <= 0) {
 					this.surePayMoney = 0;
 				} 
-				// else {
-				// 	this.surePayMoney = this.surePayMoney;
-				// }
+
 
 				//收取服务费
+				this.calculateServerMoney();
+
+				this.surePayMoney = (this.surePayMoney + parseFloat(this.serverMoney)).toFixed(2);
+
+				this.isShowSureMoney = parseFloat(this.surePayMoney) != parseFloat(this.money) && this.money;
+			},
+			//计算清风费
+			calculateServerMoney() {
 				let serverMoney = this.integral['discount'] + this.choseVocher['discount'];
 				if(this.shopInfo['serviceFeeObject'] == 0 && serverMoney >= this.shopInfo['standardFee']) {
 					if(this.shopInfo['marketType'] == 0) {
@@ -504,8 +517,6 @@
 				} else {
 					this.serverMoney = 0;
 				}
-
-				this.surePayMoney = (this.surePayMoney + parseFloat(this.serverMoney)).toFixed(2);
 			},
 			//选择使用代金券
 			choseVocherEevnt(type, info) {
@@ -530,13 +541,20 @@
 					}
 				}
 			},
+
 			// 监听适合的满减活动
 			canUserMoneyOff(currentMoney) {
 				this.moneyOff = {};
 				if(this.moneyOffGather['activitys']) {
 					for(let item of this.moneyOffGather['activitys']) {
 						if(currentMoney >= item.fullMoney ) {
-							this.moneyOff = item;
+							if(this.moneyOff.discount) {
+								if(this.moneyOff.discount < item.discount) {
+									this.moneyOff = item;
+								}
+							}else{
+								this.moneyOff = item;
+							}
 						}
 					}
 				}

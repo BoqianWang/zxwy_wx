@@ -41,46 +41,25 @@
 			</div>
 			<!-- 推荐 -->
 			<div class="p-l-ten p-r-ten m-t-ten flex-box text-center selected">
-				<span class="flex-1 actived">商品</span>
+				<span class="flex-1" 
+				:class="{actived: switchSelectType == 'shop'}" 
+				@click="switchSelect('shop')">商品</span>
 				<span class="flex-1">评价</span>
-				<span class="flex-1">商家</span>
+				<span class="flex-1" :class="{actived: switchSelectType == 'merchant'}"  @click="switchSelect('merchant')">商家</span>
 			</div>
 			<!-- 菜单详情 -->
 			<div class="shop-container">
-				<!-- <div class="shop-recommend p-ten">
-					<p class="color-3 p-b-ten">商家推荐</p>
-					<div>
-						<div class="recommed-block">
-							<img src="" alt="">
-							<p>
-								<span>商品名名称</span>
-								<span>关键词</span>
-							</p>
-							<p>
-								<span>¥</span>
-								<span></span>
-							</p>
-						</div>
-					</div>
-				</div> -->
-				<div :style="{display: 'block'}">
+				<div v-show="switchSelectType == 'shop'">
 					<div class="shop-con-wrap flex-box" :style="{height: height - 42 + 'px'}">
 						<ul class="font-12 color-7" id="classify-list">
 							<li v-for="item in categoryListDate">
 								<span style="-webkit-box-orient: vertical;">{{item.categoryName}}</span>
 							</li>
-							<!-- <li class="active">
-								<span>分类名称1</span>
-							</li>
-							<li>
-								<span>分类名称2</span>
-							</li>
-							<li>
-								<span style="-webkit-box-orient: vertical;">分类名称3</span>
-							</li>
+							<!-- 
 							<li>
 								<span style="-webkit-box-orient: vertical;">分类名称4</span>
-							</li> -->
+							</li> 
+						-->
 						</ul>
 						<section class="flex-1 p-ten section-menu" id="section-menu">
 							<div class="scoller-list" v-for="item in MenuListDate">
@@ -120,7 +99,7 @@
 													<span class="price">¥{{info['sku'][0].discountPrice}}</span>
 													<span class="color-7" style="font-size: 8px;">起</span>
 												</div>
-												<addMenu></addMenu>
+												<add-menu :menu-data="info"></add-menu>
 											</div>
 										</div>
 									</div>
@@ -157,216 +136,6 @@
 											</div>
 										</div>
 									</div>
-									<div class="wrap-block flex-box p-t-ten p-b-ten">
-										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-											
-										</div>
-										<div class="flex-1 p-l-ten menu-detail">
-											<p class="color-3 menu-d-title text_over">
-												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
-											</p>
-											<p class="font-12 color-6 menu-d-desc text_over">
-												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
-											</p>
-											<p class="font-12 color-6">
-												<span>月首355</span>
-											</p>
-											<p class="menu-d-tag">
-												<span class="tag-desc">商品标签</span>
-											</p>
-											<div class="p-t-ten flex-box align-justify">
-												<div>
-													<span class="price">¥38.6</span>
-													<span class="color-7" style="font-size: 8px;">
-														/份 <del>¥44</del>
-													</span>
-												</div>
-												<addMenu></addMenu>
-											</div>
-										</div>
-									</div>
-									<div class="wrap-block flex-box p-t-ten p-b-ten">
-										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-											
-										</div>
-										<div class="flex-1 p-l-ten menu-detail">
-											<p class="color-3 menu-d-title text_over">
-												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
-											</p>
-											<p class="font-12 color-6 menu-d-desc text_over">
-												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
-											</p>
-											<p class="font-12 color-6">
-												<span>月首355</span>
-											</p>
-											<p class="menu-d-tag">
-												<span class="tag-desc">商品标签</span>
-												<span class="tag-desc">6折</span>
-												<span>每单限2份</span>
-												<span class="tag-residue">剩9分</span>
-											</p>
-											<div class="p-t-ten flex-box align-justify">
-												<div>
-													<span class="price">¥38.6</span>
-													<span class="color-7" style="font-size: 8px;">
-														/份 <del>¥44</del>
-													</span>
-												</div>
-												<addMenu></addMenu>
-											</div>
-										</div>
-									</div>
-									<div class="wrap-block flex-box p-t-ten p-b-ten">
-										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-											
-										</div>
-										<div class="flex-1 p-l-ten menu-detail">
-											<p class="color-3 menu-d-title text_over">
-												<span>菜品名称撒旦法阿斯顿发送到防守打法</span>
-											</p>
-											<p class="font-12 color-6 menu-d-desc text_over">
-												<span>菜品描述菜品描述菜品描述是的范德萨防守打法是</span>
-											</p>
-											<p class="font-12 color-6">
-												<span>月首355</span>
-											</p>
-											<p class="menu-d-tag">
-												<span class="tag-desc">商品标签</span>
-												<span class="tag-desc">6折</span>
-												<span>每单限2份</span>
-												<span class="tag-residue">剩9分</span>
-											</p>
-											<div class="p-t-ten flex-box align-justify">
-												<div>
-													<span class="price">¥38.6</span>
-													<span class="color-7" style="font-size: 8px;">
-														/份 <del>¥44</del>
-													</span>
-												</div>
-												<addMenu></addMenu>
-											</div>
-										</div>
-									</div>
-									<div class="wrap-block flex-box p-t-ten p-b-ten">
-										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-											
-										</div>
-										<div class="flex-1 p-l-ten menu-detail">
-											<p class="color-3 menu-d-title">
-												<span>菜品名称</span>
-											</p>
-											<p class="font-12 color-6 menu-d-desc text_over">
-												<span>菜品描述菜品描述菜品描述</span>
-											</p>
-											<p class="font-12 color-6">
-												<span>月首355</span>
-											</p>
-											<p class="menu-d-tag">
-												<span class="tag-desc">商品标签</span>
-												<span class="tag-desc">6折</span>
-												<span>每单限2份</span>
-												<span class="tag-residue">剩9分</span>
-											</p>
-											<div class="p-t-ten flex-box align-justify">
-												<div>
-													<span class="price">¥38.6</span>
-													<span class="color-7" style="font-size: 8px;">
-														/盘 <del>¥44</del>
-													</span>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="wrap-block flex-box p-t-ten p-b-ten">
-										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-											
-										</div>
-										<div class="flex-1 p-l-ten menu-detail">
-											<p class="color-3 menu-d-title">
-												<span>菜品名称</span>
-											</p>
-											<p class="font-12 color-6 menu-d-desc text_over">
-												<span>菜品描述菜品描述菜品描述</span>
-											</p>
-											<p class="font-12 color-6">
-												<span>月首355</span>
-											</p>
-											<p class="menu-d-tag">
-												<span class="tag-desc">商品标签</span>
-												<span class="tag-desc">6折</span>
-												<span>每单限2份</span>
-												<span class="tag-residue">剩9分</span>
-											</p>
-											<div class="p-t-ten flex-box align-justify">
-												<div>
-													<span class="price">¥38.6</span>
-													<span class="color-7" style="font-size: 8px;">
-														/盘 <del>¥44</del>
-													</span>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="wrap-block flex-box p-t-ten p-b-ten">
-										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-											
-										</div>
-										<div class="flex-1 p-l-ten menu-detail">
-											<p class="color-3 menu-d-title">
-												<span>菜品名称</span>
-											</p>
-											<p class="font-12 color-6 menu-d-desc text_over">
-												<span>菜品描述菜品描述菜品描述</span>
-											</p>
-											<p class="font-12 color-6">
-												<span>月首355</span>
-											</p>
-											<p class="menu-d-tag">
-												<span class="tag-desc">商品标签</span>
-												<span class="tag-desc">6折</span>
-												<span>每单限2份</span>
-												<span class="tag-residue">剩9分</span>
-											</p>
-											<div class="p-t-ten flex-box align-justify">
-												<div>
-													<span class="price">¥38.6</span>
-													<span class="color-7" style="font-size: 8px;">
-														/盘 <del>¥44</del>
-													</span>
-												</div>
-											</div>
-										</div>
-									</div>
-									<div class="wrap-block flex-box p-t-ten p-b-ten">
-										<div class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-											
-										</div>
-										<div class="flex-1 p-l-ten menu-detail">
-											<p class="color-3 menu-d-title">
-												<span>菜品名称</span>
-											</p>
-											<p class="font-12 color-6 menu-d-desc text_over">
-												<span>菜品描述菜品描述菜品描述</span>
-											</p>
-											<p class="font-12 color-6">
-												<span>月首355</span>
-											</p>
-											<p class="menu-d-tag">
-												<span class="tag-desc">商品标签</span>
-												<span class="tag-desc">6折</span>
-												<span>每单限2份</span>
-												<span class="tag-residue">剩9分</span>
-											</p>
-											<div class="p-t-ten flex-box align-justify">
-												<div>
-													<span class="price">¥38.6</span>
-													<span class="color-7" style="font-size: 8px;">
-														/盘 <del>¥44</del>
-													</span>
-												</div>
-											</div>
-										</div>
-									</div>
 								</div>
 							</div> -->
 						</section>
@@ -386,7 +155,7 @@
 						</div>
 					</footer>
 				</div>
-				<div class="shop-detial" :style="{height: height - 42 + 'px',display: 'none'}">
+				<div v-show="switchSelectType == 'merchant'" class="shop-detial" :style="{height: height - 42 + 'px',display: 'none'}">
 					<div class="p-ten">
 						<div class="flex-box p-b-ten m-t-ten addresss-wrap">
 							<div class="flex-box align-justify">
@@ -464,10 +233,9 @@
 				   	 	<span>配送¥{{shopInfo['expressFee']}} </span>  
 				   	 	<span>{{shopInfo['expectTime']}}分钟</span>
 				   	 </p>
-				   	 <p v-if="shopInfo['distributionTime']">
+				   	 <p>
 				   	 	配送时间: 
-				   	    {{shopInfo['distributionTime'][0]}},
-				   		{{shopInfo['distributionTime'][1]}}
+				   	    {{shopInfo['distributionTime']}}
 				     </p>
 				  </div>
 			  	  <p class="color-3 font-15 shop-d-top">公告</p>
@@ -816,7 +584,6 @@
 	}
 </style>
 <script>
-	// import "@/wx_user/style/iconfont/iconfont.css";
 	import addMenu from './children/addMenu.vue';
 	import fetch from '@/config/fetch.js';
 	export default {
@@ -829,6 +596,12 @@
 				height: 0,
 				popupVisible: false,
 				shopCartVisible: false,
+				switchSelectType: 'shop',
+				params: {
+					longitude: this.$route.query.longitude,
+					latitude: this.$route.query.latitude,
+					shopAuthenticateId: this.$route.query.shopAuthenticateId
+				},
 				shopInfo: {},
 				//分类列表数据
 				categoryListDate: [],
@@ -845,6 +618,10 @@
 		mounted() {
 			this.init();
 		},
+		created() {
+			this.$store.commit('initShopCart');
+
+		},
 		methods: {
 			showShopDetial() {
 				this.popupVisible = !this.popupVisible;
@@ -859,7 +636,7 @@
 			//获取外卖菜单
 			getTakeoutMenu() {
 				fetch.fetchPost('/goods/v3.2/toGoodsList', {
-					shopAuthenticateId: 'e9e50cd971a6466681082098b9299259'
+					shopAuthenticateId: this.params['shopAuthenticateId']
 				}).then(res => {
 					let data = res.data;
 					for(let item of data) {
@@ -876,7 +653,6 @@
 						this.MenuListDate.push(MenuListItem);
 
 					}
-					console.log(this.MenuListDate)
 					setTimeout(() => {					
 						this.DOMOptions();
 					}, 10)
@@ -886,16 +662,16 @@
 			},
 			//获取店铺资料
 			getTakeOutShop() {
-				fetch.fetchPost('/index/v3.2/toBizPage', {
-					shopAuthenticateId: 'e9e50cd971a6466681082098b9299259',
-					longitude: '113.116376',
-					latitude: '22.562875'
-				}).then(res => {
+				fetch.fetchPost('/index/v3.2/toBizPage', this.params).then(res => {
 					this.shopInfo = res.data;
 					this.shopInfo['distributionTime'] = JSON.parse(this.shopInfo['distributionTime']);
 				}).catch(res => {
 
 				})
+			},
+			//tab切换
+			switchSelect(type) {
+				this.switchSelectType = type;
 			},
 			//dom操作
 			DOMOptions() {
