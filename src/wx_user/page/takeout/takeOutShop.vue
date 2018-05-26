@@ -609,17 +609,11 @@
 				MenuListDate: []
 			}
 		},
-		// computed() {
-		// 	//图片
-		// 	shopLogo() {
-		// 		return  this.shopInfo['shopLogo'] ? this.shopInfo['shopLogo'] : this.defaultImg ;
-		// 	}
-		// },
 		mounted() {
 			this.init();
 		},
 		created() {
-			this.$store.commit('initShopCart');
+			this.$store.commit('initShopCart', this.params['shopAuthenticateId']);
 
 		},
 		methods: {

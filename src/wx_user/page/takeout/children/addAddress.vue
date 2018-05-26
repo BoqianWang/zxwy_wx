@@ -67,7 +67,6 @@
 		computed: {
 			address() {
 				let addressInfo = this.$store.state.addressInfo;
-				console.log(this.$store.state.addressInfo)
 				if(addressInfo) {
 					this.formDate['recipientAddress'] = this.$store.state.addressInfo['recipientAddress'];
 					this.formDate['recipientLon'] = this.$store.state.addressInfo['recipientLon'];

@@ -1,8 +1,8 @@
 <template>
 	<div style="display: inline-block;">
 		<div class="flex-box add-menu text-center">
-			<p class="subtract iconfont icon-subtract" v-show="count > 0" @click="delMenu"></p>
-			<p class="menu-num color-3" v-show="count > 0">{{count}}</p>
+			<p class="subtract iconfont icon-subtract" @click="delMenu"></p>
+			<p class="menu-num color-3">{{count}}</p>
 			<p class="add iconfont icon-add white-f" @click="addMenu"></p>
 			<!-- <p @click="size">选规格</p> -->
 		</div>
@@ -113,6 +113,7 @@
 	/**
 	 * 按钮组件
 	 */
+	import { mapState } from 'vuex';
 	export default {
 		props: {
 			menuData: {
@@ -135,17 +136,19 @@
 			//监听购物车数据
 			shopCart() {
 				return this.$store.state.cartList;
+				// return Object.assign({},this.cartList);
 			},
 			//购买数量
 			count() {
-				let shopMenuList = this.shopCart[this.menuData['shopAuthenticateId']],
+				let shopMenuList = this.$store.state.cartList,
 					count = 0;
-				if(shopMenuList) {
-					shopMenuList['detailList'].forEach((item, arr) => {
+				console.log('执行了');
+				if(shopMenuList.length > 0) {
+					for(let item of shopMenuList) {
 						if(item['goodsId'] == this.menuData['goodsId']) {
 							count += item['goodsNum'];
 						}
-					})
+					}
 					return count;
 				}
 				return count;
@@ -164,6 +167,10 @@
 		methods: {
 			//删除商品
 			delMenu() {
+				let delData = {
+					goodsId: this.menuData['goodsId'],
+					shopAuthenticateId: this.menuData['shopAuthenticateId']
+				}
 				if((this.menuData['sku'] && this.menuData['sku'].length > 1) || this.goodsAttribute.length > 0) {
 					if(this.count > 1) {
 						this.$toast('多规格商品只能在购物车删除');
@@ -171,7 +178,7 @@
 						console.log('数量只有1个多规格');
 					}
 				} else {
-					this.$store.commit('delShopCart', this.menuData);
+					this.$store.commit('delShopCart', delData);
 				}
 			},
 			//点击添加按钮

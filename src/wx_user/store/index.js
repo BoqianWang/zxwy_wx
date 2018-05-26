@@ -7,7 +7,7 @@ const store = new Vuex.Store({
 	state: {
 		addressInfo: '',
 		editAddressInfo: null,
-		cartList: {}
+		cartList: [],
 	},
 	mutations: {
 		/**
@@ -33,27 +33,42 @@ const store = new Vuex.Store({
 		 * @param {[type]} state [description]
 		 * @param {[type]} info  [description]
 		 */
-		addShopCart(state, info) {
-			let cartList = state.cartList,
-				shopAuthenticateId = info['shopAuthenticateId'];
-			if(cartList[shopAuthenticateId]) {
-				for(let item of cartList[shopAuthenticateId]['detailList']) {
+		addShopCart(state, info) { 
+			let arrList = state.cartList,
+				shopCart = {};
+			if(arrList.length > 0) {
+				for(let item of arrList) {
 					if(item['skuId'] == info['skuId'] && item['goodsTaste'] == info['goodsTaste']) {
 						item['goodsNum']++;
-						Tools.setLocalStorage('shopCart', cartList);
+						shopCart[info['shopAuthenticateId']] = arrList;
+						Tools.setLocalStorage('shopCart', shopCart);
 						return;
 					}
 				}
-				cartList[shopAuthenticateId]['detailList'].push(info);
-			} else {
-			   cartList[shopAuthenticateId] = {
-			   	   detailList: [
-			   	   	 info
-			   	   ]
-			   }
 			}
-			state.cartList = cartList;
-		    Tools.setLocalStorage('shopCart', cartList);
+			arrList.push(info);
+			shopCart[info['shopAuthenticateId']] = arrList;
+			Tools.setLocalStorage('shopCart', shopCart);
+			// let cartList = state.cartList,
+			// 	shopAuthenticateId = info['shopAuthenticateId'];
+			// if(cartList[shopAuthenticateId]) {
+			// 	for(let item of cartList[shopAuthenticateId]['detailList']) {
+			// 		if(item['skuId'] == info['skuId'] && item['goodsTaste'] == info['goodsTaste']) {
+			// 			item['goodsNum']++;
+			// 			Tools.setLocalStorage('shopCart', cartList);
+			// 			return;
+			// 		}
+			// 	}
+			// 	cartList[shopAuthenticateId]['detailList'].push(info);
+			// } else {
+			//    cartList[shopAuthenticateId] = {
+			//    	   detailList: [
+			//    	   	 info
+			//    	   ]
+			//    }
+			// }
+			// state.cartList = cartList;
+		 //    Tools.setLocalStorage('shopCart', cartList);
 
 		},
 		/**
@@ -63,24 +78,21 @@ const store = new Vuex.Store({
 		 * @return {[type]}       [description]
 		 */
 		delShopCart(state, info) {
-			let cartList = state.cartList,
-				shopAuthenticateId = info['shopAuthenticateId'];
-			if(cartList[shopAuthenticateId]) {
-				let arrList = cartList[shopAuthenticateId]['detailList'];
-				for(let i = arrList.length; i < 0; i--) {
-					if(item['goodsId'] == info['goodsId']) {
+			let arrList = state.cartList,
+				shopCart = {};
+			for(let i = arrList.length - 1; i >= 0; i--) {
+				let item = arrList[i]
+				if(item['goodsId'] == info['goodsId']) {
+					if(item['goodsNum'] > 0) {
 						item['goodsNum']--;
-						if(item['goodsNum'] <= 0) {
-							arrList.splice(i, 1);
-						}
-						break;
+					} else {
+						arrList.splice(i, 1);
 					}
 				}
 			}
-
-			// state.cartList = cartList;
-			console.log(arrList);
-			// Tools.setLocalStorage('shopCart', cartList);
+			shopCart[info['shopAuthenticateId']] = arrList;
+			Tools.setLocalStorage('shopCart', shopCart);
+			// console.log(arrList, goodsId)
 		},
 		/**
 		 * 初始化购物车
@@ -88,11 +100,12 @@ const store = new Vuex.Store({
 		 * @param  {[type]} info  [description]
 		 * @return {[type]}       [description]
 		 */
-		initShopCart(state) {
+		initShopCart(state, id) {
 			if(Tools.getLocalStorage('shopCart')) {
-				state.cartList = Tools.getLocalStorage('shopCart');
+				state.cartList = Tools.getLocalStorage('shopCart')[id];
+			} else {
+				state.cartList = []
 			}
-			console.log(state.cartList);
 		},
 
 	}
