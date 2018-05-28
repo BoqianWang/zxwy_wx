@@ -141,15 +141,17 @@
 						</section>
 					</div>
 					<footer class="shop-cart align-justify rel flex-box" style="z-index: 3333;">
-						<div class="shop-cart-icon text-center abs" @click="showShopCartDetail">
-							<mt-badge class="abs cart-tips" type="error" size="small">3</mt-badge>
+						<div class="shop-cart-icon text-center abs" :class="{'empty-cart': shopCartDetail['count'] <= 0}" @click="showShopCartDetail">
+							<mt-badge class="abs cart-tips" type="error" size="small" v-if="shopCartDetail['count'] > 0">
+								{{shopCartDetail['count']}}
+						    </mt-badge>
 							<span class="iconfont icon-cart white-f"></span>
 						</div>
 						<div class="shop-cart-money">
-							<p class="white-f">¥11</p>
-							<p class="color-9 addtion-money">另需要配送费5元</p>
+							<p class="white-f" v-show="shopCartDetail['money'] > 0">¥{{shopCartDetail['money']}}</p>
+							<p class="color-9 addtion-money">另需要配送费{{shopInfo['expressFee']}}元</p>
 						</div>
-						<div class="color-9 text-center shop-cat-pay to-pay">
+						<div class="white-f text-center shop-cat-pay to-pay" :class="{'cano-to-pay': shopCartDetail['count'] <= 0}" @click="toPay(shopCartDetail['count'] > 0)">
 							<span>去结算</span>
 							<!-- <span>¥20起送</span> -->
 						</div>
@@ -250,13 +252,23 @@
 				<div class="popup-shop-detail popup-short-cat font-15">
 					<div class="p-ten flex-box justify-s-b p-short-c-t">
 						<p class="color-3 font-b">已选商品</p>
-						<p class="color-7">
+						<p class="color-7" @click="clearShopCart">
 							<span class="iconfont icon-delete"></span>
 							<span>清空</span>
 						</p>
 					</div>
 					<div class="short-cart-block p-l-ten p-r-ten ">
-						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
+						<li v-for="item in shopCartDetail['list']" class="flex-box align-center justify-s-b p-t-ten p-b-ten">
+							<div>
+								<p>{{item['goodsName']}}</p>
+								<span class="font-12 color-9">{{item['goodsTaste']}}</span>
+							</div>
+							<span>
+								<span class="moeny price">¥{{item['discountPrice']}}</span>
+								<shopCartAddMenu :menu-data-detail="item"></shopCartAddMenu>
+							</span>
+						</li>
+						<!-- <li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
 							<div>
 								<p>小锅焖面</p>
 								<span class="font-12 color-9">加辣/大份/</span>
@@ -265,62 +277,12 @@
 								<span class="moeny price">¥38.5</span>
 								<add-menu></add-menu>
 							</span>
-						</li>
-						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
-							<div>
-								<p>小锅焖面</p>
-								<span class="font-12 color-9">加辣/大份/</span>
-							</div>
-							<span>
-								<span class="moeny price">¥38.5</span>
-								<add-menu></add-menu>
-							</span>
-						</li>
-						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
-							<div>
-								<p>小锅焖面</p>
-								<span class="font-12 color-9">加辣/大份/</span>
-							</div>
-							<span>
-								<span class="moeny price">¥38.5</span>
-								<add-menu></add-menu>
-							</span>
-						</li>
-						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
-							<div>
-								<p>小锅焖面</p>
-								<span class="font-12 color-9">加辣/大份/</span>
-							</div>
-							<span>
-								<span class="moeny price">¥38.5</span>
-								<add-menu></add-menu>
-							</span>
-						</li>
-						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
-							<div>
-								<p>小锅焖面</p>
-								<span class="font-12 color-9">加辣/大份/</span>
-							</div>	
-							<span>
-								<span class="moeny price">¥38.5</span>
-								<add-menu></add-menu>
-							</span>
-						</li>
-						<li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
-							<div>
-								<p>小锅焖面</p>
-								<span class="font-12 color-9">加辣/大份/</span>
-							</div>
-							<span>
-								<span class="moeny price">¥38.5</span>
-								<add-menu></add-menu>
-							</span>
-						</li>
+						</li> -->
 					</div>
 					<p class="p-t-ten" style="background: #F9F9F9;"></p>
 					<div class="flex-box align-center justify-s-b p-ten">
 						<p>打包盒</p>
-						<p class="price p-r-ten">¥3</p>
+						<p class="price p-r-ten">¥{{shopCartDetail['boxPrice']}}</p>
 					</div>
 				</div>
 			</mt-popup>
@@ -430,30 +392,33 @@
 		 .to-pay {
 		 	background: linear-gradient(left, #FFB911, $mainColor);
 		 	background: -webkit-linear-gradient(left, #FFB911, $mainColor);
-		 	color: #fff;
+		 }
+		 .cano-to-pay {
+		 	color: #999;
+		 	background: none;
 		 }
 		 .cart-tips {
 		 	right: -.04rem;
 		 	top: 0;
 		 }
-	}
-	.shop-cart .shop-cart-icon {
-		height: .5rem;
-		width: .5rem;
-		background: #FF771A;
-		border-radius: 50%;
-		left: .1rem;
-		top: -.1rem;
-		.icon-cart {
-			font-size: .24rem;
-			line-height: .5rem;
-			font-weight: bold;
+		.shop-cart-icon {
+			height: .5rem;
+			width: .5rem;
+			background: #FF771A;
+			border-radius: 50%;
+			left: .1rem;
+			top: -.1rem;
+			.icon-cart {
+				font-size: .24rem;
+				line-height: .5rem;
+				font-weight: bold;
+			}
 		}
-	}
-	.shop-cart .empty-cart {
-		background: #EEE;
-		.icon-cart {
-			color: #777;
+		.empty-cart {
+			background: #EEE;
+			.icon-cart {
+				color: #777;
+			}
 		}
 	}
 	.takeout-wrap {
@@ -585,10 +550,12 @@
 </style>
 <script>
 	import addMenu from './children/addMenu.vue';
+	import shopCartAddMenu from './children/shopCartAddMenu.vue';
 	import fetch from '@/config/fetch.js';
 	export default {
 		components: {
-		    addMenu
+		    addMenu,
+		    shopCartAddMenu
 		},
 		data() {
 			return {
@@ -614,13 +581,39 @@
 		},
 		created() {
 			this.$store.commit('initShopCart', this.params['shopAuthenticateId']);
-
+		},
+		computed: {
+			//购物车详细信息
+			shopCartDetail() {
+				return this.$store.getters.shopCartDetail;
+			}
 		},
 		methods: {
+			//清空购物车
+			clearShopCart() {
+				this.$store.commit('clearShopCart');
+				this.shopCartVisible = !this.shopCartVisible;
+			},
+			//去结算
+			toPay(type) {	
+				if(type) {
+					this.$router.push({
+						path: '/takeout/takeOutOrder',
+						query: {
+							shopAuthenticateId: this.params['shopAuthenticateId']
+						}
+					})
+				}
+			},
+			//显示商家信息
 			showShopDetial() {
 				this.popupVisible = !this.popupVisible;
 			},
+			//显示购物车商品
 			showShopCartDetail() {
+				if(this.shopCartDetail['count'] <= 0) {
+					return
+				}
 				this.shopCartVisible = !this.shopCartVisible;
 			},
 			init() {
@@ -658,6 +651,7 @@
 			getTakeOutShop() {
 				fetch.fetchPost('/index/v3.2/toBizPage', this.params).then(res => {
 					this.shopInfo = res.data;
+					Tools.setLocalStorage('shopInfo', this.shopInfo);
 					this.shopInfo['distributionTime'] = JSON.parse(this.shopInfo['distributionTime']);
 				}).catch(res => {
 

@@ -4,8 +4,8 @@
 			<ul>
 				<li class="p-l-ten p-r-ten bg-white address-list" v-for="item in addressList">
 					<div class="p-t-ten p-b-ten flex-box align-center justify-s-b address-list-block">
-						<div class="flex-box align-center">
-							<span class="circle m-r-ten"></span>
+						<div class="flex-box align-center" @click="confirmAddress(item)">
+							<span class="circle m-r-ten iconfont" :class="{'icon-selected': address['recipientId'] == item['recipientId']}"></span>
 							<div class="font-15 address-wrap">
 								<p class="color-3 text_over">{{item.recipientAddress}}
 								{{ item.houseNumber ? item.houseNumber : ''}}</p>
@@ -18,10 +18,9 @@
 						<span class="iconfont icon-edit p-r-ten color-9" @click="editAddress(item)"></span>
 					</div>
 				</li>
-				<li class="p-l-ten p-r-ten bg-white address-list">
+				<!-- <li class="p-l-ten p-r-ten bg-white address-list">
 					<div class="p-t-ten p-b-ten flex-box align-center justify-s-b address-list-block">
 						<div class="flex-box align-center">
-							<!-- <span class="circle m-r-ten"></span> -->
 							<span class="circle m-r-ten iconfont icon-selected"></span>
 							<div class="font-15 address-wrap">
 								<p class="color-3 text_over">深圳市罗湖区中民时代广场B座2013楼胜多负少的</p>
@@ -33,7 +32,7 @@
 						</div>
 						<span @click="addAddress" class="iconfont icon-edit p-r-ten color-9"></span>
 					</div>
-				</li>
+				</li> -->
 			</ul>
 		</div>
 		<footer class="add-address bg-white text-center" @click="addAddress">
@@ -102,13 +101,19 @@
 	export default {
 		data() {
 			return {
-				addressList: {}
+				addressList: {},
+				address: Tools.getLocalStorage('address') || {}
 			}
 		},
 		mounted() {
 			this.getAddressList();
 		},
 		methods: {
+			//确定收货地址
+			confirmAddress(info) {
+				Tools.setLocalStorage('address', info);
+				this.$router.go(-1);
+			},
 			//编辑收货地址
 			editAddress(info) {
 				this.$store.commit('editAddress', info);

@@ -74,7 +74,7 @@
 		 * @param {[type]} num   精确多少位   可填(默认两位)
 		 */
 		ToCurrency: function(money, num = 2) {
-			return parseFloat(money).toFixed(num);
+			return parseFloat(parseFloat(money).toFixed(num));
 		},
 
 		/**

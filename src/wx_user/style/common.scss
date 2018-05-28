@@ -39,6 +39,9 @@ html,body{
 .align-center {
   align-items: center;
 }
+.justify-center {
+  justify-content: center;
+}
 .justify-s-b {
   justify-content: space-between;
 }
@@ -153,4 +156,8 @@ html,body{
 .tips-intergral:before {
   content: "积";
   background: #FFC000;
+} 
+.tips-server:before {
+  content: "清";
+  background: #de2121;
 } 

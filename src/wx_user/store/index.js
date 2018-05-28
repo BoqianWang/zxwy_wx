@@ -9,6 +9,28 @@ const store = new Vuex.Store({
 		editAddressInfo: null,
 		cartList: [],
 	},
+	getters: {
+		/**
+		 * 计算购物车金额
+		 * @param  {[type]} state [description]
+		 * @return {[type]}       [description]
+		 */
+		shopCartDetail(state) {
+			let detail = {},
+				cartList = state.cartList;
+			detail['list'] = cartList;
+			detail['count'] = 0;
+			detail['money'] = 0;
+			detail['boxPrice'] = 0;
+			for(let item of cartList) {
+				detail['count'] += item['goodsNum'];
+				detail['money'] += item['goodsNum'] * item['discountPrice'];
+				detail['boxPrice'] += item['goodsNum'] * item['boxNum'] * item['boxPrice'];
+			}
+			detail['money'] = Tools.ToCurrency(detail['money'] + detail['boxPrice']);
+			return detail;
+		}
+	},
 	mutations: {
 		/**
 		 * 当前选择的地址
@@ -49,26 +71,6 @@ const store = new Vuex.Store({
 			arrList.push(info);
 			shopCart[info['shopAuthenticateId']] = arrList;
 			Tools.setLocalStorage('shopCart', shopCart);
-			// let cartList = state.cartList,
-			// 	shopAuthenticateId = info['shopAuthenticateId'];
-			// if(cartList[shopAuthenticateId]) {
-			// 	for(let item of cartList[shopAuthenticateId]['detailList']) {
-			// 		if(item['skuId'] == info['skuId'] && item['goodsTaste'] == info['goodsTaste']) {
-			// 			item['goodsNum']++;
-			// 			Tools.setLocalStorage('shopCart', cartList);
-			// 			return;
-			// 		}
-			// 	}
-			// 	cartList[shopAuthenticateId]['detailList'].push(info);
-			// } else {
-			//    cartList[shopAuthenticateId] = {
-			//    	   detailList: [
-			//    	   	 info
-			//    	   ]
-			//    }
-			// }
-			// state.cartList = cartList;
-		 //    Tools.setLocalStorage('shopCart', cartList);
 
 		},
 		/**
@@ -82,8 +84,10 @@ const store = new Vuex.Store({
 				shopCart = {};
 			for(let i = arrList.length - 1; i >= 0; i--) {
 				let item = arrList[i]
-				if(item['goodsId'] == info['goodsId']) {
-					if(item['goodsNum'] > 0) {
+				if(item['skuId'] == info['skuId'] 
+					&& (item['goodsTaste'] == info['goodsTaste'] 
+					|| info['num'] == 1)) {
+					if(item['goodsNum'] > 1) {
 						item['goodsNum']--;
 					} else {
 						arrList.splice(i, 1);
@@ -93,6 +97,15 @@ const store = new Vuex.Store({
 			shopCart[info['shopAuthenticateId']] = arrList;
 			Tools.setLocalStorage('shopCart', shopCart);
 			// console.log(arrList, goodsId)
+		},
+		/**
+		 * 清空购物车
+		 * @param  {[type]} state [description]
+		 * @return {[type]}       [description]
+		 */
+		clearShopCart(state) {
+			state.cartList = [];
+			Tools.clearLocalStorage('shopCart');
 		},
 		/**
 		 * 初始化购物车

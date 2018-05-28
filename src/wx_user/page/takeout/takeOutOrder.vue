@@ -3,19 +3,25 @@
 		<!-- 头部 -->
 		<div class="order-title-wrap res">
 			<div class="abs order-address bg-white">
-				<div class="text-center p-t-ten p-r-ten p-l-ten rel">
-					<div class='a-detail p-b-ten color-3 iconfont icon-more'>
-						<p class="font-15">广东省深圳市罗湖区笋岗路中民时代广场B座2103楼顾客王科技有限公司</p>
+				<div class="text-center p-r-ten p-l-ten rel order-title flex-box align-center justify-center" @click="changeAddress">
+					<div  v-show="address.recipientAddress" class='a-detail color-3 iconfont icon-more'>
+						<p class="font-15">{{address.recipientAddress + address.houseNumber}}</p>
 						<p class="p-t-ten font-12">
-							<span>小仙女</span>
-							<span>18924298846</span>
+							<span>{{address.recipientName}}</span>
+							<span>{{address.recipientPhone}}</span>
 						</p>
+					</div>
+					<div class="add-address" v-show="!address.recipientAddress">
+						<div class="add-address-wrap color-main">
+							<span class="iconfont icon-add font-b"></span>
+							<span class="font-15">新增收货地址</span>
+						</div>
 					</div>
 				</div>
 				<div class="p-ten flex-box align-center justify-s-b send">
 					<div class="font-15">
 						<span class="color-3">立即送出</span>
-						<span class="color-main">(大约12:34送达)</span>
+						<span class="color-main">(大约{{shopInfo['expectTime']}}分钟后送达)</span>
 					</div>
 					<span class="iconfont icon-more font-15"></span>
 				</div>
@@ -25,11 +31,23 @@
 		<div class="order-container p-r-ten p-l-ten">
 			<div class="bg-white">
 				<div class="p-ten order-shop flex-box align-center">
-					<div class="shop-img m-r-ten" style="background-image: url(https://fuss10.elemecdn.com/e/7d/9854d2f95050092a008b4e3ee29e6png.png?imageMogr/format/webp/thumbnail/!130x130r/gravity/Center/crop/130x130/);"></div>
-					<p class="color-7 font-18">九毛九(华强茂业店)</p>
+					<div class="shop-img m-r-ten" :style="'background-image: url(' + shopInfo['shopLogo'] + ');'"></div>
+					<p class="color-7 font-18 text_over flex-1">{{shopInfo['shopName']}}</p>
 				</div>
 				<div class="menu-wrap">
-					<li class="flex-box menu-list justify-s-b p-l-ten p-r-ten m-b-ten">
+					<li v-for="item in shopCartDetail['list']" class="flex-box menu-list justify-s-b p-l-ten p-r-ten m-b-ten">
+						<div class="flex-box">
+							<p class="menu-img" :style="'background-image: url(' + item['goodsPic'] + ');'">
+							</p>
+							<p class="p-l-ten flex-box menu-detail">
+								<span class="font-15 color-3">{{item['goodsName']}}</span>
+								<span class="font-12 color-9">{{item['goodsTaste']}}</span>
+								<span class="font-12 color-9">{{item['goodsNum']}}份</span>
+							</p>
+						</div>
+						<p class="font-15 color-3 p-r-ten">¥{{item['goodsNum'] * item['discountPrice']}}</p>
+					</li>
+					<!-- <li class="flex-box menu-list justify-s-b p-l-ten p-r-ten m-b-ten">
 						<div class="flex-box">
 							<p class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
 							</p>
@@ -40,31 +58,7 @@
 							</p>
 						</div>
 						<p class="font-15 color-3 p-r-ten">¥42</p>
-					</li>
-					<li class="flex-box menu-list justify-s-b p-l-ten p-r-ten m-b-ten">
-						<div class="flex-box">
-							<p class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-							</p>
-							<p class="p-l-ten flex-box menu-detail">
-								<span class="font-15 color-3">小锅焖面</span>
-								<span class="font-12 color-9">小/微辣/不要葱花</span>
-								<span class="font-12 color-9">1份</span>
-							</p>
-						</div>
-						<p class="font-15 color-3 p-r-ten">¥42</p>
-					</li>
-					<li class="flex-box menu-list justify-s-b p-l-ten p-r-ten m-b-ten">
-						<div class="flex-box">
-							<p class="menu-img" style="background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1526031684705&di=07454173311abceebfdd3c1578fa0527&imgtype=0&src=http%3A%2F%2Fpic9.photophoto.cn%2F20081110%2F0042040253000423_b.jpg);">
-							</p>
-							<p class="p-l-ten flex-box menu-detail">
-								<span class="font-15 color-3">小锅焖面</span>
-								<span class="font-12 color-9">小/微辣/不要葱花</span>
-								<span class="font-12 color-9">1份</span>
-							</p>
-						</div>
-						<p class="font-15 color-3 p-r-ten">¥42</p>
-					</li>
+					</li> -->
 				</div>
 				<div class="show-hide m-b-ten p-ten">
 					<span class="color-3 font-15 rel iconfont icon-moreunfold">点击展开</span>
@@ -73,11 +67,11 @@
 				<div class="p-l-ten p-r-ten p-t-ten font-12 color-3">
 					<p class="flex-box justify-s-b p-b-ten">
 						<span>包装费</span>
-						<span>¥4</span>
+						<span>¥{{shopCartDetail['boxPrice']}}</span>
 					</p>
 					<p class="flex-box justify-s-b">
 						<span>配送费</span>
-						<span>¥5</span>
+						<span>¥{{shopInfo['expressFee']}}</span>
 					</p>
 				</div>
 				<!-- 分割线 -->
@@ -89,32 +83,40 @@
 				<div class="p-r-ten p-l-ten">
 					<p class="flex-box justify-s-b p-b-ten align-center font-12">
 						<span>
-							<span class="white-f tips">积</span>
+							<span class="tips-intergral tips"></span>
 							<span>积分抵扣</span>
 						</span>
-						<span>-¥ 4.0</span>
+						<span>-¥ {{integral['discount']}}</span>
 					</p>
-					<p class="flex-box justify-s-b p-b-ten align-center font-12">
+					<!-- <p class="flex-box justify-s-b p-b-ten align-center font-12">
 						<span>
-							<span class="white-f tips" style="background: #9CDE56;">首</span>
+							<span class="tips-first tips"></span>
 							<span>首减</span>
 						</span>
 						<span>-¥ 0.5</span>
+					</p> -->
+					<p class="flex-box justify-s-b p-b-ten align-center font-12">
+						<span>
+							<span class="tips-sub tips"></span>
+							<span>满减</span>
+						</span>
+						<span>-¥ {{moneyOff['discount']}}</span>
 					</p>
 					<p class="flex-box justify-s-b p-b-ten align-center font-12">
 						<span>
-							<span class="white-f tips" style="background: #FF6E15;">减</span>
-							<span>满减</span>
+							<span class="tips-server tips"></span>
+							<span>清分费</span>
 						</span>
-						<span>-¥ 0.5</span>
+						<span>+¥ {{serverMoney}}</span>
 					</p>
-					<div class="flex-box align-center justify-s-b m-t-ten">
+					<div class="flex-box align-center justify-s-b m-t-ten" v-if="voucherNum > 0" @click="showVoucher('voucher')">
 						<div class="font-15">
-							<span class="white-f tips font-12" style="background: #FC6A6A;">券</span>
+							<span class="tips-ticket tips"></span>
 							<span class="color-3">代金券</span>
 						</div>
 						<div class="font-15">
-							<span class="white-f tips" style="background: #FF6E15;">2张可用</span>
+							<span v-if="voucher['discount']" class="color-main">-¥ {{voucher['discount']}}</span>
+							<span v-else class="white-f tips p-l-ten p-r-ten" style="background: #FF6E15;">{{voucherNum}}张可用</span>
 							<span class="iconfont icon-more"></span>
 						</div>
 					</div>
@@ -126,17 +128,19 @@
 					<span class="circle"></span>
 				</div>
 				<div class="p-l-ten p-r-ten p-b-ten flex-box align-center justify-s-b">
-					<span class="color-9 font-12">已优惠5元</span>
+					<!-- <span class="color-9 font-12">已优惠5元</span> -->
+					<span></span>
 					<p class="font-15">
 						小计
-						<span class="acount-money">¥188.5</span>
+						<span class="acount-money">¥{{surePayMoney}}</span>
 					</p>
 				</div>
 			</div>
 			<!-- 备注 -->
-			<div class="m-t-ten remark">
+			<div class="m-t-ten remark" @click="showVoucher('remark')">
 				<mt-cell title="备注" is-link>
-				  <span class="font-15">口味,偏好等要求</span>
+				  <p class="text_over" style="width: 2rem; text-align: right;" v-if="remark">{{remark}}</p>
+				  <p v-else class="font-15">口味,偏好等要求</p>
 				</mt-cell>
 			</div>
 		</div>
@@ -144,21 +148,46 @@
 		<footer class="order-footer">
 			<div class="flex-box">
 				<div class="font-12 flex-1 color-9 p-l-ten p-r-ten flex-box justify-s-b">
-					<span>已优惠5元</span>
+					<span>已优惠{{allDiscount}}元</span>
 					<span>
 						合计
-						<span class="white-f font-18">¥188.5</span>
+						<del>¥{{money}}</del>
+						<span class="white-f font-18">¥{{surePayMoney}}</span>
 					</span>
 				</div>
-				<p class="order-sumbit white-f text-center font-15">
+				<p class="order-sumbit white-f text-center font-15" @click="commitOrder">
 					提交订单
 				</p>
 			</div>
 		</footer>
+
+		<voucher ref="voucher" 
+		:voucher-list="voucherList" 
+		:shop-info="shopInfo" 
+		:current-money="shopCartDetail['money']" 
+		@voucherCount="voucherCountHandle"
+		@choseVocher="choseVocherHandle"></voucher>
+
+		<remark ref="remark" 
+		@remarkHandle="remarkHandle"></remark>
 	</div>
 </template>
 <style scoped lang="scss">
 	@import "../../style/mixin";
+	.menu-wrap {
+
+	}
+	.add-address {
+		/*padding: .2rem 0;*/
+		.add-address-wrap {
+			/*margin: 0 auto;*/
+			width: 2rem;
+			height: .4rem;
+			border:1px solid $mainColor;
+			line-height: .4rem;
+			border-radius: .2rem;
+		}
+	}
 	.order-footer {
 		position: fixed;
 		bottom: 0;
@@ -180,10 +209,10 @@
 	.acount-money {
 		color: #FF2618;
 	}
-	.tips {
+	/*.tips {
 		padding: .02rem .04rem;
 		background: #FFC000;
-	}
+	}*/
 	.inline {
 		.circle {
 			width: .1rem;
@@ -259,11 +288,13 @@
 			left: 50%;
 			transform: translate3d(-50%, 0, 0);
 			box-shadow: 0 1px 8px 0 #eee;
-			.a-detail {
+			.order-title {
+				min-height: 1rem;
 				border-bottom: 1px solid #eee;
 			}
 		}
 	}
+
 	.a-detail.icon-more:before {
 		position: absolute;
 		top: 50%;
@@ -281,17 +312,252 @@
 	}
 </style>
 <script>
+	import fetch from '@/config/fetch.js';
+	import voucher from '@/components/voucher.vue';
+	import remark from './children/takeoutorder/remark.vue';
+	import brower from '@/config/browser';
 	export default {
+		components: {
+			voucher,
+			remark
+		},
 		data() {
 			return {
+				remark: '',
+				address: Tools.getLocalStorage('address') || {},
+				shopInfo: Tools.getLocalStorage('shopInfo') || {},
+				shopAuthenticateId: this.$route.query.shopAuthenticateId,
+				params: {
+				},
+				//代金券列表
+				voucherList: [],
+				//可用代金券数量
+				voucherNum: 0,
+				//选中代金券
+				voucher: {
 
+				},
+				//代金券列表
+				moneyOffGather: {},
+				//选中的满减
+				moneyOff: {},
+				//总金额
+				money: 0,
+				//个人积分
+				personalIntegral: {},
+				integral: {
+					discount: 0
+				},
+				//清风费
+				serverMoney: 0,
+				//支付方式
+				paymentMode: '',
+				paytype: brower.IsWeixinOrAlipay() == 'false' ? 'Alipay' : brower.IsWeixinOrAlipay(),
+				//获取提示
+				errorMessage: ''
+			}
+		},
+		created() {
+			this.$store.commit('initShopCart', this.shopAuthenticateId);
+		},
+		computed: {
+			shopCartDetail() {
+				return this.$store.getters.shopCartDetail;
+			},
+			surePayMoney() {
+				this.money = this.shopCartDetail['money'] + this.shopInfo['expressFee']
+				let surePay = this.money;
+
+				this.moneyOff = this.canUserMoneyOff(surePay, this.moneyOffGather['activitys']);
+				//满减
+				if(this.moneyOff['discount']) {
+					surePay -= this.moneyOff['discount']; 
+				}
+				//代金券
+				if(this.voucher['discount']) {
+					surePay -= this.voucher['discount'];
+				} else {
+					this.voucher['discount'] = 0;
+				}
+
+				surePay = Tools.ToCurrency(surePay, 2);
+
+				if(surePay <= 0) {
+					surePay = 0;
+				}
+				// 积分
+				if(this.personalIntegral['integral'] > 0 && surePay > 0) {
+					if(surePay >= this.personalIntegral['integral']) {
+						surePay -= this.personalIntegral['integral'];
+						this.integral['discount'] = this.personalIntegral['integral'];
+					} 
+					else {
+						this.integral['discount'] = surePay;
+						// this.$set(this.integral, 'count', surePay);
+						surePay = 0;
+					}
+				}
+				//清风费
+				this.serverMoney = this.calculateServerMoney(this.integral['discount'], this.voucher['discount'], this.shopInfo);
+
+				surePay += this.serverMoney;
+				this.allDiscount = Tools.ToCurrency(this.money - surePay + this.serverMoney);
+				return surePay;
 			}
 		},
 		mounted() {
-
+			this.getIntegral();
+			this.getMoneyOffList();
+			this.getVoucherList();
 		},
 		methods: {
+			remarkHandle(work) {
+				this.remark = work;
+			},
+			//计算清风费
+			calculateServerMoney(integralDiscount, voucherDiscount, shopInfo) {
+				let serverMoney = integralDiscount + voucherDiscount,
+					calServerMoney = 0;
+				if(shopInfo['serviceFeeObject'] == 0 && serverMoney >= shopInfo['standardFee']) {
+					if(shopInfo['marketType'] == 0) {
+						calServerMoney = parseFloat(shopInfo['serviceRate']);
+					} 
+					else if(shopInfo['marketType'] == 1) {
+						calServerMoney = (parseFloat(shopInfo['serviceRate']) * serverMoney).toFixed(2);
+					}
+				} else {
+					calServerMoney = 0;
+				}
+				return calServerMoney;
+			},
+			getMoneyOffList() {
+				for(let item of this.shopInfo['activitysList']) {
+					// 满减
+					if(item.activityType == 0) {
+						this.moneyOffGather = item;
+					}
+				}
+			},
+			// 监听适合的满减活动
+			canUserMoneyOff(currentMoney, moneyOffLsit) {
+				let moneyOff = {};
+				if(moneyOffLsit) {
+					for(let item of moneyOffLsit) {
+						if(currentMoney >= item.fullMoney ) {
+							if(moneyOff.discount) {
+								if(moneyOff.discount < item.discount) {
+									moneyOff = item;
+								}
+							}else{
+								moneyOff = item;
+							}
+						}
+					}
+				}
+				return moneyOff;
+			},
+			//选择使用的代金券
+			choseVocherHandle(info) {
+				this.voucher = info;
+			},
+			//获取可用代金券数量
+			voucherCountHandle(count) {
+				this.voucherNum = count;
+			},
+			orderData() {
+				if(!this.address['recipientId']) {
+					this.errorMessage = '请填写收货地址';
+					return;
+				}
+					//积分抵扣金额
+				let deductedCost = this.integral['discount'] || 0,
+					//总优惠
+					discount = Tools.ToCurrency(this.allDiscount - deductedCost),
+					activityId = this.moneyOff['activityId'] || '',
+					activityBelong = this.moneyOffGather['activityBelong'] || '',
+					shareGiftsId = this.voucher['shareGiftsId'] || '',
+					receiveId = this.voucher['receiveId'] || '',
+					//支付方式
+					// paymentMode = this.paytype == 'WeiXin' ? 1 :  2,
+					paymentMode = 0,
+					//清风费
+					marketFee = this.serverMoney,
+					//订单明细
+					detailList = this.shopCartDetail['list'],
+					currentTime = (+new Date() + 1200 * 1000) / 1000,
+					addressId = this.address['recipientId'];
+				this.params = {
+					addressId: addressId,
+					expressFee: this.shopInfo['expressFee'],
 
+					expectTime: Tools.TimestampToDate('YYYY-M-D h:m:s', currentTime),
+					//配送方式
+					invoiced: 0,
+					wmRemark: this.remark,
+					bizId: this.shopInfo['bizId'],
+					originalCost: this.money,
+					actualCost: this.surePayMoney,
+					deductedCost: deductedCost,
+					discount: discount,
+					activityId: activityId,
+					activityBelong: activityBelong,
+					shareGiftsId: shareGiftsId,
+					shareGiftsId: shareGiftsId,
+					receiveId: receiveId,
+					paymentMode: paymentMode,
+					marketFee: marketFee,
+					detailList: detailList
+				};
+			},
+			//提交订单
+			commitOrder() {
+				this.orderData();
+				if(this.errorMessage) {
+					this.$toast(this.errorMessage);
+					return;	
+				}
+				fetch.fetchPost('/order/v3.2/takeawaySubmit', {
+					json: JSON.stringify(this.params)
+				}).then( res => {
+
+				}).catch(res => {
+
+				})
+			},
+			//选择代金券
+			showVoucher(type) {
+				if(type == 'voucher') {
+					this.$refs.voucher.showHidePopup();
+				} else if(type == 'remark') {
+					this.$refs.remark.showHidePopup();
+				}
+			},
+			//修改收货地址
+			changeAddress() {
+				this.$router.push({
+					path: '/takeout/addressList'
+				})
+			},
+			getIntegral() {
+				fetch.fetchPost('/personal/personalCenter', {
+
+				}).then(res => {
+					this.personalIntegral = res.data;
+				}).catch(res => {
+
+				})
+			},
+			//获取代金券
+			getVoucherList() {
+				fetch.fetchPost('personal/voucherList', {
+					pageNo: 1,
+					canUse: true
+				}).then(res => {
+					this.voucherList = res.data.lists;
+				}).catch(res => {
+
+				})
+			}
 		}
 	}
 </script>

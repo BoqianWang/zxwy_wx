@@ -1,8 +1,8 @@
 <template>
 	<div style="display: inline-block;">
 		<div class="flex-box add-menu text-center">
-			<p class="subtract iconfont icon-subtract" @click="delMenu"></p>
-			<p class="menu-num color-3">{{count}}</p>
+			<p class="subtract iconfont icon-subtract" v-show="count > 0" @click="delMenu"></p>
+			<p class="menu-num color-3" v-show="count > 0">{{count}}</p>
 			<p class="add iconfont icon-add white-f" @click="addMenu"></p>
 			<!-- <p @click="size">选规格</p> -->
 		</div>
@@ -50,9 +50,7 @@
 	</div>
 </template>
 <style scoped lang="scss">
-	@import '../../../style/mixin.scss';
-	@import '../../../style/iconfont/iconfont.css';
-	
+	@import '../../../style/mixin.scss';	
 	.add-menu {
 		align-items: center;
 	}
@@ -113,7 +111,6 @@
 	/**
 	 * 按钮组件
 	 */
-	import { mapState } from 'vuex';
 	export default {
 		props: {
 			menuData: {
@@ -129,7 +126,8 @@
 				specificationIndex: 0,
 				attributeIndexList: {},
 				goodsAttribute: [],
-
+				goodsTaste: '',
+				skuDetail: {}
 			}
 		},
 		computed: {
@@ -142,7 +140,6 @@
 			count() {
 				let shopMenuList = this.$store.state.cartList,
 					count = 0;
-				console.log('执行了');
 				if(shopMenuList.length > 0) {
 					for(let item of shopMenuList) {
 						if(item['goodsId'] == this.menuData['goodsId']) {
@@ -155,6 +152,7 @@
 			}
 		},
 		mounted() {
+			this.skuDetail = this.menuData['sku'][this.specificationIndex];
 			if(this.menuData['goodsAttribute'] && this.menuData['goodsAttribute'] != 'null') {
 				let re = /[^,/，]+/g;
 				this.goodsAttribute = JSON.parse(this.menuData['goodsAttribute']);
@@ -168,14 +166,16 @@
 			//删除商品
 			delMenu() {
 				let delData = {
-					goodsId: this.menuData['goodsId'],
+					skuId: this.skuDetail['skuId'],
+					goodsTaste: this.goodsTaste,
 					shopAuthenticateId: this.menuData['shopAuthenticateId']
 				}
 				if((this.menuData['sku'] && this.menuData['sku'].length > 1) || this.goodsAttribute.length > 0) {
 					if(this.count > 1) {
 						this.$toast('多规格商品只能在购物车删除');
 					} else {
-						console.log('数量只有1个多规格');
+						delData['num'] = 1;
+						this.$store.commit('delShopCart', delData);
 					}
 				} else {
 					this.$store.commit('delShopCart', delData);
@@ -183,11 +183,11 @@
 			},
 			//点击添加按钮
 			addMenu() {
+				
 				if((this.menuData['sku'] && this.menuData['sku'].length > 1) || this.goodsAttribute.length > 0) {
 					this.popupVisible = true;
 				} else {
-					let skuDetail = this.menuData['sku'][this.specificationIndex];
-					this.addCart(skuDetail, '');
+					this.addCart(this.skuDetail, '');
 				}
 				
 			},
@@ -197,22 +197,24 @@
 			},
 			//点击选好了
 			confirm() {
-				let skuDetail = this.menuData['sku'][this.specificationIndex],
-				attributeStr = [],
+				let attributeStr = [],
 				spec = '';
-				if(skuDetail['spec'] != null) {
-					spec = skuDetail['spec'];
+				this.skuDetail = this.menuData['sku'][this.specificationIndex];	
+				if(this.skuDetail['spec'] != null) {
+					spec = this.skuDetail['spec'];
 				}
 				for(let i in this.attributeIndexList) {
 					attributeStr.push(this.goodsAttribute[i]['value'][this.attributeIndexList[i]]);
 				}
-				this.addCart(skuDetail, `${spec},${attributeStr.join(',')}`);
+				this.goodsTaste = `${spec},${attributeStr.join(',')}`
+				this.addCart(this.skuDetail, this.goodsTaste);
 				this.popupVisible = false;
 			},
 			//添加购物车
 			addCart(skuDetail, goodsTaste) {
 				let params = {
 					shopAuthenticateId: this.menuData['shopAuthenticateId'],
+					goodsPic: this.menuData['goodsPic'],
 					goodsId: this.menuData['goodsId'],
 					skuId: skuDetail['skuId'],
 					goodsName: this.menuData['goodsName'],

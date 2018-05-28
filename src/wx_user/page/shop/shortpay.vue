@@ -71,11 +71,11 @@
 		        	<li v-for="info in voucherList" @click="choseVocherEevnt(2, info)">
 						<div class="voucher">
 							<div class="voucher-above white-f" :style="{background: info.isUserful == 1 ? '' : 'rgba(204,204,204,1)'}">
-								<p class="flex-box space-between above-title m-b-ten">
+								<p class="flex-box justify-s-b above-title m-b-ten">
 									<span>{{ info.voucherTitle }}</span>
 									<span>¥{{ info.discount }}</span>
 								</p>
-								<p class="flex-box space-between font-12">
+								<p class="flex-box justify-s-b font-12">
 									<span>{{ info.beginDateStr }}至{{ info.endDateStr }}</span>
 									<span>满{{ info.fullMoney }}可用</span>
 								</p>
@@ -90,11 +90,11 @@
 		        	<!-- <li>
 						<div class="voucher">
 							<div class="voucher-above white-f">
-								<p class="flex-box space-between above-title m-b-ten">
+								<p class="flex-box justify-s-b above-title m-b-ten">
 									<span>商家代金券</span>
 									<span>¥5</span>
 								</p>
-								<p class="flex-box space-between font-12">
+								<p class="flex-box justify-s-b font-12">
 									<span>2017-12-12至2017-01-12</span>
 									<span>满20可用</span>
 								</p>
@@ -133,12 +133,6 @@
 	.pay-body {
 		overflow: auto;
 	}
-
-	.space-between {
-		align-items: center; 
-		justify-content: space-between;
-	}
-
 
 	.shop-img {
 		justify-content: center;
@@ -360,8 +354,8 @@
 					activityBelong = this.moneyOffGather['activityBelong'] || '',
 					activityId = this.moneyOff['activityId'] || '',
 					//1表示微信, 2表示支付宝, 0表示余额
-					paymentMode = this.paytype == 'WeiXin' ? 1 :  2,
-					// paymentMode = 0,
+					// paymentMode = this.paytype == 'WeiXin' ? 1 :  2,
+					paymentMode = 0,
 					randomDisAmount = 0,
 					shareGiftsId = this.choseVocher['shareGiftsId'] || '',
 					receiveId = this.choseVocher['receiveId'] || '',
