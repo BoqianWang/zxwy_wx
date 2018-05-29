@@ -519,11 +519,87 @@
 				fetch.fetchPost('/order/v3.2/takeawaySubmit', {
 					json: JSON.stringify(this.params)
 				}).then( res => {
-
+					if(res.data.orderStatus == 2) {
+						this.paySuccess();
+					}
+					else if(res.data.orderStatus == 1) {
+						if(this.paytype == 'WeiXin') {
+							this.weixinPay(res.data.retMap);
+						}
+						else if(this.paytype == 'Alipay') {
+							 if(res.data.form) {
+				              const div = document.createElement('div');
+				              div.innerHTML = res.data.form;
+				              document.body.appendChild(div);
+				              document.forms.punchout_form.submit();
+				            } else {
+				              //支付宝浏览器api支付
+				              document.addEventListener('AlipayJSBridgeReady', this.tradePay(res.data.tradeNo), false);
+				            }
+						}
+					}
 				}).catch(res => {
-
+					this.$toast('')
 				})
 			},
+			paySuccess() {
+				this.$store.commit('clearShopCart');
+				this.$router.replace({
+					path: '/takeoutDetail',
+					query: {
+						orderId: '6ef8f6b3684c483491ca4d62b44ed2a5'
+					}
+				})
+			},
+			cancelPay() {
+
+			},
+			//支付宝支付
+		    tradePay(tradeNO) {
+		       AlipayJSBridge.call("tradePay", {
+		            tradeNO: tradeNO
+		       },  (data) => {
+		           if ("9000" == data.resultCode) {
+		               // this.paySuccess();
+		           } else {
+		               
+		           }
+		       });
+		    },
+			//微信支付
+			weixinPay(data){
+		        if (typeof WeixinJSBridge == "undefined") {//微信浏览器内置对象。参考微信官方文档
+		          if(document.addEventListener) {
+		            document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(data), false);
+		          }
+		          else if (document.attachEvent) {
+		            document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady(data));
+		            document.attachEvent('onWeixinJSBridgeReady',this.onBridgeReady(data));
+		          }
+		        } 
+		        else{
+		          this.onBridgeReady(data);
+		        }
+		      },
+		      onBridgeReady(data){
+		        WeixinJSBridge.invoke(
+		          'getBrandWCPayRequest',{
+		            "appId": data.appId,     //公众号名称，由商户传入
+		            "timeStamp": data.timeStamp, //时间戳，自1970年以来的秒数
+		            "nonceStr": data.nonceStr, //随机串
+		            "package": data.package,
+		            "signType": data.signType, //微信签名方式：
+		            "paySign": data.paySign //微信签名
+		          },(res) => {
+		            // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+		            if(res.err_msg == "get_brand_wcpay_request:ok"){
+		                  // this.paySuccess();
+		            }else{
+		               alert('没有成功')
+		            }
+		          }
+		        );
+		    },
 			//选择代金券
 			showVoucher(type) {
 				if(type == 'voucher') {

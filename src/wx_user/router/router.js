@@ -57,9 +57,11 @@ const addressList = r => require.ensure([], () => r(require('@/wx_user/page/take
 //添加收货地址
 const addAddress = r => require.ensure([], () => r(require('@/wx_user/page/takeout/children/addAddress.vue')), 'addAddress');
 //订单
-const orderlistNew = r => require.ensure([], () => r(require('@/wx_user/page/order/orderlistNew.vue')), 'orderlistNew');
+// const orderlistNew = r => require.ensure([], () => r(require('@/wx_user/page/order/orderlistNew.vue')), 'orderlistNew');
 //搜索地址
 const searchAddress = r => require.ensure([], () => r(require('@/wx_user/page/takeout/children/children/searchAddress.vue')), 'searchAddress');
+const takeoutDetail = r => require.ensure([], () => r(require('@/wx_user/page/order/takeoutDetail.vue')), 'takeoutDetail');
+
 // import newyouhui  from  '../page/my/youhui/newYouHui.vue'
 
 // const newShortpay = r => require.ensure([], () => r(require('../page/shop/newShortpay.vue')), 'newShortpay');
@@ -95,43 +97,78 @@ export default{
           title:'个人中心'
         }
       }]
-    },{
+    },
+    {
       path:'/orderdetail',
       component:orderdetail,
-      meta:{title:'订单详情'}
-    },{
+      meta:{
+        title:'订单详情'
+      }
+    },
+     {
+      path: '/takeoutDetail',
+      component: takeoutDetail,
+      meta:{
+        title: '外卖订单详情'
+      }
+    },
+    {
       path:'/login',
       component:login,
-      meta:{title:'登录'}
-    },{
+      meta:{
+        title:'登录'
+      }
+    },
+    {
       path:'/points',
       component:points,
-      meta:{title:'积分'}
-    },{
+      meta:{
+        title:'积分'
+      }
+    },
+    {
       path:'/youhui',
       component:youhuilist,
-      meta:{title:'我的优惠'}
-    },{
+      meta:{
+        title:'我的优惠'
+      }
+    },
+    {
       path:'/newyouhui',
       component:newyouhui,
-      meta:{title:'新用户领取代金券'}
-    },{
+      meta:{
+        title:'新用户领取代金券'
+      }
+    },
+    {
       path:'/wuxiaoYH',
       component:wuxiaoYH,
-      meta:{title:'无效优惠'}
-    },{
+      meta:{
+        title:'无效优惠'
+      }
+    },
+    {
       path: '/balance',
       component:balance,
-      meta:{title:'余额'}
-    },{
+      meta:{
+        title:'余额'
+      }
+    },
+    {
       path: '/settel',
       component:settel,
-      meta:{title:'绑定手机号'}
-    },{
+      meta:{
+        title:'绑定手机号'
+      }
+    },
+    {
       path: '/bizdetail',
       component:bizdetail,
-      meta:{title:'商家详情'}
-    },{
+      meta:{
+        title:'商家详情'
+      }
+    },
+    {
       path:'/pay',
       component:pay,
       children:[

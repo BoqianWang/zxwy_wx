@@ -99,7 +99,10 @@
 				<span class="color-3">距离优先</span>
 				<span>销量最高</span>
 			</div>
-			<div class="home-shop-list p-ten">
+			<div class="home-shop-list p-ten" 
+			infinite-scroll-disabled="loadding" 
+			infinite-scroll-distance="100"
+			v-infinite-scroll="loadMore">
 				<div class="shop-list-block flex-box p-t-ten p-b-ten" v-for="item in bizList">
 					<div class="block-list-img" :style="'background-image: url(' + item.shopLogo + ');'"></div>
 					<div class="p-l-ten flex-1">
@@ -350,10 +353,11 @@
 				],
 				address: '正在定位...',
 				params: {
-					longitude: '12'
+					pageNo: 1
 				},
 				industryList: {},
-				bizList: {}
+				bizList: [],
+				loadding: true
 			}
 		},
 		created() {
@@ -365,6 +369,12 @@
 			this.showHideAcitve();
 		},
 		methods: {
+			//加载更多
+			loadMore() {
+				// this.loadding = false;
+				// this.params['pageNo']++;
+				// this.getIndexList();
+			},
 			// 点击跳转
 			toLink(type, info) {
 				console.log(type);
@@ -403,7 +413,8 @@
 			getIndexList() {
 				fetch.fetchGet('/index/v3.2/index', this.params).then(res => {
 					this.industryList = res.data.industryList;
-					this.bizList = res.data.bizList
+					this.bizList = this.bizList.concat(res.data.bizList);
+					this.loadding = false;
 				}).catch(res => {
 
 				})
