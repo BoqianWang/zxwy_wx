@@ -214,6 +214,7 @@
 			addCart(skuDetail, goodsTaste) {
 				let params = {
 					shopAuthenticateId: this.menuData['shopAuthenticateId'],
+					goodsCategoryId: this.menuData['goodsCategoryId'],
 					goodsPic: this.menuData['goodsPic'],
 					goodsId: this.menuData['goodsId'],
 					skuId: skuDetail['skuId'],
@@ -223,7 +224,7 @@
 					discountPrice: skuDetail['discountPrice'],
 					boxNum: skuDetail['boxNum'],
 					boxPrice: skuDetail['boxPrice'],
-					goodsTaste: goodsTaste
+					goodsTaste: goodsTaste,
 				}
 				// console.log(params);
 				this.$store.commit('addShopCart', params);

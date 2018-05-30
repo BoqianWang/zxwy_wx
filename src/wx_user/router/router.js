@@ -246,5 +246,8 @@ export default{
     //     title: '首页'
     //   }
     // }
-  ]
+  ],
+  scrollBehavior(to, from, savedPosition) {
+     return { x: 0, y: 0 }
+  }
 }

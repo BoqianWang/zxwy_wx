@@ -127,93 +127,52 @@
 							 	<span v-if="item.isWm == 1">配送¥{{item.expressFee}}</span>
 							 </p>
 						</div>
-						 <div class="color-3 font-12 block-list-active">
-							 <p class="flex-box justify-s-b active-show-hide rel">
-							 	<span>
+						 <div class="color-3 font-12 block-list-active rel" :class="{'click-item': item['showActive']}" @click="showItemActive(item)">
+							 	<!-- <span>
 							 		<span class="tips tips-first"></span>
 							 		新用户首单立减
-							 	</span>
-							 	<span class="color-7 flex-box align-center abs active-count-wrap p-t-ten p-b-ten">
-							 	  <span class="iconfont icon-sanjiaoxing-down"></span>
-							 	  <span>3个活动</span>
-							 	</span>
+							 	</span> -->
+						 	<p v-if="item['activitysVO'].length > 0" 
+						 		class="abs l-a-icon flex-box align-center p-ten"
+						 		:class="{'icon-sanjiaoxing-up': item['showActive']}">
+						 	    <span class="iconfont icon-sanjiaoxing-down"></span>
+						 	    <span>{{item['activitysVO'].length}}个活动</span>
+						 	</p>
+							 <li v-for="info in item['activitysVO']">
+								 <p class="flex-box align-center" v-if="info['activityType'] == 0" v-for="item in info['activitys']">
+								 	<span class="tips tips-sub"></span>{{item['activityDescription']}}
+								 </p>
+								 <p class="flex-box align-center" v-if="info['activityType'] >= 8" v-for="item in info['activitys']">
+								 	<span class="tips tips-ticket"></span>{{item['activityDescription']}}
+								 </p>
+								 <!-- <p>
+								 	<span class="tips tips-intergral"></span>现金积分
+								 </p> -->
+							 </li>
+							 <!-- <p>
+								 <span class="tips tips-intergral"></span>现金积分
+							 </p> -->
+							 <!-- <p>
+							 	<span class="tips tips-ticket"></span>代金券优惠
 							 </p>
-							<div style="display: none;">
-								 <p>
-								 	<span class="tips tips-sub"></span>
-								 	满减活动
-								 </p>
-								 <p>
-								 	<span class="tips tips-ticket"></span>
-								 	代金券优惠
-								 </p>
-								 <p>
-								 	<span class="tips tips-intergral"></span>
-								 	现金积分
-								 </p>
-							</div>
+							 <p>
+							 	<span class="tips tips-intergral"></span>现金积分
+							 </p> -->
 						 </div>
 					</div>
 				</div>
-				<!-- <div class="shop-list-block flex-box p-t-ten p-b-ten">
-					<div class="block-list-img" style="background-image: url(https://fuss10.elemecdn.com/e/7d/9854d2f95050092a008b4e3ee29e6png.png?imageMogr/format/webp/thumbnail/!130x130r/gravity/Center/crop/130x130/);"></div>
-					<div class="p-l-ten flex-1">
-						<div>
-							<p>
-								<span class="font-18 color-3">九毛九(华强茂业店)</span>
-								<span class="tips tips-takeout"></span>
-							</p>
-							<p class="color-3 font-12 flex-box justify-s-b block-list-order">
-								<span>
-								 	 <span>4.7</span>
-								 	 <span class="p-l-ten">月售9999单</span>
-								</span>	
-							 	 <span class="color-7">44分钟 661km</span>
-							 </p>
-							 <p class="color-3 font-12 block-list-desc">
-							 	<span>笋岗商圈</span>
-							 	<span>起送¥25</span>
-							 	<span>配送¥5</span>
-							 </p>
-						</div>
-						 <div class="color-3 font-12 block-list-active">
-							 <p class="flex-box justify-s-b active-show-hide">
-							 	<span>
-							 		<span class="tips tips-first"></span>
-							 		新用户首单立减
-							 	</span>
-							 	<span class="color-7 flex-box align-center l-a-title">
-							 	  <span class="iconfont icon-sanjiaoxing-down"></span>
-							 	  3个活动
-							 	</span>
-								
-							 </p>
-							 <div style="display: none;">
-									 <p>
-									 	<span class="tips tips-sub"></span>
-									 	满减活动
-									 </p>
-									 <p>
-									 	<span class="tips tips-ticket"></span>
-									 	代金券优惠
-									 </p>
-									 <p>
-									 	<span class="tips tips-intergral"></span>
-									 	现金积分
-									 </p>
-							 </div>
-						 </div>
-					</div>
-				</div>-->
 			</div>
 		</div>
 	</div>
 </template>
 <style lang="scss">
 	@import "../../style/mixin";
-	.active-count-wrap {
+	.l-a-icon {
 		right: 0;
-		top: -.05rem;
+		top: 0;
+	}
+	.block-list-active.click-item {
+		height: auto;
 	}
 	.icon-sanjiaoxing-up .icon-sanjiaoxing-down {
 		transform: rotate(180deg);
@@ -249,8 +208,14 @@
 	.block-list-order {
 		padding: .02rem 0;
 	}
+	.block-list-active {
+		transition: height .2 linear;
+		height: .24rem;
+		overflow: hidden;
+	}
 	.block-list-active p {
 		padding-top: .05rem;
+		padding-bottom: .08rem;
 	}
 	.block-list-desc span + span:before {
 		content: "|";
@@ -357,23 +322,33 @@
 				},
 				industryList: {},
 				bizList: [],
-				loadding: true
+				loadding: true,
+				totalPage: 1
 			}
 		},
 		created() {
 
 		},
 		mounted() {
-
 			this.getPositon();
-			this.showHideAcitve();
 		},
 		methods: {
+
+			showItemActive(info) {
+				if(info['showActive']) {
+					this.$set(info, 'showActive', false)
+				} else {
+					this.$set(info, 'showActive', true)
+				}
+			},
 			//加载更多
 			loadMore() {
-				// this.loadding = false;
-				// this.params['pageNo']++;
-				// this.getIndexList();
+				this.loadding = true;
+				if(this.params['pageNo'] >= this.totalPage) {
+					return;
+				}
+				this.params['pageNo']++;
+				this.getIndexList();
 			},
 			// 点击跳转
 			toLink(type, info) {
@@ -412,8 +387,11 @@
 			//店铺列表
 			getIndexList() {
 				fetch.fetchGet('/index/v3.2/index', this.params).then(res => {
-					this.industryList = res.data.industryList;
+					if(res.data.industryList) {
+						this.industryList = res.data.industryList;
+					}
 					this.bizList = this.bizList.concat(res.data.bizList);
+					this.totalPage = res.data.totalPage;
 					this.loadding = false;
 				}).catch(res => {
 
@@ -463,36 +441,6 @@
 						}
 					})
 				})
-			},
-			//显示或者隐藏活动描述
-			showHideAcitve() {
-				document.body.onclick = (e) => {
-					let el = e.srcElement || e.target,
-						targetEl = el,
-						iconEl = null,
-						index = 0;
-					while(targetEl.className.indexOf('active-show-hide') <= -1) {
-						index++;
-						targetEl = targetEl.parentNode;
-						if( index >= 5 || targetEl.nodeName.toLowerCase() == 'body') {
-							targetEl = null;
-							index = 0;
-							break;
-						}
-					}
-					if(targetEl) {
-						this.targetShow(targetEl.nextElementSibling, targetEl.children[1]);
-					}
-				}
-			},
-			targetShow(targetEl, el) {
-				if(targetEl.style.display == 'block') {
-					targetEl.style.display = 'none';
-					el.className = 'color-7 flex-box align-center';
-				} else {
-					targetEl.style.display = 'block';
-					el.className = 'color-7 flex-box align-center icon-sanjiaoxing-up'
-				}
 			}
 		},
 	}

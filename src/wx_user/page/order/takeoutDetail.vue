@@ -8,14 +8,14 @@
 				</div>
 				<div class="text-right p-r-ten title-btn">
 					<mt-button class="refund-btn font-15" type="primary" 
-					v-if="orderDetail['orderStatus'] > 3 && orderDetail['orderStatus'] < 5"
+					v-if="orderDetail['orderStatus'] >= 3 && orderDetail['orderStatus'] <= 5"
 					@click="refundOrder">申请退款</mt-button>
 
 					<mt-button class="refund-btn font-15" type="primary" 
 					v-if="orderDetail['orderStatus'] == 2" 
 					@click="cancelOrder">取消订单</mt-button>
 
-					<router-link :to="'/takeout/takeOutShop?shopAuthenticateId=' + 1">
+					<router-link :to="'/takeout/takeOutShop?shopAuthenticateId=' + orderDetail['shopAuthenticateId']">
 						<mt-button class="takeout-btn font-15" type="primary">再来一单</mt-button>
 					</router-link>
 					<!-- <mt-button class="font-15" type="primary">评价</mt-button> -->
@@ -156,6 +156,12 @@
 					<span class="color-7">配送地址</span>
 					<span class="flex-1 color-3">
 						{{orderDetail['recipientAddress'],orderDetail['houseNumber']}}
+					</span>
+				</p>
+				<p class="flex-box p-b-ten">
+					<span class="color-7">备注</span>
+					<span class="flex-1 color-3">
+						{{orderDetail['wmRemark']}}
 					</span>
 				</p>
 			</div>

@@ -82,7 +82,10 @@
 							</div>
 							<div class="voucher-middle"></div>
 							<div class="voucher-below font-12">
-								<p>仅限{{ info['districtCodeVOs'][0]['shopName'] }},可用</p>
+								<!-- <p>仅限{{ info['districtCodeVOs'][0]['shopName'] }},可用</p> -->
+								<p v-for="item in info['districtCodeVOs']">
+									仅限{{item['shopName']}}可用
+								</p>
 								<p>消费金额需满{{ info.fullMoney }}元可用</p>
 							</div>
 						</div>
@@ -557,9 +560,16 @@
 			canUserVoucherList(list,currentMoney) {
 				for(let item of list) {
 					if(currentMoney >= item.fullMoney) {
-						//等级为5, 商家别代金券
-						if(this.shopInfo['bizId'] == item['districtCodeVOs'][0]['districtCode']) {
-							item['isUserful'] = 1;
+						//等级为5, 店铺别代金券
+						if(item.activityLevel == 5) {
+							for(let info of item['districtCodeVOs']) {
+								if(this.shopInfo['bizId'] == info['districtCode']) {
+									item['isUserful'] = 1;
+									break;
+								}
+							}	
+						// if(this.shopInfo['bizId'] == item['districtCodeVOs'][0]['districtCode']) {
+						// 	item['isUserful'] = 1;
 						} 
 						//等级为0, 全平台别代金券
 						else if(item.activityLevel == 0) {
@@ -627,7 +637,7 @@
 			        //token不合法
 			        if(res == 2) {
 			        	Tools.clearCookies('zx_token');
-			        	location.reload(); 
+			        	// location.reload(); 
 			        }
 				})
 			},

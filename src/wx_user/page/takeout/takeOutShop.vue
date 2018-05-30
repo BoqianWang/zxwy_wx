@@ -6,7 +6,7 @@
 				<div class="shop-title rel" :style="{backgroundImage: 'url(' + defaultImg + ')'}">
 					<!-- <p class="abs" style="background-image: url(https://fuss10.elemecdn.com/e/7d/9854d2f95050092a008b4e3ee29e6png.png?imageMogr/format/webp/thumbnail/!130x130r/gravity/Center/crop/130x130/);">
 					</p> -->
-					<p class="abs" :style="'background-image: url(' + shopInfo['shopLogo'] + ');'">
+					<p class="abs" v-if="shopInfo['shopLogo']" :style="'background-image: url(' + shopInfo['shopLogo'] + ');'">
 					</p>
 				</div>
 				<!-- 描述 -->
@@ -26,14 +26,15 @@
 							<!-- 欢迎光临，用餐高峰期请提前下单，谢谢	 -->
 							{{shopInfo['shopIntro']}}
 						</div>
-						<div class="p-t-ten color-6">
-							<span class="tips tips-first"></span>
+						<div class="p-t-ten color-6" v-if="shopInfo['activitysList'] && shopInfo['activitysList'].length > 0">
+							<span v-if="shopInfo['activitysList'][0]['activityType'] == 0" class="tips tips-sub"></span>
+							<span v-else-if="shopInfo['activitysList'][0]['activityType'] >= 8" class="tips tips-ticket"></span>
 							<span>
-								新用户首单立减(不与其他活动同享)
+								{{shopInfo['activitysList'][0]['activitys'][0]['activityDescription']}}
 							</span>
 							<span class="color-9 font-12 p-l-ten rel">
 							  <span class="shop-down iconfont icon-sanjiaoxing-down abs"></span>
-							  <span class="p-l-ten">4个活动</span>
+							  <span class="p-l-ten">{{shopInfo['activitysList'].length}}个活动</span>
 							</span>
 						</div>
 					</div>
@@ -52,8 +53,11 @@
 				<div v-show="switchSelectType == 'shop'">
 					<div class="shop-con-wrap flex-box" :style="{height: height - 42 + 'px'}">
 						<ul class="font-12 color-7" id="classify-list">
-							<li v-for="item in categoryListDate">
+							<li v-for="(item, index) in categoryListDate" @click="changeScroll(index)">
 								<span style="-webkit-box-orient: vertical;">{{item.categoryName}}</span>
+								<mt-badge v-show="shopCartDetail['goodsCategoryId'][item['categoryId']]" class="abs category-tips" type="error" size="small" >
+									{{shopCartDetail['goodsCategoryId'][item['categoryId']]}}
+								</mt-badge>
 							</li>
 							<!-- 
 							<li>
@@ -151,9 +155,18 @@
 							<p class="white-f" v-show="shopCartDetail['money'] > 0">¥{{shopCartDetail['money']}}</p>
 							<p class="color-9 addtion-money">另需要配送费{{shopInfo['expressFee']}}元</p>
 						</div>
-						<div class="white-f text-center shop-cat-pay to-pay" :class="{'cano-to-pay': shopCartDetail['count'] <= 0}" @click="toPay(shopCartDetail['count'] > 0)">
+						<!-- <div class="white-f text-center shop-cat-pay to-pay" :class="{'cano-to-pay': shopCartDetail['money'] >= shopInfo['startSendFee']}" @click="toPay()">
 							<span>去结算</span>
-							<!-- <span>¥20起送</span> -->
+							<span>¥20起送</span>
+						</div> -->
+						<div v-if="shopCartDetail['money'] > 0 && shopCartDetail['money'] >= shopInfo['startSendFee']" class="white-f text-center shop-cat-pay to-pay" @click="toPay()">
+							<span>去结算</span>
+						</div>
+						<div v-else-if="shopCartDetail['money']" class="white-f text-center shop-cat-pay to-pay cano-to-pay">
+							<span>还差¥{{shopInfo['startSendFee'] - shopCartDetail['money']}}</span>
+						</div>
+						<div v-else class="white-f text-center shop-cat-pay to-pay cano-to-pay">
+							<span>¥{{shopInfo['startSendFee']}}起送</span>
 						</div>
 					</footer>
 				</div>
@@ -164,17 +177,21 @@
 								<span class="iconfont icon-map p-r-ten address-m color-9">
 								</span>
 								<span class="font-15 color-3">  
-									深圳市罗湖区宝安南路57号中民时代广场楼某某某
+									{{shopInfo['shopStreet']}}
 								</span>
 							</div>
-							<p class="iconfont icon-phone m-l-ten p-l-ten p-r-ten address-p color-7"></p>
+							<a :href="'tel:' + tel">
+								<p class="iconfont icon-phone m-l-ten p-l-ten p-r-ten address-p color-7"></p>
+							</a>
 						</div>
 						<div class="shop-detial-img p-t-ten p-b-ten">
-							<ul class="clearfix" style="width: 1200px; ">
-								<li class="m-r-ten"></li>
-								<li class="m-r-ten"></li>
-								<li class="m-r-ten"></li>
-								<li class="m-r-ten"></li>
+							<ul class="clearfix" style="width: 1200px;">
+								<li class="m-r-ten" 
+								:style="'background-image: url(' + shopInfo['shopImgs'] + ');'"></li>
+								<li class="m-r-ten" 
+								:style="'background-image: url(' + shopInfo['businessLicense'] + ');'"></li>
+								<li class="m-r-ten" 
+								:style="'background-image: url(' + shopInfo['cateringLicence'] + ');'"></li>
 								<li class="m-r-ten"></li>
 								<li class="m-r-ten"></li>
 							</ul>
@@ -197,7 +214,7 @@
 							<div class="flex-box align-justify p-t-ten p-b-ten shop-cell-list">
 								<p class="flex-box align-center">
 									<span class="cell-server color-9 iconfont icon-task-management p-r-ten"></span>
-									<span class="color-3 font-15">配送时间: 10:00-23:00</span>
+									<span class="color-3 font-15">配送时间: {{shopInfo['distributionTime']}}</span>
 								</p>
 								<!-- <p class=" color-9 iconfont icon-more"></p> -->
 							</div>
@@ -210,41 +227,40 @@
 			  <div class="p-ten popup-shop-detail rel">
 			  	  <span class="shop-d-close abs iconfont icon-close p-ten"  @click="showShopDetial"></span>
 			  	  <p class="color-3 font-15 p-b-ten m-t-ten">优惠</p>
-			  	  <div>
-			  	  	<p class="p-b-ten">
+			  	  <div class="color-3 font-12" style="max-height: 400px; overflow: auto;">
+			  	  	<!-- <p class="p-b-ten">
 			  	  		<span class="tips tips-first"></span>
 			  	  		<span class="color-6 font-12">新用户首单立减(不与其他活动同享)</span>
-			  	  	</p>
-			  	  	<p class="p-b-ten">
-			  	  		<span class="tips tips-sub"></span>
-			  	  		<span class="color-6 font-12">满减活动</span>
-			  	  	</p>
-			  	  	<p class="p-b-ten">
-			  	  		<span class="tips tips-ticket"></span>
-			  	  		<span class="color-6 font-12">代金券优惠</span>
-			  	  	</p>
-			  	  	<p class="p-b-ten">
-			  	  		<span class="tips tips-intergral"></span>
-			  	  		<span class="color-6 font-12">现金积分</span>
-			  	  	</p>
+			  	  	</p> -->
+			  	  	  <li v-for="info in shopInfo['activitysList']">
+						 <p class="flex-box align-center p-b-ten" v-if="info['activityType'] == 0" v-for="item in info['activitys']">
+						 	<span class="tips tips-sub"></span>{{item['activityDescription']}}
+						 </p>
+						 <p class="flex-box align-center p-b-ten" v-if="info['activityType'] >= 8" v-for="item in info['activitys']">
+						 	<span class="tips tips-ticket"></span>{{item['activityDescription']}}
+						 </p>
+
+						 <!-- <p>
+						 	<span class="tips tips-intergral"></span>现金积分
+						 </p> -->
+					  </li>
+				  	  <p class="color-3 font-15 shop-d-top">配送</p>
+					  <div class="color-6 font-12">
+					   	 <p>
+					   	 	<span>起送¥{{shopInfo['startSendFee']}} </span>
+					   	 	<span>配送¥{{shopInfo['expressFee']}} </span>  
+					   	 	<span>{{shopInfo['expectTime']}}分钟</span>
+					   	 </p>
+					   	 <p>
+					   	 	配送时间: 
+					   	    {{shopInfo['distributionTime']}}
+					     </p>
+					  </div>
+				  	  <p class="color-3 font-15 shop-d-top">公告</p>
+					  <div class="color-6 font-12">
+					  	   {{shopInfo['shopNotices']}}
+					  </div>
 			  	  </div>
-			  	  <p class="color-3 font-15 shop-d-top">配送</p>
-				  <div class="color-6 font-12">
-				   	 <p>
-				   	 	<span>起送¥{{shopInfo['startSendFee']}} </span>
-				   	 	<span>配送¥{{shopInfo['expressFee']}} </span>  
-				   	 	<span>{{shopInfo['expectTime']}}分钟</span>
-				   	 </p>
-				   	 <p>
-				   	 	配送时间: 
-				   	    {{shopInfo['distributionTime']}}
-				     </p>
-				  </div>
-			  	  <p class="color-3 font-15 shop-d-top">公告</p>
-				  <div class="color-6 font-12">
-				  	   {{shopInfo['shopNotices']}}
-				  	  <!-- 欢迎光临,好高兴为您服务~~~欢迎光临，用餐高峰期请提前下单，谢谢。欢迎光临，用餐高峰期请提前下单，谢谢。欢迎光临，用餐高峰期请提前下单，谢谢。 -->
-				  </div>
 			  </div>
 			</mt-popup>
 			<!-- 购物车 -->
@@ -292,8 +308,9 @@
 <style scoped lang="scss">
 @import "../../style/mixin";
 @import "../../style/iconfont/iconfont.css";
-	.v-modal {
-		overflow: hidden;
+	.category-tips {
+		right: 0;
+		top: .04rem;
 	}
 	.popup-short-cat {
 		/*padding-bottom: .7rem;*/
@@ -345,6 +362,7 @@
 				width: .94rem;
 				height: .7rem;
 				background: #eee;
+				background-size: cover;
 			}
 		}
 		.shop-cell {
@@ -564,9 +582,10 @@
 				popupVisible: false,
 				shopCartVisible: false,
 				switchSelectType: 'shop',
+				positionInfo: Tools.getLocalStorage('positionInfo'),
 				params: {
-					longitude: this.$route.query.longitude,
-					latitude: this.$route.query.latitude,
+					longitude: '' ,
+					latitude: '',
 					shopAuthenticateId: this.$route.query.shopAuthenticateId
 				},
 				shopInfo: {},
@@ -585,25 +604,34 @@
 		computed: {
 			//购物车详细信息
 			shopCartDetail() {
-				return this.$store.getters.shopCartDetail;
+				let detail = this.$store.getters.shopCartDetail;
+				if(detail['count'] <= 0) {
+					this.shopCartVisible = false;
+				}
+				console.log(detail);
+				return detail;
+			},
+			tel() {
+				if(this.shopInfo['tel']) {
+					return this.shopInfo['tel'].split(',')[0];
+				}
 			}
 		},
 		methods: {
 			//清空购物车
 			clearShopCart() {
 				this.$store.commit('clearShopCart');
-				this.shopCartVisible = !this.shopCartVisible;
+				// this.shopCartVisible = !this.shopCartVisible;
 			},
 			//去结算
-			toPay(type) {	
-				if(type) {
-					this.$router.push({
-						path: '/takeout/takeOutOrder',
-						query: {
-							shopAuthenticateId: this.params['shopAuthenticateId']
-						}
-					})
-				}
+			toPay() {	
+				this.$router.push({
+					path: '/takeout/takeOutOrder',
+					query: {
+						shopAuthenticateId: this.params['shopAuthenticateId']
+					}
+				})
+				
 			},
 			//显示商家信息
 			showShopDetial() {
@@ -618,7 +646,7 @@
 			},
 			init() {
 				this.getTakeOutShop();
-				this.getTakeoutMenu();
+				
 			},
 			//获取外卖菜单
 			getTakeoutMenu() {
@@ -630,11 +658,15 @@
 						if(item['goodsList'].length <= 0) {
 							continue;
 						}
-						let categoryItem = { categoryName: item['categoryName']};
+						let categoryItem = { 
+							categoryName: item['categoryName'],
+							categoryId: item['categoryId']
+						};
 						let MenuListItem = {
 							categoryDescribe: item['categoryDescribe'],
 							goodsList: item['goodsList'],
-							categoryName: item['categoryName']
+							categoryName: item['categoryName'],
+							
 						};
 						this.categoryListDate.push(categoryItem);
 						this.MenuListDate.push(MenuListItem);
@@ -649,10 +681,15 @@
 			},
 			//获取店铺资料
 			getTakeOutShop() {
+				if(this.positionInfo['longitude']) {
+					this.params['longitude'] = this.positionInfo['longitude'];
+					this.params['latitude'] = this.positionInfo['latitude']
+				}
 				fetch.fetchPost('/index/v3.2/toBizPage', this.params).then(res => {
+					this.getTakeoutMenu();
 					this.shopInfo = res.data;
 					Tools.setLocalStorage('shopInfo', this.shopInfo);
-					this.shopInfo['distributionTime'] = JSON.parse(this.shopInfo['distributionTime']);
+					//获取菜单
 				}).catch(res => {
 
 				})
@@ -674,14 +711,14 @@
 				//右侧菜单列表
 				this.sectionMenuList = this.sectionMenu.children;
 				// 菜单起始高度
-				this.MenuListInitTop = this.sectionMenuList[0].offsetTop + 40;
+				this.MenuListInitTop = this.sectionMenuList[0].offsetTop;
 				//初始菜单index
 				this.currentIndex = 0;
 				this.sectionMenu.addEventListener('scroll', (e) => {
 					this.scollEvent();
 				});
-				this.showCurrentClassify(this.currentIndex, 'active');
-				this.clickEvent();
+				this.showCurrentClassify(this.currentIndex, 'rel active');
+				// this.clickEvent();
 			},
 			// 滚动事件
 			scollEvent() {
@@ -697,25 +734,45 @@
 						this.currentIndex = i;
 					}
 				}
-				this.showCurrentClassify(this.currentIndex, 'active');
+				this.showCurrentClassify(this.currentIndex, 'rel active');
+			},
+			changeScroll(index) {
+				// this.showCurrentClassify(index, 'rel active');
+				this.sectionMenu.scrollTop = this.sectionMenuList[index].offsetTop - this.MenuListInitTop;
+				// this.scrollAniamted(this.sectionMenu, this.sectionMenuList[index].offsetTop - this.MenuListInitTop);
 			},
 			//点击事件
-			clickEvent() {
-				let self = this;
-				for(let i = 0; i < this.ListCount; i++) {
-					this.classifyList[i]['index'] = i;
-					this.classifyList[i].onclick = function() {
-						self.showCurrentClassify(this.index, 'active');
-						self.sectionMenu.scrollTop = self.sectionMenuList[this.index].offsetTop - self.MenuListInitTop;
-					}
-				}
-			},
+			// clickEvent() {
+			// 	let self = this;
+			// 	for(let i = 0; i < this.ListCount; i++) {
+			// 		this.classifyList[i]['index'] = i;
+			// 		this.classifyList[i].onclick = function() {
+			// 			self.showCurrentClassify(this.index, 'active');
+			// 			self.sectionMenu.scrollTop = self.sectionMenuList[this.index].offsetTop - self.MenuListInitTop;
+
+			// 		}
+			// 	}
+			// },
 			//高亮显示当前分类
 			showCurrentClassify(index, className) {
 				for(let i = 0; i < this.ListCount; i++) {
-					this.classifyList[i].className = '';
+					this.classifyList[i].className = 'rel';
 				}
 				this.classifyList[index].className = className;
+			},
+			// 滚动动画
+			scrollAniamted(element, target) {
+				let speed = (target  - element.scrollTop) / 10;
+				speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+				this.timer = setInterval(() => {
+					if(speed == 0 || element.scrollTop == target){
+						clearInterval(this.timer);
+						element.scrollTop = target;
+						return;
+					}
+					console.log(element.scrollTop);
+					element.scrollTop = element.scrollTop + speed;
+				}, 16)
 			}
 		}
 	}

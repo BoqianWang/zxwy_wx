@@ -22,7 +22,14 @@ const store = new Vuex.Store({
 			detail['count'] = 0;
 			detail['money'] = 0;
 			detail['boxPrice'] = 0;
+			detail['goodsCategoryId'] = {};
 			for(let item of cartList) {
+				let id = item['goodsCategoryId'];
+				if(detail['goodsCategoryId'][id]) {
+					detail['goodsCategoryId'][id] += item['goodsNum'];
+				} else {
+					detail['goodsCategoryId'][id] = item['goodsNum'];
+				}
 				detail['count'] += item['goodsNum'];
 				detail['money'] += item['goodsNum'] * item['discountPrice'];
 				detail['boxPrice'] += item['goodsNum'] * item['boxNum'] * item['boxPrice'];

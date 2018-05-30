@@ -60,10 +60,10 @@
 						<p class="font-15 color-3 p-r-ten">¥42</p>
 					</li> -->
 				</div>
-				<div class="show-hide m-b-ten p-ten">
+				<!-- <div class="show-hide m-b-ten p-ten">
 					<span class="color-3 font-15 rel iconfont icon-moreunfold">点击展开</span>
 					<span class="color-3 font-15 rel iconfont icon-less">点击收起</span>
-				</div>
+				</div> -->
 				<div class="p-l-ten p-r-ten p-t-ten font-12 color-3">
 					<p class="flex-box justify-s-b p-b-ten">
 						<span>包装费</span>
@@ -361,7 +361,9 @@
 			this.$store.commit('initShopCart', this.shopAuthenticateId);
 		},
 		computed: {
+			//购物车详情
 			shopCartDetail() {
+				
 				return this.$store.getters.shopCartDetail;
 			},
 			surePayMoney() {
@@ -519,6 +521,7 @@
 				fetch.fetchPost('/order/v3.2/takeawaySubmit', {
 					json: JSON.stringify(this.params)
 				}).then( res => {
+					this.payDetail = res.data;
 					if(res.data.orderStatus == 2) {
 						this.paySuccess();
 					}
@@ -547,12 +550,12 @@
 				this.$router.replace({
 					path: '/takeoutDetail',
 					query: {
-						orderId: '6ef8f6b3684c483491ca4d62b44ed2a5'
+						orderId: this.payDetail['orderId']
 					}
 				})
 			},
 			cancelPay() {
-
+				this.paySuccess();
 			},
 			//支付宝支付
 		    tradePay(tradeNO) {
@@ -560,9 +563,9 @@
 		            tradeNO: tradeNO
 		       },  (data) => {
 		           if ("9000" == data.resultCode) {
-		               // this.paySuccess();
+		               this.paySuccess();
 		           } else {
-		               
+		               this.cancelPay();
 		           }
 		       });
 		    },
@@ -593,9 +596,9 @@
 		          },(res) => {
 		            // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
 		            if(res.err_msg == "get_brand_wcpay_request:ok"){
-		                  // this.paySuccess();
+		                  this.paySuccess();
 		            }else{
-		               alert('没有成功')
+		               this.cancelPay();
 		            }
 		          }
 		        );

@@ -210,7 +210,8 @@
 
 				},
 				positionInfo: Tools.getLocalStorage('positionInfo'),
-				loadding: true
+				loadding: true,
+				totalPage: 1
 			}
 		},
 		mounted() {
@@ -219,6 +220,9 @@
 		methods: {
 			loadMore() {
 				this.loadding = true;
+				if(this.params['pageNo'] >= this.totalPage) {
+					return;
+				}
 				this.params['pageNo']++;
 				this.getPersonalList();
 			},
@@ -249,7 +253,8 @@
 			},
 			getPersonalList() {
 				fetch.fetchPost('/personal/v3.2/orderList', this.params).then(res => {
-					this.list = this.list.concat(res.data);
+					this.list = this.list.concat(res.data.orderList);
+					this.totalPage = res.data.totalPage;
 					this.loadding = false;
 				})
 			}

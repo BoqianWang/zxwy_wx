@@ -31,8 +31,8 @@
 				height: 25%;
 				width: 25%;
 				float: left;
-				border-right: .5px solid #d6d6d6;
-				border-top: .5px solid #d6d6d6;
+				border-right: 1px solid #d6d6d6;
+				border-top: 1px solid #d6d6d6;
 				display: flex;
 				align-items: center;
 				justify-content: center;
