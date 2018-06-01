@@ -29,12 +29,12 @@
 						<div class="p-t-ten color-6" v-if="shopInfo['activitysList'] && shopInfo['activitysList'].length > 0">
 							<span v-if="shopInfo['activitysList'][0]['activityType'] == 0" class="tips tips-sub"></span>
 							<span v-else-if="shopInfo['activitysList'][0]['activityType'] >= 8" class="tips tips-ticket"></span>
-							<span>
+							<span class="p-r-ten">
 								{{shopInfo['activitysList'][0]['activitys'][0]['activityDescription']}}
 							</span>
 							<span class="color-9 font-12 p-l-ten rel">
 							  <span class="shop-down iconfont icon-sanjiaoxing-down abs"></span>
-							  <span class="p-l-ten">{{shopInfo['activitysList'].length}}个活动</span>
+							  <span>{{shopInfo['activitysList'].length}}个活动</span>
 							</span>
 						</div>
 					</div>
@@ -103,7 +103,7 @@
 													<span class="price">¥{{info['sku'][0].discountPrice}}</span>
 													<span class="color-7" style="font-size: 8px;">起</span>
 												</div>
-												<add-menu :menu-data="info"></add-menu>
+												<add-menu :menu-data="info" @send-item="choseAttributeHanlde"></add-menu>
 											</div>
 										</div>
 									</div>
@@ -145,7 +145,7 @@
 						</section>
 					</div>
 					<footer class="shop-cart align-justify rel flex-box" style="z-index: 3333;">
-						<div class="shop-cart-icon text-center abs" :class="{'empty-cart': shopCartDetail['count'] <= 0}" @click="showShopCartDetail">
+						<div class="shop-cart-icon text-center abs animated" :class="{'empty-cart': shopCartDetail['count'] <= 0, 'bounce': bounce > 0 }" @click="showShopCartDetail">
 							<mt-badge class="abs cart-tips" type="error" size="small" v-if="shopCartDetail['count'] > 0">
 								{{shopCartDetail['count']}}
 						    </mt-badge>
@@ -302,12 +302,316 @@
 					</div>
 				</div>
 			</mt-popup>
+			<chose-attribute ref="choseAttribute"></chose-attribute>
 		</div>
 	</div>
 </template>
+
+<script>
+	import addMenu from './children/takeoutshop/addMenu.vue';
+	import shopCartAddMenu from './children/takeoutshop/shopCartAddMenu.vue';
+	import choseAttribute from './children/takeoutshop/choseAttribute.vue';
+	import fetch from '@/config/fetch.js';
+	export default {
+		components: {
+		    addMenu,
+		    shopCartAddMenu,
+		    choseAttribute
+		},
+		data() {
+			return {
+				defaultImg: 'http://chuantu.biz/t6/313/1526552904x-1404793429.png',
+				height: 0,
+				popupVisible: false,
+				shopCartVisible: false,
+				switchSelectType: 'shop',
+				positionInfo: Tools.getLocalStorage('positionInfo'),
+				params: {
+					longitude: '114',
+					latitude: '22',
+					shopAuthenticateId: this.$route.query.shopAuthenticateId
+				},
+				shopInfo: {},
+				//分类列表数据
+				categoryListDate: [],
+				//菜单列表数据
+				MenuListDate: [],
+				bounce: false,
+				itemMenudata: {}
+			}
+		},
+		mounted() {
+			this.init();
+		},
+		created() {
+			this.$store.commit('initShopCart', this.params['shopAuthenticateId']);
+		},
+		computed: {
+			//购物车详细信息
+			shopCartDetail() {
+				let detail = this.$store.getters.shopCartDetail;
+				if(detail['count'] <= 0) {
+					this.shopCartVisible = false;
+				} else {
+					this.changeBounce();
+				}
+				return detail;
+			},
+			tel() {
+				if(this.shopInfo['tel']) {
+					return this.shopInfo['tel'].split(',')[0];
+				}
+			}
+		},
+		methods: {
+			choseAttributeHanlde(date) {
+				this.itemMenudata = date;
+				this.$refs.choseAttribute.initShopCart();
+			},
+			//购物车特效
+			changeBounce() {
+				this.bounce = true;
+				setTimeout(() => {
+					this.bounce = false;
+				}, 1000)
+			},
+			//清空购物车
+			clearShopCart() {
+				this.$store.commit('clearShopCart');
+				// this.shopCartVisible = !this.shopCartVisible;
+			},
+			//去结算
+			toPay() {	
+				// this.$router.push({
+				// 	path: '/pay/takeOutOrder',
+				// 	query: {
+				// 		shopAuthenticateId: this.params['shopAuthenticateId']
+				// 	}
+				// })
+				// alert(location.host + '/#/pay/takeOutOrder?shopAuthenticateId=' + this.params['shopAuthenticateId'])
+				location.href = './index.html#/pay/takeOutOrder?shopAuthenticateId=' + this.params['shopAuthenticateId'];
+				// // alert(location.host);
+				
+			},
+			//显示商家信息
+			showShopDetial() {
+				this.popupVisible = !this.popupVisible;
+			},
+			//显示购物车商品
+			showShopCartDetail() {
+				if(this.shopCartDetail['count'] <= 0) {
+					return
+				}
+				this.shopCartVisible = !this.shopCartVisible;
+			},
+			init() {
+				this.getTakeOutShop();
+				
+			},
+			//获取外卖菜单
+			getTakeoutMenu() {
+				fetch.fetchPost('/goods/v3.2/toGoodsList', {
+					shopAuthenticateId: this.params['shopAuthenticateId']
+				}).then(res => {
+					let data = res.data;
+					for(let item of data) {
+						if(item['goodsList'].length <= 0) {
+							continue;
+						}
+						let categoryItem = { 
+							categoryName: item['categoryName'],
+							categoryId: item['categoryId']
+						};
+						let MenuListItem = {
+							categoryDescribe: item['categoryDescribe'],
+							goodsList: item['goodsList'],
+							categoryName: item['categoryName'],
+							
+						};
+						this.categoryListDate.push(categoryItem);
+						this.MenuListDate.push(MenuListItem);
+
+					}
+					setTimeout(() => {					
+						this.DOMOptions();
+					}, 10)
+				}).catch(res => {
+
+				})
+			},
+			//获取店铺资料
+			getTakeOutShop() {
+				if(this.positionInfo['longitude']) {
+					this.params['longitude'] = this.positionInfo['longitude'];
+					this.params['latitude'] = this.positionInfo['latitude']
+				}
+				fetch.fetchPost('/index/v3.2/toBizPage', this.params).then(res => {
+					this.getTakeoutMenu();
+					this.shopInfo = res.data;
+					Tools.setLocalStorage('shopInfo', this.shopInfo);
+					//获取菜单
+				}).catch(res => {
+
+				})
+			},
+			//tab切换
+			switchSelect(type) {
+				this.switchSelectType = type;
+			},
+			//dom操作
+			DOMOptions() {
+				//计算屏幕高度
+				this.height = document.documentElement.clientHeight;
+				//菜单容器
+				this.sectionMenu = document.querySelector('#section-menu');
+				//左侧菜单列表
+				this.classifyList = document.querySelectorAll('#classify-list > li');
+				//分类数量
+				this.ListCount = this.classifyList.length;
+				//右侧菜单列表
+				this.sectionMenuList = this.sectionMenu.children;
+				// 菜单起始高度
+				this.MenuListInitTop = this.sectionMenuList[0].offsetTop;
+				//初始菜单index
+				this.currentIndex = 0;
+				this.sectionMenu.addEventListener('scroll', (e) => {
+					this.scollEvent();
+				});
+				this.showCurrentClassify(this.currentIndex, 'rel active');
+				// this.clickEvent();
+			},
+			// 滚动事件
+			scollEvent() {
+				//body滚动条滚动
+				let scrollTop = document.documentElement.scrollTop || document.body.scrollTop,
+					MenuScrollTop = this.sectionMenu.scrollTop;
+
+				document.documentElement.scrollTop = document.body.scrollTop = MenuScrollTop;
+
+				for(let i = 0; i < this.ListCount; i++){
+					let MenuListTop = this.sectionMenuList[i].offsetTop - this.MenuListInitTop;
+					if(MenuScrollTop >= MenuListTop) {
+						this.currentIndex = i;
+					}
+				}
+				this.showCurrentClassify(this.currentIndex, 'rel active');
+			},
+			changeScroll(index) {
+				// this.showCurrentClassify(index, 'rel active');
+				// this.sectionMenu.scrollTop = this.sectionMenuList[index].offsetTop - this.MenuListInitTop;
+				this.scrollAniamted(this.sectionMenu, this.sectionMenuList[index].offsetTop - this.MenuListInitTop);
+			},
+			//高亮显示当前分类
+			showCurrentClassify(index, className) {
+				for(let i = 0; i < this.ListCount; i++) {
+					this.classifyList[i].className = 'rel';
+				}
+				this.classifyList[index].className = className;
+			},
+			// 滚动动画
+			scrollAniamted(element, target) {
+				clearInterval(this.timer);
+				this.timer = setInterval(() => {
+					let speed = (target  - element.scrollTop) / 12;
+					speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
+					// if((speed > 0 && element.scrollTop >= target) 
+						// ||(speed < 0 && element.scrollTop <= target)) {
+					if(element.scrollTop == target) {
+						clearInterval(this.timer);
+						// element.scrollTop = target;	
+						return;
+					}
+					console.log(speed, element.scrollTop, target);
+					element.scrollTop = element.scrollTop + speed;
+				}, 16);
+				// setTimeout(() => {
+				// 	clearInterval(this.timer);
+				// }, 1000)
+			}
+		}
+	}
+</script>
 <style scoped lang="scss">
 @import "../../style/mixin";
 @import "../../style/iconfont/iconfont.css";
+	.animated {
+	  -webkit-animation-duration: 1s;
+	  animation-duration: 1s;
+	  -webkit-animation-fill-mode: both;
+	  animation-fill-mode: both;
+	}
+	@-webkit-keyframes bounce {
+	  from,
+	  20%,
+	  53%,
+	  80%,
+	  to {
+	    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+	    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+	    -webkit-transform: translate3d(0, 0, 0);
+	    transform: translate3d(0, 0, 0);
+	  }
+
+	  40%,
+	  43% {
+	    -webkit-animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+	    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+	    -webkit-transform: translate3d(0, -30px, 0);
+	    transform: translate3d(0, -30px, 0);
+	  }
+
+	  70% {
+	    -webkit-animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+	    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+	    -webkit-transform: translate3d(0, -15px, 0);
+	    transform: translate3d(0, -15px, 0);
+	  }
+
+	  90% {
+	    -webkit-transform: translate3d(0, -4px, 0);
+	    transform: translate3d(0, -4px, 0);
+	  }
+	}
+
+	@keyframes bounce {
+	  from,
+	  20%,
+	  53%,
+	  80%,
+	  to {
+	    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+	    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+	    -webkit-transform: translate3d(0, 0, 0);
+	    transform: translate3d(0, 0, 0);
+	  }
+
+	  40%,
+	  43% {
+	    -webkit-animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+	    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+	    -webkit-transform: translate3d(0, -30px, 0);
+	    transform: translate3d(0, -30px, 0);
+	  }
+
+	  70% {
+	    -webkit-animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+	    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+	    -webkit-transform: translate3d(0, -15px, 0);
+	    transform: translate3d(0, -15px, 0);
+	  }
+
+	  90% {
+	    -webkit-transform: translate3d(0, -4px, 0);
+	    transform: translate3d(0, -4px, 0);
+	  }
+	}
+
+	.bounce {
+	  -webkit-animation-name: bounce;
+	  animation-name: bounce;
+	  -webkit-transform-origin: center bottom;
+	  transform-origin: center bottom;
+	}
 	.category-tips {
 		right: 0;
 		top: .04rem;
@@ -458,7 +762,10 @@
 		bottom: -.2rem;	
 	}
 	.shop-desc {
-		padding: .4rem .1rem 0;
+		padding: .3rem .1rem 0;
+		.p-t-ten {
+			padding-top: .02rem;
+		}
 	}
 	.shop-name {
 		color: #333;
@@ -467,8 +774,8 @@
 	.shop-desc-detail {
 		font-size: .118rem;
 		.shop-down {
-			left: .05rem;
-			top: 0.01rem;	
+			left: -.05rem;
+			top: 0rem;	
 		}
 	}
 	.shop-desc-detail .detail-sales span + span:before {
@@ -500,7 +807,7 @@
 		}
 		section, ul{
 			height: 100%;
-			overflow: auto;
+			overflow-y: scroll;
 			padding-bottom: .52rem;
 		}
 		ul{
@@ -566,214 +873,3 @@
 		border-radius: 4px;
 	}
 </style>
-<script>
-	import addMenu from './children/addMenu.vue';
-	import shopCartAddMenu from './children/shopCartAddMenu.vue';
-	import fetch from '@/config/fetch.js';
-	export default {
-		components: {
-		    addMenu,
-		    shopCartAddMenu
-		},
-		data() {
-			return {
-				defaultImg: 'http://chuantu.biz/t6/313/1526552904x-1404793429.png',
-				height: 0,
-				popupVisible: false,
-				shopCartVisible: false,
-				switchSelectType: 'shop',
-				positionInfo: Tools.getLocalStorage('positionInfo'),
-				params: {
-					longitude: '' ,
-					latitude: '',
-					shopAuthenticateId: this.$route.query.shopAuthenticateId
-				},
-				shopInfo: {},
-				//分类列表数据
-				categoryListDate: [],
-				//菜单列表数据
-				MenuListDate: []
-			}
-		},
-		mounted() {
-			this.init();
-		},
-		created() {
-			this.$store.commit('initShopCart', this.params['shopAuthenticateId']);
-		},
-		computed: {
-			//购物车详细信息
-			shopCartDetail() {
-				let detail = this.$store.getters.shopCartDetail;
-				if(detail['count'] <= 0) {
-					this.shopCartVisible = false;
-				}
-				console.log(detail);
-				return detail;
-			},
-			tel() {
-				if(this.shopInfo['tel']) {
-					return this.shopInfo['tel'].split(',')[0];
-				}
-			}
-		},
-		methods: {
-			//清空购物车
-			clearShopCart() {
-				this.$store.commit('clearShopCart');
-				// this.shopCartVisible = !this.shopCartVisible;
-			},
-			//去结算
-			toPay() {	
-				this.$router.push({
-					path: '/takeout/takeOutOrder',
-					query: {
-						shopAuthenticateId: this.params['shopAuthenticateId']
-					}
-				})
-				
-			},
-			//显示商家信息
-			showShopDetial() {
-				this.popupVisible = !this.popupVisible;
-			},
-			//显示购物车商品
-			showShopCartDetail() {
-				if(this.shopCartDetail['count'] <= 0) {
-					return
-				}
-				this.shopCartVisible = !this.shopCartVisible;
-			},
-			init() {
-				this.getTakeOutShop();
-				
-			},
-			//获取外卖菜单
-			getTakeoutMenu() {
-				fetch.fetchPost('/goods/v3.2/toGoodsList', {
-					shopAuthenticateId: this.params['shopAuthenticateId']
-				}).then(res => {
-					let data = res.data;
-					for(let item of data) {
-						if(item['goodsList'].length <= 0) {
-							continue;
-						}
-						let categoryItem = { 
-							categoryName: item['categoryName'],
-							categoryId: item['categoryId']
-						};
-						let MenuListItem = {
-							categoryDescribe: item['categoryDescribe'],
-							goodsList: item['goodsList'],
-							categoryName: item['categoryName'],
-							
-						};
-						this.categoryListDate.push(categoryItem);
-						this.MenuListDate.push(MenuListItem);
-
-					}
-					setTimeout(() => {					
-						this.DOMOptions();
-					}, 10)
-				}).catch(res => {
-
-				})
-			},
-			//获取店铺资料
-			getTakeOutShop() {
-				if(this.positionInfo['longitude']) {
-					this.params['longitude'] = this.positionInfo['longitude'];
-					this.params['latitude'] = this.positionInfo['latitude']
-				}
-				fetch.fetchPost('/index/v3.2/toBizPage', this.params).then(res => {
-					this.getTakeoutMenu();
-					this.shopInfo = res.data;
-					Tools.setLocalStorage('shopInfo', this.shopInfo);
-					//获取菜单
-				}).catch(res => {
-
-				})
-			},
-			//tab切换
-			switchSelect(type) {
-				this.switchSelectType = type;
-			},
-			//dom操作
-			DOMOptions() {
-				//计算屏幕高度
-				this.height = document.documentElement.clientHeight;
-				//菜单容器
-				this.sectionMenu = document.querySelector('#section-menu');
-				//左侧菜单列表
-				this.classifyList = document.querySelectorAll('#classify-list > li');
-				//分类数量
-				this.ListCount = this.classifyList.length;
-				//右侧菜单列表
-				this.sectionMenuList = this.sectionMenu.children;
-				// 菜单起始高度
-				this.MenuListInitTop = this.sectionMenuList[0].offsetTop;
-				//初始菜单index
-				this.currentIndex = 0;
-				this.sectionMenu.addEventListener('scroll', (e) => {
-					this.scollEvent();
-				});
-				this.showCurrentClassify(this.currentIndex, 'rel active');
-				// this.clickEvent();
-			},
-			// 滚动事件
-			scollEvent() {
-				//body滚动条滚动
-				let scrollTop = document.documentElement.scrollTop || document.body.scrollTop,
-					MenuScrollTop = this.sectionMenu.scrollTop;
-
-				document.documentElement.scrollTop = document.body.scrollTop = MenuScrollTop;
-
-				for(let i = 0; i < this.ListCount; i++){
-					let MenuListTop = this.sectionMenuList[i].offsetTop - this.MenuListInitTop;
-					if(MenuScrollTop >= MenuListTop) {
-						this.currentIndex = i;
-					}
-				}
-				this.showCurrentClassify(this.currentIndex, 'rel active');
-			},
-			changeScroll(index) {
-				// this.showCurrentClassify(index, 'rel active');
-				this.sectionMenu.scrollTop = this.sectionMenuList[index].offsetTop - this.MenuListInitTop;
-				// this.scrollAniamted(this.sectionMenu, this.sectionMenuList[index].offsetTop - this.MenuListInitTop);
-			},
-			//点击事件
-			// clickEvent() {
-			// 	let self = this;
-			// 	for(let i = 0; i < this.ListCount; i++) {
-			// 		this.classifyList[i]['index'] = i;
-			// 		this.classifyList[i].onclick = function() {
-			// 			self.showCurrentClassify(this.index, 'active');
-			// 			self.sectionMenu.scrollTop = self.sectionMenuList[this.index].offsetTop - self.MenuListInitTop;
-
-			// 		}
-			// 	}
-			// },
-			//高亮显示当前分类
-			showCurrentClassify(index, className) {
-				for(let i = 0; i < this.ListCount; i++) {
-					this.classifyList[i].className = 'rel';
-				}
-				this.classifyList[index].className = className;
-			},
-			// 滚动动画
-			scrollAniamted(element, target) {
-				let speed = (target  - element.scrollTop) / 10;
-				speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
-				this.timer = setInterval(() => {
-					if(speed == 0 || element.scrollTop == target){
-						clearInterval(this.timer);
-						element.scrollTop = target;
-						return;
-					}
-					console.log(element.scrollTop);
-					element.scrollTop = element.scrollTop + speed;
-				}, 16)
-			}
-		}
-	}
-</script>

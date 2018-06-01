@@ -47,7 +47,8 @@ const newyouhui = r => require.ensure([], () => r(require('../page/my/youhui/new
 
 //首页选择地址
 const homeaddress = r => require.ensure([], () => r(require('@/wx_user/page/home/children/chooseAddress.vue')), 'homeaddress');
-
+//店铺搜索
+const searchShop = r => require.ensure([], () => r(require('@/wx_user/page/home/searchShop.vue')), 'searchShop');
 // 外卖模块
 const takeOutShop = r => require.ensure([], () => r(require('@/wx_user/page/takeout/takeOutShop.vue')), 'takeOutShop');
 //提交订单
@@ -56,13 +57,13 @@ const takeOutOrder = r => require.ensure([], () => r(require('@/wx_user/page/tak
 const addressList = r => require.ensure([], () => r(require('@/wx_user/page/takeout/children/addressList.vue')), 'addressList');
 //添加收货地址
 const addAddress = r => require.ensure([], () => r(require('@/wx_user/page/takeout/children/addAddress.vue')), 'addAddress');
-//订单
-// const orderlistNew = r => require.ensure([], () => r(require('@/wx_user/page/order/orderlistNew.vue')), 'orderlistNew');
 //搜索地址
 const searchAddress = r => require.ensure([], () => r(require('@/wx_user/page/takeout/children/children/searchAddress.vue')), 'searchAddress');
+//外卖订单
 const takeoutDetail = r => require.ensure([], () => r(require('@/wx_user/page/order/takeoutDetail.vue')), 'takeoutDetail');
+// 店铺首页搜索
+// const takeoutDetail = r => require.ensure([], () => r(require('@/wx_user/page/order/takeoutDetail.vue')), 'takeoutDetail');
 
-// import newyouhui  from  '../page/my/youhui/newYouHui.vue'
 
 // const newShortpay = r => require.ensure([], () => r(require('../page/shop/newShortpay.vue')), 'newShortpay');
 export default{
@@ -71,10 +72,13 @@ export default{
       path:'/',
       component:indexPage,
       redirect:'home',
-      children:[{
+      children:[
+      {
         path:'home',
         component:home,
-        meta:{title:'首页'},
+        meta:{
+          title:'首页'
+        },
       },
       {
         path : 'orderlist',
@@ -83,13 +87,13 @@ export default{
           title:'订单列表'
         }
       },
-      // {
-      //   path : 'orderlistNew',
-      //   component: orderlistNew,
-      //   meta:{
-      //     title:'订单列表'
-      //   }
-      // },
+      {
+        path : 'searchShop',
+        component: searchShop,
+        meta:{
+          title:'店铺搜索'
+        }
+      },
       {
         path: 'mycenter',
         component:mycenter,
@@ -210,7 +214,7 @@ export default{
       }
     },
     {
-      path: '/takeout/takeOutOrder',
+      path: '/pay/takeOutOrder',
       component: takeOutOrder,
       meta: {
         title: '提交订单'

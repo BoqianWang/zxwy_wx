@@ -306,6 +306,7 @@
 </style>
 <script>
 	import fetch from '@/config/fetch.js';
+	import { getCurrentPosition } from '@/assets/js/Amap.js';
 	export default {
 		data() {
 			return {
@@ -360,7 +361,9 @@
 						})
 					break;
 					case 'searchShop':
-
+						this.$router.push({
+							path: '/searchShop'
+						})
 					break;
 					case 'shop':
 						if(info.isWm == 1) {
@@ -407,6 +410,7 @@
 			},
 			//定位回调
 			positionCallBack(type, result) {
+				alert(JSON.stringify(result));
 				let positionInfo = {};
 				if(type == 'gps') {
 					positionInfo['address'] = result['formattedAddress']
@@ -427,20 +431,21 @@
 					this.getLocalStoragePosition();
 					return;
 				}
-				AMap.plugin(['AMap.Geolocation', 'AMap.CitySearch'], () => {
-					this.geolocation = new AMap.Geolocation({
-						timeout: 10000,
-					});
-					this.geolocation.getCurrentPosition((status, result) => {
-						if(status == 'complete') {
-							this.positionCallBack('gps', result)
-						} else {
-							this.geolocation.getCityInfo((status, result) => {
-								this.positionCallBack('ip', result)
-							})
-						}
-					})
-				})
+				getCurrentPosition(this.positionCallBack);
+				// AMap.plugin(['AMap.Geolocation', 'AMap.CitySearch'], () => {
+				// 	this.geolocation = new AMap.Geolocation({
+				// 		timeout: 10000,
+				// 	});
+				// 	this.geolocation.getCurrentPosition((status, result) => {
+				// 		if(status == 'complete') {
+				// 			this.positionCallBack('gps', result)
+				// 		} else {
+				// 			this.geolocation.getCityInfo((status, result) => {
+				// 				this.positionCallBack('ip', result)
+				// 			})
+				// 		}
+				// 	})
+				// })
 			}
 		},
 	}

@@ -104,12 +104,19 @@
 					</p>
 					<p class="flex-box justify-s-b p-b-ten align-center font-12">
 						<span>
+							<span class="tips-random tips"></span>
+							<span>随机减</span>
+						</span>
+						<span>-¥ {{randomCut}}</span>
+					</p>
+					<p class="flex-box justify-s-b p-b-ten align-center font-12">
+						<span>
 							<span class="tips-server tips"></span>
 							<span>清分费</span>
 						</span>
 						<span>+¥ {{serverMoney}}</span>
 					</p>
-					<div class="flex-box align-center justify-s-b m-t-ten" v-if="voucherNum > 0" @click="showVoucher('voucher')">
+					<div class="flex-box align-center justify-s-b m-t-ten" @click="showVoucher('voucher')">
 						<div class="font-15">
 							<span class="tips-ticket tips"></span>
 							<span class="color-3">代金券</span>
@@ -316,6 +323,7 @@
 	import voucher from '@/components/voucher.vue';
 	import remark from './children/takeoutorder/remark.vue';
 	import brower from '@/config/browser';
+	import { payType, WeixinPay, AliPay, AliFromPay } from '@/assets/js/Pay.js';
 	export default {
 		components: {
 			voucher,
@@ -352,9 +360,10 @@
 				serverMoney: 0,
 				//支付方式
 				paymentMode: '',
-				paytype: brower.IsWeixinOrAlipay() == 'false' ? 'Alipay' : brower.IsWeixinOrAlipay(),
 				//获取提示
-				errorMessage: ''
+				errorMessage: '',
+				//随机减
+				randomCut: 0
 			}
 		},
 		created() {
@@ -363,7 +372,6 @@
 		computed: {
 			//购物车详情
 			shopCartDetail() {
-				
 				return this.$store.getters.shopCartDetail;
 			},
 			surePayMoney() {
@@ -374,7 +382,11 @@
 				//满减
 				if(this.moneyOff['discount']) {
 					surePay -= this.moneyOff['discount']; 
+				} else {
+					this.moneyOff['discount'] = 0;
 				}
+				//随机减
+				surePay -= this.randomCut;
 				//代金券
 				if(this.voucher['discount']) {
 					surePay -= this.voucher['discount'];
@@ -411,6 +423,7 @@
 			this.getIntegral();
 			this.getMoneyOffList();
 			this.getVoucherList();
+			this.getRanDomSub();
 		},
 		methods: {
 			remarkHandle(work) {
@@ -467,25 +480,24 @@
 				this.voucherNum = count;
 			},
 			orderData() {
-				if(!this.address['recipientId']) {
-					this.errorMessage = '请填写收货地址';
-					return;
-				}
 					//积分抵扣金额
 				let deductedCost = this.integral['discount'] || 0,
+					randomCut = this.randomCut,
 					//总优惠
-					discount = Tools.ToCurrency(this.allDiscount - deductedCost),
+					discount = Tools.ToCurrency(this.moneyOff['discount'] + this.voucher['discount'] + randomCut),
 					activityId = this.moneyOff['activityId'] || '',
 					activityBelong = this.moneyOffGather['activityBelong'] || '',
 					shareGiftsId = this.voucher['shareGiftsId'] || '',
 					receiveId = this.voucher['receiveId'] || '',
 					//支付方式
-					// paymentMode = this.paytype == 'WeiXin' ? 1 :  2,
-					paymentMode = 0,
+					paymentMode = payType == 'WeiXin' ? 1 :  2,
+					// paymentMode = 0,
+					// 订单来源
+					orderSource = payType == 'WeiXin' ? 1 :  2,
 					//清风费
-					marketFee = this.serverMoney,
+					qffFee = this.serverMoney,
 					//订单明细
-					detailList = this.shopCartDetail['list'],
+					detailList = this.getDetailList(this.shopCartDetail['list']),
 					currentTime = (+new Date() + 1200 * 1000) / 1000,
 					addressId = this.address['recipientId'];
 				this.params = {
@@ -499,50 +511,70 @@
 					bizId: this.shopInfo['bizId'],
 					originalCost: this.money,
 					actualCost: this.surePayMoney,
-					deductedCost: deductedCost,
-					discount: discount,
-					activityId: activityId,
-					activityBelong: activityBelong,
-					shareGiftsId: shareGiftsId,
-					shareGiftsId: shareGiftsId,
-					receiveId: receiveId,
-					paymentMode: paymentMode,
-					marketFee: marketFee,
-					detailList: detailList
+					deductedCost,
+					discount,
+					activityId,
+					activityBelong,
+					shareGiftsId,
+					receiveId,
+					paymentMode,
+					orderSource,
+					qffFee,
+					detailList,
+					randomCut
 				};
+			},
+			//处理菜单列表
+			getDetailList(detailList) {
+				let list = [];
+				for(let item of detailList) {
+					delete item['shopAuthenticateId'];
+					delete item['goodsCategoryId'];
+					delete item['goodsId'];
+					list.push(item);
+				}
+				return list;
 			},
 			//提交订单
 			commitOrder() {
-				this.orderData();
-				if(this.errorMessage) {
+				if(!this.address['recipientId']) {
+					this.errorMessage = '请填写收货地址';
 					this.$toast(this.errorMessage);
-					return;	
+					return;
 				}
+				this.orderData();
 				fetch.fetchPost('/order/v3.2/takeawaySubmit', {
 					json: JSON.stringify(this.params)
 				}).then( res => {
 					this.payDetail = res.data;
-					if(res.data.orderStatus == 2) {
+					if(res.data.orderStatus >= 2 ) {
 						this.paySuccess();
 					}
 					else if(res.data.orderStatus == 1) {
-						if(this.paytype == 'WeiXin') {
-							this.weixinPay(res.data.retMap);
+						if(payType == 'WeiXin') {
+							// this.weixinPay(res.data.retMap);
+							WeixinPay(res.data.retMap, (res) => {
+								this.paySuccess()
+							})
 						}
-						else if(this.paytype == 'Alipay') {
+						else if(payType == 'Alipay') {
 							 if(res.data.form) {
-				              const div = document.createElement('div');
-				              div.innerHTML = res.data.form;
-				              document.body.appendChild(div);
-				              document.forms.punchout_form.submit();
+				              // const div = document.createElement('div');
+				              // div.innerHTML = res.data.form;
+				              // document.body.appendChild(div);
+				              // document.forms.punchout_form.submit();
+				              AliFromPay(res.data.form)
 				            } else {
 				              //支付宝浏览器api支付
-				              document.addEventListener('AlipayJSBridgeReady', this.tradePay(res.data.tradeNo), false);
+				              // document.addEventListener('AlipayJSBridgeReady', this.tradePay(res.data.tradeNo), false);
+				              AliPay(res.data.tradeNo, (res) => {
+				              	 this.paySuccess()
+				              })
 				            }
 						}
 					}
 				}).catch(res => {
-					this.$toast('')
+					
 				})
 			},
 			paySuccess() {
@@ -554,55 +586,6 @@
 					}
 				})
 			},
-			cancelPay() {
-				this.paySuccess();
-			},
-			//支付宝支付
-		    tradePay(tradeNO) {
-		       AlipayJSBridge.call("tradePay", {
-		            tradeNO: tradeNO
-		       },  (data) => {
-		           if ("9000" == data.resultCode) {
-		               this.paySuccess();
-		           } else {
-		               this.cancelPay();
-		           }
-		       });
-		    },
-			//微信支付
-			weixinPay(data){
-		        if (typeof WeixinJSBridge == "undefined") {//微信浏览器内置对象。参考微信官方文档
-		          if(document.addEventListener) {
-		            document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(data), false);
-		          }
-		          else if (document.attachEvent) {
-		            document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady(data));
-		            document.attachEvent('onWeixinJSBridgeReady',this.onBridgeReady(data));
-		          }
-		        } 
-		        else{
-		          this.onBridgeReady(data);
-		        }
-		      },
-		      onBridgeReady(data){
-		        WeixinJSBridge.invoke(
-		          'getBrandWCPayRequest',{
-		            "appId": data.appId,     //公众号名称，由商户传入
-		            "timeStamp": data.timeStamp, //时间戳，自1970年以来的秒数
-		            "nonceStr": data.nonceStr, //随机串
-		            "package": data.package,
-		            "signType": data.signType, //微信签名方式：
-		            "paySign": data.paySign //微信签名
-		          },(res) => {
-		            // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-		            if(res.err_msg == "get_brand_wcpay_request:ok"){
-		                  this.paySuccess();
-		            }else{
-		               this.cancelPay();
-		            }
-		          }
-		        );
-		    },
 			//选择代金券
 			showVoucher(type) {
 				if(type == 'voucher') {
@@ -626,6 +609,7 @@
 
 				})
 			},
+
 			//获取代金券
 			getVoucherList() {
 				fetch.fetchPost('personal/voucherList', {
@@ -636,7 +620,15 @@
 				}).catch(res => {
 
 				})
-			}
+			},
+			//获取随机减
+			//随机减
+			getRanDomSub() {
+				fetch.fetchPost('/order/v3.2/randomSub', {}).
+				then(res => {
+					this.randomCut = res.data;
+				})
+			},
 		}
 	}
 </script>

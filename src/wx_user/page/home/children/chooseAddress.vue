@@ -71,11 +71,12 @@
 		height: .4rem;
 		line-height: .4rem;
 		.icon-add {
-			padding: .02rem;
+			/*padding: .02rem;*/
 			border: 1px solid $mainColor;
 			border-radius: 50%;
 			color: $mainColor;
-			font-size: .14rem;
+			width: 22px;
+			height: 22px;
 		}
 	}
 	.choose-address {

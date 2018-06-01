@@ -8,6 +8,7 @@ const store = new Vuex.Store({
 		addressInfo: '',
 		editAddressInfo: null,
 		cartList: [],
+		itemMenuDate: {}
 	},
 	getters: {
 		/**
@@ -56,6 +57,15 @@ const store = new Vuex.Store({
 		 */
 		editAddress(state, info) {
 			state.editAddressInfo = info;
+		},
+		/**
+		 * 多规格商品
+		 * @param  {[type]} state [description]
+		 * @param  {[type]} info  [description]
+		 * @return {[type]}       [description]
+		 */
+		itemMenuDetail(state, info) {
+			state.itemMenuDate = info;
 		},
 		/**
 		 * 添加购物车

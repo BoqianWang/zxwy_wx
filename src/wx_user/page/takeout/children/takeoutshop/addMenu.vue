@@ -6,7 +6,7 @@
 			<p class="add iconfont icon-add white-f" @click="addMenu"></p>
 			<!-- <p @click="size">选规格</p> -->
 		</div>
-		<mt-popup
+		<!-- <mt-popup
 		  v-model="popupVisible"
 		  position="bottom">
 		  <div class="size-wrap p-ten">
@@ -16,9 +16,6 @@
 		  		<div class="flex-1 p-l-ten flex-box menu-detail">
 		  			<div class="color-3 width-100">
 		  				<p>{{menuData['goodsName']}}</p>
-			  			<!-- <span class="color-3 font-12">已选:
-							小 / 微辣 / 不要葱花 / 等等等
-			  			</span> -->
 		  			</div>
 		  			<p class="size-money">¥{{menuData['sku'] && menuData['sku'][specificationIndex]['discountPrice']}}</p>
 		  		</div>
@@ -31,7 +28,6 @@
 			  			v-for="(item,index) in menuData['sku']" 
 			  			:class="{'item-selected': specificationIndex == index}"
 			  			@click="specificationIndex = index">{{item['spec']}}</span>
-			  			<!-- <span>规格名称2</span> -->
 			  		</div>
 		  		</div>
 		  		<div class="atribute" v-for="(item, parentIndex) in goodsAttribute">
@@ -46,11 +42,11 @@
 		  	</div>
 		  	<mt-button class="sure" type="primary" @click="confirm">选好了</mt-button>
 		  </div>
-		</mt-popup>
+		</mt-popup> -->
 	</div>
 </template>
 <style scoped lang="scss">
-	@import '../../../style/mixin.scss';	
+	@import '../../../../style/mixin.scss';	
 	.add-menu {
 		align-items: center;
 	}
@@ -71,7 +67,7 @@
 		border:1px solid #FF6F15;
 		line-height: 20px;
 	}
-	.size-wrap {
+	/*.size-wrap {
 		width: 3.76rem;
 		padding-bottom: .8rem;
 		.sure {
@@ -105,7 +101,7 @@
 			color: #333;
 			border-radius: 4px;
 		}
-	}
+	}*/
 </style>
 <script>
 	/**
@@ -124,18 +120,18 @@
 				popupVisible: false,
 				// count: 0,
 				specificationIndex: 0,
-				attributeIndexList: {},
+				// attributeIndexList: {},
 				goodsAttribute: [],
-				goodsTaste: '',
+				// goodsTaste: '',
 				skuDetail: {}
 			}
 		},
 		computed: {
 			//监听购物车数据
-			shopCart() {
-				return this.$store.state.cartList;
-				// return Object.assign({},this.cartList);
-			},
+			// shopCart() {
+			// 	return this.$store.state.cartList;
+			// 	return Object.assign({},this.cartList);
+			// },
 			//购买数量
 			count() {
 				let shopMenuList = this.$store.state.cartList,
@@ -146,20 +142,15 @@
 							count += item['goodsNum'];
 						}
 					}
-					return count;
+					// return count;
 				}
 				return count;
-			}
+			},
 		},
 		mounted() {
 			this.skuDetail = this.menuData['sku'][this.specificationIndex];
 			if(this.menuData['goodsAttribute'] && this.menuData['goodsAttribute'] != 'null') {
-				let re = /[^,/，]+/g;
 				this.goodsAttribute = JSON.parse(this.menuData['goodsAttribute']);
-				for(let i in this.goodsAttribute) {
-					this.goodsAttribute[i]['value'] = this.goodsAttribute[i]['value'].match(re);
-					this.$set(this.attributeIndexList, i, 0);
-				}
 			}
 		},
 		methods: {
@@ -167,7 +158,7 @@
 			delMenu() {
 				let delData = {
 					skuId: this.skuDetail['skuId'],
-					goodsTaste: this.goodsTaste,
+					goodsTaste: '',
 					shopAuthenticateId: this.menuData['shopAuthenticateId']
 				}
 				if((this.menuData['sku'] && this.menuData['sku'].length > 1) || this.goodsAttribute.length > 0) {
@@ -183,42 +174,45 @@
 			},
 			//点击添加按钮
 			addMenu() {
-				
 				if((this.menuData['sku'] && this.menuData['sku'].length > 1) || this.goodsAttribute.length > 0) {
-					this.popupVisible = true;
+					// this.popupVisible = true;
+					this.$store.commit('itemMenuDetail', this.menuData)
+					this.$emit('send-item');
+					
 				} else {
-					this.addCart(this.skuDetail, '');
+					this.addCart(this.menuData, this.skuDetail, '');
 				}
 				
 			},
 			//选择属性
-			choseAttributeINndex(parentIndex, subIndex) {
-				this.attributeIndexList[parentIndex] = subIndex;
-			},
+			// choseAttributeINndex(parentIndex, subIndex) {
+			// 	this.attributeIndexList[parentIndex] = subIndex;
+			// },
 			//点击选好了
-			confirm() {
-				let attributeStr = [],
-				spec = '';
-				this.skuDetail = this.menuData['sku'][this.specificationIndex];	
-				if(this.skuDetail['spec'] != null) {
-					spec = this.skuDetail['spec'];
-				}
-				for(let i in this.attributeIndexList) {
-					attributeStr.push(this.goodsAttribute[i]['value'][this.attributeIndexList[i]]);
-				}
-				this.goodsTaste = `${spec},${attributeStr.join(',')}`
-				this.addCart(this.skuDetail, this.goodsTaste);
-				this.popupVisible = false;
-			},
+			// confirm() {
+			// 	let attributeStr = [],
+			// 	spec = '';
+			// 	this.skuDetail = this.menuData['sku'][this.specificationIndex];	
+			// 	if(this.skuDetail['spec'] != null) {
+			// 		spec = this.skuDetail['spec'];
+			// 	}
+			// 	for(let i in this.attributeIndexList) {
+			// 		attributeStr.push(this.goodsAttribute[i]['value'][this.attributeIndexList[i]]);
+			// 	}
+			// 	this.goodsTaste = `${spec},${attributeStr.join(',')}`
+			// 	this.addCart(this.skuDetail, this.goodsTaste);
+			// 	this.popupVisible = false;
+			// 	// this.$emit('chose-specification-attribute', 'scroll');
+			// },
 			//添加购物车
-			addCart(skuDetail, goodsTaste) {
+			addCart(menuData, skuDetail, goodsTaste) {
 				let params = {
-					shopAuthenticateId: this.menuData['shopAuthenticateId'],
-					goodsCategoryId: this.menuData['goodsCategoryId'],
-					goodsPic: this.menuData['goodsPic'],
-					goodsId: this.menuData['goodsId'],
+					shopAuthenticateId: menuData['shopAuthenticateId'],
+					goodsCategoryId: menuData['goodsCategoryId'],
+					goodsId: menuData['goodsId'],
+					goodsPic: menuData['goodsPic'],
+					goodsName: menuData['goodsName'],
 					skuId: skuDetail['skuId'],
-					goodsName: this.menuData['goodsName'],
 					goodsNum: 1,
 					originalPrice: skuDetail['price'],
 					discountPrice: skuDetail['discountPrice'],

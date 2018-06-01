@@ -15,6 +15,10 @@
 					v-if="orderDetail['orderStatus'] == 2" 
 					@click="cancelOrder">取消订单</mt-button>
 
+					<mt-button 
+					v-if="orderDetail['orderStatus'] == 1" 
+					class="takeout-btn font-15" type="primary" @click="restartToPay">点击支付</mt-button>
+
 					<router-link :to="'/takeout/takeOutShop?shopAuthenticateId=' + orderDetail['shopAuthenticateId']">
 						<mt-button class="takeout-btn font-15" type="primary">再来一单</mt-button>
 					</router-link>
@@ -89,6 +93,13 @@
 					</p>
 					<p class="flex-box justify-s-b p-b-ten align-center font-12">
 						<span>
+							<span class="tips-random tips"></span>
+							<span>随机减</span>
+						</span>
+						<span>-¥ {{orderDetail['randomCut']}}</span>
+					</p>
+					<p class="flex-box justify-s-b p-b-ten align-center font-12">
+						<span>
 							<span class="tips-ticket tips"></span>
 							<span>代金券</span>
 						</span>
@@ -99,7 +110,7 @@
 							<span class="tips-server tips"></span>
 							<span>清分费</span>
 						</span>
-						<span>+¥ {{orderDetail['serviceRate']}}</span>
+						<span>+¥ {{orderDetail['qffFee']}}</span>
 					</p>
 				</div>
 				<!-- 分割线 -->
@@ -241,6 +252,7 @@
 </style>
 <script>
 	import fetch from '@/config/fetch.js';
+	import { payType, WeixinPay, AliPay, AliFromPay } from '@/assets/js/Pay.js';
 	export default {
 		data() {
 			return {
@@ -274,6 +286,42 @@
 			this.getOrderDetail();
 		},
 		methods: {
+			//立马支付
+			restartToPay() {
+				fetch.fetchPost('/order/v3.2/restartToPay', this.params).then(res => {
+					let result = res.data
+					// if(result.orderStatus == 1) {
+						if(payType == 'WeiXin') {
+							WeixinPay(result.retMap, (res) => {
+								if(res == 'success') {
+									this.paySuccess();
+								} else {
+									this.canselPay();
+								}
+							})
+						} else {
+							if(result.form) {
+								AliFromPay();
+							} else {
+								AliPay(result.tradeNo, res => {
+									if(res == 'success') {
+										this.paySuccess();
+									} else {
+										this.canselPay();
+									}
+								})
+							}
+						}
+					// }
+				})
+			},
+			paySuccess() {
+				this.getOrderDetail();
+			},
+			canselPay() {
+				this.$toast('请尽快支付, 不然就会订单会失效哦!');
+			},
+			//取消订单
 			cancelOrder() {
 				fetch.fetchPost('/order/v3.2/cancelOrder', this.params).then(res => {
 					this.orderDetail['orderStatus'] = 0;
@@ -289,7 +337,7 @@
 			},
 			//获取订单
 			getOrderDetail() {
-				fetch.fetchPost('personal/v3.2/orderDetail', this.params).
+				fetch.fetchPost('/personal/v3.2/orderDetail', this.params).
 				then(res => {
 					this.orderDetail = res.data;
 				}).catch(res => {

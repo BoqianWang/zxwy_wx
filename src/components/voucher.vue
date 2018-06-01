@@ -106,7 +106,7 @@
 		data() {
 			return {
 				popupVisible: false,
-				shopCartDetail: this.$store.getters.shopCartDetail
+				// shopCartDetail: this.$store.getters.shopCartDetail
 			}
 		},
 		computed: {

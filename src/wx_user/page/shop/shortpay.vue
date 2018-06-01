@@ -28,11 +28,17 @@
 				</div>
 			</div>
 			<div class="pay-footer">
+				<!-- 随机减 -->
+				<mt-cell v-show="randomCut > 0 && isShowSureMoney" title="随机减" :value="'- ¥' + randomCut">
+					<!-- <span class="color-main">- ¥1</span> -->
+				</mt-cell>
+				
 				<!-- 代金券 -->
 				<mt-cell v-show="userfulVocherCount > 0" title="代金券" is-link  @click.native="showHidePopup(popupVisible)">
 				  <span class="pay-foot-discount white-f" v-if="!choseVocher['discount']">{{ userfulVocherCount }}张可用</span>
 				  <span v-else>{{'- ¥' + choseVocher['discount']}}</span>
 				</mt-cell>
+
 				<!-- 积分抵扣 -->
 				<mt-cell v-show="integral['all'] > 0" 
 				:title="shopInfo.personalIntegralStr" 
@@ -55,9 +61,9 @@
 				<mt-button v-show="sureBtn" class="pay-sure white-f" type="default" @click="surePay">确认支付</mt-button>
 			</div>
 		</div>
-		<!-- <div class="text-center" style="margin-top: 20px;">
+		<div class="text-center" style="margin-top: 20px;">
 		    <mt-button type="danger" @click='clearCookie'>清除cookies(用于测试)</mt-button>
-		</div> -->
+		</div>
 		<!-- 代金券 -->
 		<mt-popup class="popup" v-model="popupVisible" position="right" :modal="false">
 			<mt-header fixed title="选择代金券" style="height: 44px;">
@@ -90,25 +96,6 @@
 							</div>
 						</div>
 		        	</li>
-		        	<!-- <li>
-						<div class="voucher">
-							<div class="voucher-above white-f">
-								<p class="flex-box justify-s-b above-title m-b-ten">
-									<span>商家代金券</span>
-									<span>¥5</span>
-								</p>
-								<p class="flex-box justify-s-b font-12">
-									<span>2017-12-12至2017-01-12</span>
-									<span>满20可用</span>
-								</p>
-							</div>
-							<div class="voucher-middle"></div>
-							<div class="voucher-below font-12">
-								<p>仅限芊芊果园,可用</p>
-								<p>消费金额需满20元可用</p>
-							</div>
-						</div>
-		        	</li> -->
 		        </ul>
 	        </div>
 		</mt-popup>
@@ -210,7 +197,6 @@
 		width: 100%;
 		height: 100%;
 		background: #F9F9F9;
-		/*overflow: auto;*/
 	}
 	.popup .mint-header {
 		background: #ff6e15;
@@ -253,9 +239,11 @@
 	}
 </style>
 <script>
-	import api from '@/config/api';
+	// import api from '@/config/api';
 	import keyword from '@/components/keyword/KeyboardInput.vue';
-	import brower from '@/config/browser';
+	import { payType, WeixinPay, AliPay, AliFromPay } from '@/assets/js/Pay.js';
+	import fetch from '@/config/fetch.js';
+	// import voucher from '@/components/voucher.vue';
 	export default {
 		components: {
 			keyword
@@ -274,18 +262,12 @@
 				isClick: true,
 				//页面确认支付按钮
 				sureBtn: false,
-				// 商户id
-				// bizId: this.$route.query.bizId,
-				// 代金券原始数据
-				// voucherListData: [],
 				//处理过后代金券列表
 				voucherList: [],
 				//原始代金券列表
-				// resVoucherList: [],
 				//可用代金券数量
 				userfulVocherCount: 0,
 				//选择代金券的金额
-				// choseVocherMoney: 0,
 				
 				// 店铺详情
 				shopInfo: {},
@@ -295,21 +277,18 @@
 				choseVocher: {},
 				//适合使用的满减活动
 				moneyOff: {},
-				// mpney_off:{
-				// 	discount:0,
-				// 	activityId:''
-				// }
 				//积分
 				integral: {
 					all: 0,
 					//积分抵扣
 					discount: 0
 				},
-				paytype: brower.IsWeixinOrAlipay() == 'false' ? 'Alipay' : brower.IsWeixinOrAlipay(),
 				afterDataVO: {},
 				errorShopInfo: false,
 				// 是否显示实付
-				isShowSureMoney: false
+				isShowSureMoney: false,
+				//随机减
+				randomCut: 0
 			}
 		},
 		computed: {
@@ -329,11 +308,12 @@
 			this.getShopDetail();
 		},
 		methods:{
+
 			// 清除cookies
-		    // clearCookie() {
-		    //     alert('已清除缓存');
-		    //     Tools.clearCookies('zx_token');
-		    // },
+		    clearCookie() {
+		        alert('已清除缓存');
+		        Tools.clearCookies('zx_token');
+		    },
 			//显示或者隐藏代金券
 			showHidePopup(type) {
 				this.popupVisible = !this.popupVisible
@@ -351,44 +331,75 @@
 					actualCost = this.surePayMoney,
 					//积分
 					deductedCost = this.integral['discount'],
+					// 随机减
+					randomCut = this.randomCut,
 					//满减 + 代金券 
-					// discount = Math.abs((this.money -  this.surePayMoney - this.integral['discount'] + this.serverMoney).toFixed(2)),
-					discount = (this.moneyOff['discount'] + this.choseVocher['discount']).toFixed(2),
+					discount = (this.moneyOff['discount'] + this.choseVocher['discount'] + randomCut).toFixed(2),
+
 					activityBelong = this.moneyOffGather['activityBelong'] || '',
 					activityId = this.moneyOff['activityId'] || '',
 					//1表示微信, 2表示支付宝, 0表示余额
-					// paymentMode = this.paytype == 'WeiXin' ? 1 :  2,
-					paymentMode = 0,
-					randomDisAmount = 0,
+					paymentMode = payType == 'WeiXin' ? 1 :  2,
+					// paymentMode = 0,
+					orderSource = payType == 'WeiXin' ? 1 :  2,
 					shareGiftsId = this.choseVocher['shareGiftsId'] || '',
 					receiveId = this.choseVocher['receiveId'] || '',
-					marketServiceCost = this.serverMoney;
+					qffFee = this.serverMoney;
 				if(this.money <= 0 || this.money == '') {
 					this.$toast('请输入金额')
 					return;
 				}
 				this.isClick = false;
-				this.$indicator.open();
-				api.orderSubmit(bizId, originalCost, actualCost, deductedCost, discount, activityBelong, activityId,
-					paymentMode, randomDisAmount, shareGiftsId, receiveId, marketServiceCost)
+				fetch.fetchPost('/order/v3.2/shortcutSubmit', {
+					bizId,
+					originalCost,
+					actualCost,
+					deductedCost,
+					discount,
+					activityBelong,
+					activityId,
+					paymentMode,
+					randomCut,
+					orderSource,
+					shareGiftsId,
+					receiveId,
+					qffFee,
+				})
+				// api.orderSubmit(bizId, originalCost, actualCost, deductedCost, discount, activityBelong, activityId,
+				// 	paymentMode, randomDisAmount, shareGiftsId, receiveId, marketServiceCost)
 				.then(res => {
 					this.afterDataVO = res.data.afterDataVO;
 					if(res.data.orderStatus == 6) {
 						this.paySuccess();
 					} 
 					else if(res.data.orderStatus == 1) {
-						if(this.paytype == 'WeiXin') {
-							this.weixinPay(res.data.retMap);
+						if(payType == 'WeiXin') {
+							// this.weixinPay(res.data.retMap);
+							WeixinPay(res.data.retMap, res => {
+								if(res == 'success') {
+									this.paySuccess();
+								} else {
+									this.isClick = true;
+								}
+							}) 
 						}
-						else if(this.paytype == 'Alipay') {
+						else if(payType == 'Alipay') {
 							 if(res.data.form) {
-				              const div = document.createElement('div');
-				              div.innerHTML = res.data.form;
-				              document.body.appendChild(div);
-				              document.forms.punchout_form.submit();
+				              // const div = document.createElement('div');
+				              // div.innerHTML = res.data.form;
+				              // document.body.appendChild(div);
+				              // document.forms.punchout_form.submit();
+				              AliFromPay(res.data.form)
 				            } else {
 				              //支付宝浏览器api支付
-				              document.addEventListener('AlipayJSBridgeReady', this.tradePay(res.data.tradeNo), false);
+				              // document.addEventListener('AlipayJSBridgeReady', this.tradePay(res.data.tradeNo), false);
+				              AliPay(res.data.tradeNo, res => {
+				              	  if(res == 'success') {
+				              	  	 this.paySuccess();
+				              	  } else {
+				              	  	 this.isClick = true;
+				              	  }
+				              })
 				            }
 						}
 					}
@@ -397,51 +408,51 @@
 				})
 			},
 			//支付宝支付
-		    tradePay(tradeNO) {
-		       AlipayJSBridge.call("tradePay", {
-		            tradeNO: tradeNO
-		       },  (data) => {
-		           if ("9000" == data.resultCode) {
-		               this.paySuccess();
-		           } else {
-		               this.isClick = true;
-		           }
-		       });
-		    },
+		    // tradePay(tradeNO) {
+		    //    AlipayJSBridge.call("tradePay", {
+		    //         tradeNO: tradeNO
+		    //    },  (data) => {
+		    //        if ("9000" == data.resultCode) {
+		    //            this.paySuccess();
+		    //        } else {
+		    //            this.isClick = true;
+		    //        }
+		    //    });
+		    // },
 		    //微信支付
-			weixinPay(data){
-		        if (typeof WeixinJSBridge == "undefined") {//微信浏览器内置对象。参考微信官方文档
-		          if(document.addEventListener) {
-		            document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(data), false);
-		          }
-		          else if (document.attachEvent) {
-		            document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady(data));
-		            document.attachEvent('onWeixinJSBridgeReady',this.onBridgeReady(data));
-		          }
-		        } 
-		        else{
-		          this.onBridgeReady(data);
-		        }
-		      },
-		      onBridgeReady(data){
-		        WeixinJSBridge.invoke(
-		          'getBrandWCPayRequest',{
-		            "appId": data.appId,     //公众号名称，由商户传入
-		            "timeStamp": data.timeStamp, //时间戳，自1970年以来的秒数
-		            "nonceStr": data.nonceStr, //随机串
-		            "package": data.package,
-		            "signType": data.signType, //微信签名方式：
-		            "paySign": data.paySign //微信签名
-		          },(res) => {
-		            // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-		            if(res.err_msg == "get_brand_wcpay_request:ok"){
-		                  this.paySuccess();
-		            }else{
-		              this.isClick = true;
-		            }
-		          }
-		        );
-		    },
+			// weixinPay(data){
+		 //        if (typeof WeixinJSBridge == "undefined") {//微信浏览器内置对象。参考微信官方文档
+		 //          if(document.addEventListener) {
+		 //            document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(data), false);
+		 //          }
+		 //          else if (document.attachEvent) {
+		 //            document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady(data));
+		 //            document.attachEvent('onWeixinJSBridgeReady',this.onBridgeReady(data));
+		 //          }
+		 //        } 
+		 //        else{
+		 //          this.onBridgeReady(data);
+		 //        }
+		 //      },
+		 //      onBridgeReady(data){
+		 //        WeixinJSBridge.invoke(
+		 //          'getBrandWCPayRequest',{
+		 //            "appId": data.appId,     //公众号名称，由商户传入
+		 //            "timeStamp": data.timeStamp, //时间戳，自1970年以来的秒数
+		 //            "nonceStr": data.nonceStr, //随机串
+		 //            "package": data.package,
+		 //            "signType": data.signType, //微信签名方式：
+		 //            "paySign": data.paySign //微信签名
+		 //          },(res) => {
+		 //            // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+		 //            if(res.err_msg == "get_brand_wcpay_request:ok"){
+		 //                  this.paySuccess();
+		 //            }else{
+		 //              this.isClick = true;
+		 //            }
+		 //          }
+		 //        );
+		 //    },
 			//支付成功后跳转
 		    paySuccess() {
 		          this.$router.push({
@@ -457,6 +468,7 @@
 			//计算实付金额
 			surePayMoneyHandle(currenValue) {
 				// let moneyOffDiscount = 0;
+				//随机减
 				// 使用满减
 				if(!this.moneyOff.discount) {
 					// moneyOffDiscount = this.moneyOff.discount;
@@ -466,6 +478,8 @@
 				// this.surePayMoney = currenValue - moneyOffDiscount;
 				this.surePayMoney = currenValue - this.moneyOff.discount;
 
+				// 随机减
+				this.surePayMoney -= this.randomCut;
 				// 使用代金券
 				if(this.choseVocher['isUserful'] == 1) {
 					this.surePayMoney -= this.choseVocher['discount'];
@@ -621,14 +635,14 @@
 					bizId: this.$route.query.bizId || '',
 					merNo: this.$route.query.merNo || ''
 				}
-				this.$indicator.open();
-				api.shortpay(params).then(res => {
+				fetch.fetchPost('/order/ShopDetails', params).then(res => {
 					this.shopInfo = res.data;
 					this.integral['all'] = this.shopInfo['personalIntegralMoney'];
 
 					this.getVoucherList();
 					// 处理商店优惠活动
 					this.shopDiscounts();
+					
 				}).catch(res => {
 					//无该店铺信息
 			        if(res == 1) {
@@ -643,13 +657,23 @@
 			},
 			//获取代金券
 			getVoucherList() {
-				this.$indicator.open();
-				api.useyouhuilist(1, true).then(res => {
+				fetch.fetchPost('/personal/voucherList', {
+					pageNo: 1,
+					canUse: true
+				}).then(res => {
 					this.voucherList = res.data.lists;
+					this.getRanDomSub();
 				}).catch(res => {
 
 				})
-			}
+			},
+			//随机减
+			getRanDomSub() {
+				fetch.fetchPost('/order/v3.2/randomSub', {}).
+				then(res => {
+					this.randomCut = res.data;
+				})
+			},
 		}
 	}
 </script>
