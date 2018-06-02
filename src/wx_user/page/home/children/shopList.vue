@@ -3,7 +3,7 @@
 			infinite-scroll-disabled="loadding" 
 			infinite-scroll-distance="100"
 			v-infinite-scroll="loadMore">
-				<div class="shop-list-block flex-box p-ten bg-white" v-for="item in list['list']">
+				<div class="shop-list-block flex-box p-ten bg-white" v-for="item in list['shopList']">
 					<div class="block-list-img" :style="'background-image: url(' + item.shopLogo + ');'"></div>
 					<div class="p-l-ten flex-1">
 						<div @click="toLink('shop', item)">
@@ -45,7 +45,7 @@
 						 </div>
 					</div>
 				</div>
-
+				<div v-show="tips" class="font-15 color-3 text-center p-t-ten">{{tips}}</div>
 			</div>
 </template>
 <style lang="scss">
@@ -97,9 +97,9 @@
 		},
 		computed: {
 			list() {
-				let bizList = this.bizList
+				let bizList = this.bizList;
 				if(bizList['page']) {
-					this.totalPage = bizList['page']['total'];
+					this.totalPage = bizList['page']['totalPage'];
 					this.pageNo = bizList['page']['pageNo'];
 				}
 				return bizList;
@@ -110,7 +110,8 @@
 				loadding: true,
 				totalPage: 1,
 				pageNo: 1,
-				loadding: true
+				loadding: true,
+				tips: ''
 			}
 		},
 		mounted() {
@@ -156,8 +157,12 @@
 			//加载更多
 			loadMore() {
 				this.loadding = true;
+				console.log(this.pageNo, this.totalPage)
 				if(this.pageNo >= this.totalPage) {
+					this.tips = '没有找到更多内容了~~';
 					return;
+				} else {
+					this.tips = '';
 				}
 				this.pageNo++;
 				this.$emit('load-more', this.pageNo);

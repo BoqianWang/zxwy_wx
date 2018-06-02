@@ -3,7 +3,7 @@
 		<div class="search-shop-title p-ten flex-box bg-white">
 			<div class="flex-1 bg-F9F9F9 p-l-ten align-center flex-box">
 				<span class="iconfont icon-search font-b"></span>
-				<input class="p-l-ten width-100" type="search" v-model="params['keyword']" @keyup.enter="toSearch" placeholder="请输入搜索名称">
+				<input autofocus="autofocus" class="p-l-ten width-100" type="search" v-model="params['keyword']" @keyup.enter="toSearch" placeholder="请输入搜索名称">
 			</div>
 			<input class="p-l-ten p-r-ten search-btn bg-white color-main font-15" type="button" @click="toSearch" value="搜索">
 		</div>
@@ -50,6 +50,7 @@
 				params: {
 					keyword: '',
 					pageNo: 1,
+					pageSize: 20,
 					longitude: Tools.getLocalStorage('positionInfo')['longitude'],
 					latitude: Tools.getLocalStorage('positionInfo')['latitude']
 				},
@@ -72,11 +73,11 @@
 			},
 			getShopList() {
 				fetch.fetchPost('/index/v3.2/searchShop', this.params).then(res => {
-					this.shopList = this.shopList.concat(res.data.list);
-					this.$set(this.shopListData, 'list', this.shopList);
+					this.shopList = this.shopList.concat(res.data['shopList']);
+					this.$set(this.shopListData, 'shopList', this.shopList);
 					this.$set(this.shopListData, 'page', {
 						pageNo: res.data.pageNo,
-						total: res.data.total
+						totalPage: res.data.totalPage
 					})
 					this.$refs.shopList.canLoadMore();
 				}).catch(res => {

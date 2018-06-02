@@ -37,7 +37,8 @@
 				</div>
 				<div class="p-t-ten flex-box order-button" v-if="item['takeawayParam']">
 					<mt-button class="color-3 bg-white" type="default" size="small" @click="toLink(item, 'again')">再来一单</mt-button>
-					<mt-button class="m-l-ten white-f" type="default" size="small">评价</mt-button>
+
+					<mt-button  v-if="item['orderStatus'] == 6" class="m-l-ten white-f recommond" type="default" size="small">评价</mt-button>
 				</div>
 			</li>
 			<!-- <li class="p-ten">
@@ -158,7 +159,7 @@
 			button {
 				width: 80px;
 			}
-			button:last-child {
+			.recommond {
 				background: $mainColor;
 			}
 		}

@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-white">
+	<div class="bg-white" :class="{'blur': !isInBussiness['is']}">
 		<div class="takeout-wrap" id="takeout-wrap">
 			<div class="takeout-shop-t-w" @click="showShopDetial">
 				<!-- 头部 -->
@@ -145,6 +145,7 @@
 						</section>
 					</div>
 					<footer class="shop-cart align-justify rel flex-box" style="z-index: 3333;">
+						<div v-if="!isInBussiness['is']" class="abs is-in-bussiness color-3 font-15 p-r-ten p-l-ten">{{isInBussiness['tips']}}</div>
 						<div class="shop-cart-icon text-center abs animated" :class="{'empty-cart': shopCartDetail['count'] <= 0, 'bounce': bounce > 0 }" @click="showShopCartDetail">
 							<mt-badge class="abs cart-tips" type="error" size="small" v-if="shopCartDetail['count'] > 0">
 								{{shopCartDetail['count']}}
@@ -155,15 +156,11 @@
 							<p class="white-f" v-show="shopCartDetail['money'] > 0">¥{{shopCartDetail['money']}}</p>
 							<p class="color-9 addtion-money">另需要配送费{{shopInfo['expressFee']}}元</p>
 						</div>
-						<!-- <div class="white-f text-center shop-cat-pay to-pay" :class="{'cano-to-pay': shopCartDetail['money'] >= shopInfo['startSendFee']}" @click="toPay()">
-							<span>去结算</span>
-							<span>¥20起送</span>
-						</div> -->
 						<div v-if="shopCartDetail['money'] > 0 && shopCartDetail['money'] >= shopInfo['startSendFee']" class="white-f text-center shop-cat-pay to-pay" @click="toPay()">
 							<span>去结算</span>
 						</div>
 						<div v-else-if="shopCartDetail['money']" class="white-f text-center shop-cat-pay to-pay cano-to-pay">
-							<span>还差¥{{shopInfo['startSendFee'] - shopCartDetail['money']}}</span>
+							<span>还差¥{{(shopInfo['startSendFee'] - shopCartDetail['money']).toFixed(2)}}</span>
 						</div>
 						<div v-else class="white-f text-center shop-cat-pay to-pay cano-to-pay">
 							<span>¥{{shopInfo['startSendFee']}}起送</span>
@@ -337,7 +334,12 @@
 				//菜单列表数据
 				MenuListDate: [],
 				bounce: false,
-				itemMenudata: {}
+				itemMenudata: {},
+				//是不在在营业中
+				isInBussiness: {
+					is: true,
+					tips: ''
+				}
 			}
 		},
 		mounted() {
@@ -364,6 +366,16 @@
 			}
 		},
 		methods: {
+			isInBussinessHandle(shopInfo) {
+				if(shopInfo['isWm'] == 0) {
+					this.isInBussiness['is'] = false;
+					this.isInBussiness['tips'] = '该商家没有开启外卖功能!';
+				} else if(shopInfo['shopStatus'] == 0 || shopInfo['shopStatus'] == 3) {
+					this.isInBussiness['is'] = false;
+					this.isInBussiness['tips'] = '该商家休息中,暂不营业!';
+				}
+			},
+			//选择属性规格
 			choseAttributeHanlde(date) {
 				this.itemMenudata = date;
 				this.$refs.choseAttribute.initShopCart();
@@ -378,19 +390,12 @@
 			//清空购物车
 			clearShopCart() {
 				this.$store.commit('clearShopCart');
-				// this.shopCartVisible = !this.shopCartVisible;
 			},
 			//去结算
-			toPay() {	
-				// this.$router.push({
-				// 	path: '/pay/takeOutOrder',
-				// 	query: {
-				// 		shopAuthenticateId: this.params['shopAuthenticateId']
-				// 	}
-				// })
-				// alert(location.host + '/#/pay/takeOutOrder?shopAuthenticateId=' + this.params['shopAuthenticateId'])
-				location.href = './index.html#/pay/takeOutOrder?shopAuthenticateId=' + this.params['shopAuthenticateId'];
-				// // alert(location.host);
+			toPay() {
+				if(this.isInBussiness['is']) {
+					location.href = './index.html#/pay/takeOutOrder?shopAuthenticateId=' + this.params['shopAuthenticateId'];
+				}	
 				
 			},
 			//显示商家信息
@@ -441,7 +446,7 @@
 			},
 			//获取店铺资料
 			getTakeOutShop() {
-				if(this.positionInfo['longitude']) {
+				if(this.positionInfo) {
 					this.params['longitude'] = this.positionInfo['longitude'];
 					this.params['latitude'] = this.positionInfo['latitude']
 				}
@@ -449,6 +454,7 @@
 					this.getTakeoutMenu();
 					this.shopInfo = res.data;
 					Tools.setLocalStorage('shopInfo', this.shopInfo);
+					this.isInBussinessHandle(this.shopInfo);
 					//获取菜单
 				}).catch(res => {
 
@@ -497,9 +503,8 @@
 				this.showCurrentClassify(this.currentIndex, 'rel active');
 			},
 			changeScroll(index) {
-				// this.showCurrentClassify(index, 'rel active');
-				// this.sectionMenu.scrollTop = this.sectionMenuList[index].offsetTop - this.MenuListInitTop;
-				this.scrollAniamted(this.sectionMenu, this.sectionMenuList[index].offsetTop - this.MenuListInitTop);
+				this.sectionMenu.scrollTop = this.sectionMenuList[index].offsetTop - this.MenuListInitTop;
+				// this.scrollAniamted(this.sectionMenu, this.sectionMenuList[index].offsetTop - this.MenuListInitTop);
 			},
 			//高亮显示当前分类
 			showCurrentClassify(index, className) {
@@ -534,6 +539,10 @@
 <style scoped lang="scss">
 @import "../../style/mixin";
 @import "../../style/iconfont/iconfont.css";
+	.blur {
+		-webkit-filter: grayscale(100%); /* Chrome, Safari, Opera */
+	    filter: grayscale(100%);
+	}
 	.animated {
 	  -webkit-animation-duration: 1s;
 	  animation-duration: 1s;
@@ -698,6 +707,14 @@
 		z-index: 3333;
 		/*align-items: center;
 		justify-content: space-between;*/
+		.is-in-bussiness {
+			filter: none;
+			height: .2rem;
+			line-height: .2rem;
+			right: 0;
+			top: -.2rem;
+			background: #eee;
+		}
 		.shop-cart-money {
 			padding-left: .7rem;
 			font-size: .18rem;

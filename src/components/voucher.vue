@@ -132,11 +132,15 @@
 			choseVocherEevnt(type, info) {
 				if(type == 1) {
 					this.$emit('choseVocher', {});
+					this.showHidePopup();
 				} else if(type == 2) {
-					this.$emit('choseVocher', info);
+					if(info['isUserful'] == 1) {
+						this.$emit('choseVocher', info);
+						this.showHidePopup();
+					}
 				}
 
-				this.showHidePopup();
+				
 			},
 			canUserVoucherList(list, currentMoney) {
 				let arr = [],

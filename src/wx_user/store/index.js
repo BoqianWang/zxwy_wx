@@ -8,7 +8,8 @@ const store = new Vuex.Store({
 		addressInfo: '',
 		editAddressInfo: null,
 		cartList: [],
-		itemMenuDate: {}
+		itemMenuDate: {},
+		remark: ''
 	},
 	getters: {
 		/**
@@ -40,6 +41,15 @@ const store = new Vuex.Store({
 		}
 	},
 	mutations: {
+		/**
+		 * 保存当前备注
+		 * @param  {[type]} state [description]
+		 * @param  {[type]} info  [description]
+		 * @return {[type]}       [description]
+		 */
+		sendRemark(state, info) {
+			state.remark = info;
+		},
 		/**
 		 * 当前选择的地址
 		 * @param  {[type]} state [description]

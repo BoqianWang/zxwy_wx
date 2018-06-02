@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-white">
+	<div class="bg-white home-wrap">
 		<div class="home-title rel">
 			<!-- 轮播图 -->
 			<mt-swipe class="swiper-wrap" :auto="3000">
@@ -163,23 +163,15 @@
 				</div>
 			</div>
 		</div>
+		<div class="font-15 color-3 text-center p-t-ten">{{tips}}</div>
 	</div>
 </template>
 <style lang="scss">
 	@import "../../style/mixin";
-	.l-a-icon {
-		right: 0;
-		top: 0;
+	.home-wrap {
+		padding-bottom: .6rem;
 	}
-	.block-list-active.click-item {
-		height: auto;
-	}
-	.icon-sanjiaoxing-up .icon-sanjiaoxing-down {
-		transform: rotate(180deg);
-	}
-	.icon-sanjiaoxing-down {
-		transition: transform .2s linear;
-	}
+	
 	.address-wrap > div {
 		height: 30px;
 		background: rgba(0, 0, 0, .4);
@@ -228,8 +220,21 @@
 			background-size: cover;
 		}
 	}
+	.l-a-icon {
+		right: 0;
+		top: 0;
+	}
+	.block-list-active.click-item {
+		height: auto;
+	}
+	.icon-sanjiaoxing-up .icon-sanjiaoxing-down {
+		transform: rotate(180deg);
+	}
+	.icon-sanjiaoxing-down {
+		transition: transform .2s linear;
+	}
 	.home-shop-wrap {
-		padding-bottom: .6rem;
+		
 		.shop-wrap-title {
 			span {
 				padding: .05rem .1rem;
@@ -321,6 +326,7 @@
 				params: {
 					pageNo: 1
 				},
+				tips: '',
 				industryList: {},
 				bizList: [],
 				loadding: true,
@@ -346,6 +352,7 @@
 			loadMore() {
 				this.loadding = true;
 				if(this.params['pageNo'] >= this.totalPage) {
+					this.tips = '没有更多内容了~~'
 					return;
 				}
 				this.params['pageNo']++;
@@ -353,7 +360,6 @@
 			},
 			// 点击跳转
 			toLink(type, info) {
-				console.log(type);
 				switch(type) {
 					case 'location': 
 						this.$router.push({
@@ -390,11 +396,12 @@
 			//店铺列表
 			getIndexList() {
 				fetch.fetchGet('/index/v3.2/index', this.params).then(res => {
-					if(res.data.industryList) {
+					let result = res.data;
+					if(result.industryList) {
 						this.industryList = res.data.industryList;
 					}
-					this.bizList = this.bizList.concat(res.data.bizList);
-					this.totalPage = res.data.totalPage;
+					this.bizList = this.bizList.concat(result.bizList);
+					this.totalPage = result.totalPage;
 					this.loadding = false;
 				}).catch(res => {
 
@@ -410,14 +417,14 @@
 			},
 			//定位回调
 			positionCallBack(type, result) {
-				alert(JSON.stringify(result));
 				let positionInfo = {};
 				if(type == 'gps') {
 					positionInfo['address'] = result['formattedAddress']
 					positionInfo['longitude'] = result['position']['lng'];
 					positionInfo['latitude'] = result['position']['lat'];
 				} else {
-					positionInfo['address'] =  result['province'] + result['city'];
+					let city = result['city'] ? result['city'] : '深圳市'
+					positionInfo['address'] =  result['province'] +  city;
 					positionInfo['longitude'] = result['center'][0];
 					positionInfo['latitude'] = result['center'][1];
 				}
@@ -431,21 +438,8 @@
 					this.getLocalStoragePosition();
 					return;
 				}
+				this.$indicator.open();
 				getCurrentPosition(this.positionCallBack);
-				// AMap.plugin(['AMap.Geolocation', 'AMap.CitySearch'], () => {
-				// 	this.geolocation = new AMap.Geolocation({
-				// 		timeout: 10000,
-				// 	});
-				// 	this.geolocation.getCurrentPosition((status, result) => {
-				// 		if(status == 'complete') {
-				// 			this.positionCallBack('gps', result)
-				// 		} else {
-				// 			this.geolocation.getCityInfo((status, result) => {
-				// 				this.positionCallBack('ip', result)
-				// 			})
-				// 		}
-				// 	})
-				// })
 			}
 		},
 	}

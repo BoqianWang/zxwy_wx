@@ -4,14 +4,17 @@
 		<div class="order-title-wrap res">
 			<div class="abs order-address bg-white">
 				<div class="text-center p-r-ten p-l-ten rel order-title flex-box align-center justify-center" @click="changeAddress">
-					<div  v-show="address.recipientAddress" class='a-detail color-3 iconfont icon-more'>
-						<p class="font-15">{{address.recipientAddress + address.houseNumber}}</p>
+					<div  v-if="address.recipientAddress" class='a-detail color-3 iconfont icon-more'>
+						<p class="font-15">
+							<span>{{address.recipientAddress}}</span> 
+							<span v-if="address.houseNumber">{{address.houseNumber}}</span>
+						</p>
 						<p class="p-t-ten font-12">
 							<span>{{address.recipientName}}</span>
 							<span>{{address.recipientPhone}}</span>
 						</p>
 					</div>
-					<div class="add-address" v-show="!address.recipientAddress">
+					<div class="add-address" v-else>
 						<div class="add-address-wrap color-main">
 							<span class="iconfont icon-add font-b"></span>
 							<span class="font-15">新增收货地址</span>
@@ -23,7 +26,7 @@
 						<span class="color-3">立即送出</span>
 						<span class="color-main">(大约{{shopInfo['expectTime']}}分钟后送达)</span>
 					</div>
-					<span class="iconfont icon-more font-15"></span>
+					<!-- <span class="iconfont icon-more font-15"></span> -->
 				</div>
 			</div>
 		</div>
@@ -81,42 +84,35 @@
 					<span class="circle"></span>
 				</div>
 				<div class="p-r-ten p-l-ten">
-					<p class="flex-box justify-s-b p-b-ten align-center font-12">
+					<p class="flex-box justify-s-b m-b-ten font-12">
 						<span>
 							<span class="tips-intergral tips"></span>
 							<span>积分抵扣</span>
 						</span>
 						<span>-¥ {{integral['discount']}}</span>
 					</p>
-					<!-- <p class="flex-box justify-s-b p-b-ten align-center font-12">
-						<span>
-							<span class="tips-first tips"></span>
-							<span>首减</span>
-						</span>
-						<span>-¥ 0.5</span>
-					</p> -->
-					<p class="flex-box justify-s-b p-b-ten align-center font-12">
+					<p class="flex-box justify-s-b m-b-ten font-12">
 						<span>
 							<span class="tips-sub tips"></span>
 							<span>满减</span>
 						</span>
 						<span>-¥ {{moneyOff['discount']}}</span>
 					</p>
-					<p class="flex-box justify-s-b p-b-ten align-center font-12">
+					<p class="flex-box justify-s-b m-b-ten font-12">
 						<span>
 							<span class="tips-random tips"></span>
 							<span>随机减</span>
 						</span>
 						<span>-¥ {{randomCut}}</span>
 					</p>
-					<p class="flex-box justify-s-b p-b-ten align-center font-12">
+					<p class="flex-box justify-s-b m-b-ten align-center font-12">
 						<span>
 							<span class="tips-server tips"></span>
 							<span>清分费</span>
 						</span>
 						<span>+¥ {{serverMoney}}</span>
 					</p>
-					<div class="flex-box align-center justify-s-b m-t-ten" @click="showVoucher('voucher')">
+					<div v-if="voucherNum > 0" class="flex-box align-center justify-s-b m-t-ten" @click="showVoucher('voucher')">
 						<div class="font-15">
 							<span class="tips-ticket tips"></span>
 							<span class="color-3">代金券</span>
@@ -181,6 +177,7 @@
 </template>
 <style scoped lang="scss">
 	@import "../../style/mixin";
+	
 	.menu-wrap {
 
 	}
@@ -331,7 +328,6 @@
 		},
 		data() {
 			return {
-				remark: '',
 				address: Tools.getLocalStorage('address') || {},
 				shopInfo: Tools.getLocalStorage('shopInfo') || {},
 				shopAuthenticateId: this.$route.query.shopAuthenticateId,
@@ -363,13 +359,17 @@
 				//获取提示
 				errorMessage: '',
 				//随机减
-				randomCut: 0
+				randomCut: 0,
 			}
 		},
 		created() {
 			this.$store.commit('initShopCart', this.shopAuthenticateId);
 		},
 		computed: {
+			//备注
+			remark() {
+				return this.$store.state.remark;
+			},
 			//购物车详情
 			shopCartDetail() {
 				return this.$store.getters.shopCartDetail;
@@ -417,7 +417,7 @@
 				surePay += this.serverMoney;
 				this.allDiscount = Tools.ToCurrency(this.money - surePay + this.serverMoney);
 				return surePay;
-			}
+			},
 		},
 		mounted() {
 			this.getIntegral();

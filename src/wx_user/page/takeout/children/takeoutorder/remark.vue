@@ -8,7 +8,7 @@
 	          <!-- <div slot='right' @click="choseVocherEevnt(1)">暂不使用</div> -->
 	        </mt-header>
 	        <div class="popup-container p-ten">
-		        <textarea class="remark-text width-100 p-ten font-15" v-model='text'></textarea>
+		        <textarea maxlength="50" class="remark-text width-100 p-ten font-15" v-model='text'></textarea>
 		        <mt-button class="width-100 bg-white color-main popup-btn" type="default" @click="finishRemark">完成</mt-button>
 	        </div>
 		</mt-popup>
@@ -58,7 +58,8 @@
 			},
 			//完成备注
 			finishRemark() {
-				this.$emit('remarkHandle', this.text);
+				// this.$emit('remarkHandle', this.text);
+				this.$store.commit('sendRemark', this.text);
 				this.showHidePopup();
 			}
 		}

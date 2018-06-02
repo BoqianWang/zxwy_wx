@@ -5,7 +5,7 @@
 			<div class="search-title p-ten bg-white">
 				<div class="fixed-wrap flex-box align-center p-l-ten">
 					<span class="iconfont icon-search font-b"></span>
-					<input class="search-input white-f p-l-ten" placeholder="请输入地址名称" v-model="address">
+					<input autofocus="autofocus" class="search-input white-f p-l-ten" placeholder="请输入地址名称" v-model="address">
 				</div>
 			</div>
 			<div class="address-list font-15">
@@ -87,7 +87,7 @@
 		methods: {
 			comfirmAddress(info) {
 				let addressInfo = {
-					recipientAddress: info['district'] + info['address'],
+					recipientAddress: `${info['district']}${info['address']}(${info['name']})`,
 					recipientLon: info['location']['lng'],
 					recipientLat: info['location']['lat']
 				}

@@ -56,7 +56,6 @@
 			border: 1px solid $mainColor;
 			border-radius: 50%;
 			color: $mainColor;
-			font-size: .14rem;
 		}
 	}
 	.address-list:last-child .address-list-block {

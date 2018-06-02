@@ -63,7 +63,7 @@
 </template>
 
 <script>
- import api from '../../../config/api'
+ import fetch from '@/config/fetch.js';
   export default{
     data(){
       return{
@@ -83,7 +83,7 @@
       localStorage.tabbar_text = "我的";
     },
     mounted(){
-      api.personCenter()
+      fetch.fetchPost('/personal/personalCenter', {})
       .then(res=>{
         this.mydata = res.data;
         this.isLogin = true;

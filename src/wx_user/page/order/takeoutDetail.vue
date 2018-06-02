@@ -166,7 +166,9 @@
 				<p class="flex-box p-b-ten">
 					<span class="color-7">配送地址</span>
 					<span class="flex-1 color-3">
-						{{orderDetail['recipientAddress'],orderDetail['houseNumber']}}
+						{{orderDetail['recipientAddress']}}
+						{{orderDetail['houseNumber'] ? orderDetail['houseNumber'] : ''}}
+						<!-- <span v-if="orderDetail['houseNumber']">{{}}</span> -->
 					</span>
 				</p>
 				<p class="flex-box p-b-ten">

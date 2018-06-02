@@ -90,7 +90,7 @@ export default{
       */
 
       personCenter(){
-        return fetch.fetchPost('personal/personalCenter');
+        return fetch.fetchPost('/personal/personalCenter');
       },
       /**
        * 订单详情
