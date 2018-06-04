@@ -64,6 +64,7 @@
 </style>
 <script>
 	// import routerScript from '@/components/routerScript.vue';
+	import { autoComplete } from '@/assets/js/AMap.js';
 	export default {
 		// components: {
 		// 	routerScript
@@ -81,7 +82,7 @@
 		},
 		mounted() {
 			this.$store.commit('editAddress', null);
-			this.autoComplete();
+			// this.autoComplete();
 			this.toSearch(this.address);
 		},
 		methods: {
@@ -95,26 +96,34 @@
 				this.$router.go(-1);
 			},
 			//初始化输入提示地址插件
-			autoComplete() {
-				AMap.plugin('AMap.Autocomplete', () => {
-					let autoOptions = {
-					};
-					this.searchTipsHandle = new AMap.Autocomplete(autoOptions);
-				});
-			},
+			// autoComplete() {
+			// 	AMap.plugin('AMap.Autocomplete', () => {
+			// 		let autoOptions = {
+			// 		};
+			// 		this.searchTipsHandle = new AMap.Autocomplete(autoOptions);
+			// 	});
+			// },
 			//搜索地址关键字
 			toSearch(value) {
 				if(value == '') {
 					return;
 				}
-				this.searchTipsHandle.search(value, (status, result) => {
-					console.log(status, result);
+				autoComplete(value, (status, result) => {
+					// console.log(status, result);
 					if(status == 'complete') {
 						this.addressList = result.tips;
 					} else {
 						// this.$toast(`${status}: 解析地址出错`);
 					}
 				})
+				// this.searchTipsHandle.search(value, (status, result) => {
+				// 	console.log(status, result);
+				// 	if(status == 'complete') {
+				// 		this.addressList = result.tips;
+				// 	} else {
+				// 		// this.$toast(`${status}: 解析地址出错`);
+				// 	}
+				// })
 			}
 		}
 	}

@@ -150,24 +150,6 @@ export default {
 		choseAddress(info) {
 			this.setPositionInfo(info['recipientAddress'], info['recipientLon'], info['recipientLat']);
 		},
-		//定位
-		locationPosition() {
-			this.currentAddress = '正在定位中...';
-			getCurrentPosition((type, res) => {
-				let longitude = '',
-					latitude = '';
-				if(type == 'gps') {
-					this.currentAddress = res.formattedAddress;
-					longitude = res['position']['lng'];
-					latitude = res['position']['lat'];
-				} else {	
-					this.currentAddress = res.province + res.city;
-					longitude = res['center'][0];
-					latitude = res['center'][1]
-				}
-				this.setPositionInfo(this.currentAddress, longitude, latitude);
-			})
-		},
 		//本地缓存地址
 		setPositionInfo(address, longitude, latitude) {
 			let positionInfo = {
@@ -176,9 +158,18 @@ export default {
 				latitude: latitude
 			};
 			Tools.setLocalStorage('positionInfo', positionInfo);
-			setTimeout(() => {
-				this.$router.go(-1);
-			}, 500)
+			this.$router.go(-1);
+		},
+		//定位
+		locationPosition() {
+			this.currentAddress = '正在定位中...';
+			getCurrentPosition((type, res) => {
+				if(res == 'success') {
+					setTimeout(() => {
+						this.$router.go(-1);
+					}, 500)
+				}
+			})
 		},
 		//获取用户地址列表
 		getAddressList() {

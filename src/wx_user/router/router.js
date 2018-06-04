@@ -110,7 +110,7 @@ export default{
       }
     },
      {
-      path: '/takeoutDetail',
+      path: '/pay/takeoutDetail',
       component: takeoutDetail,
       meta:{
         title: '外卖订单详情'

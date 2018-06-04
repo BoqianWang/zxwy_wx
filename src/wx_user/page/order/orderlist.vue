@@ -245,10 +245,11 @@
 							}
 						})
 					} else if(option == 'detail') {
-						this.$router.push({
-							path: '/takeoutDetail',
-							query: { orderId: info['orderId'] }
-						})
+						// this.$router.push({
+						// 	path: '/takeoutDetail',
+						// 	query: { orderId: info['orderId'] }
+						// })
+						location.href = './index.html#/pay/takeoutDetail?orderId=' + info['orderId'];
 					}
 				}
 			},

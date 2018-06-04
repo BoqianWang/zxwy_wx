@@ -340,7 +340,7 @@
 					activityId = this.moneyOff['activityId'] || '',
 					//1表示微信, 2表示支付宝, 0表示余额
 					paymentMode = payType == 'WeiXin' ? 1 :  2,
-					// paymentMode = 0,
+					// paymentMode = 2,
 					orderSource = payType == 'WeiXin' ? 1 :  2,
 					shareGiftsId = this.choseVocher['shareGiftsId'] || '',
 					receiveId = this.choseVocher['receiveId'] || '',

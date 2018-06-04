@@ -33,12 +33,37 @@ export function getCurrentPosition(callBack) {
 		});
 		geolocation.getCurrentPosition((status, result) => {
 			if(status == 'complete') {
-				callBack('gps', result)
+				setPositionInfo('gps', result)
+				callBack('gps', 'success')
 			} else {
 				geolocation.getCityInfo((status, result) => {
-					callBack('ip', result)
+					setPositionInfo('ip', result);
+					callBack('ip', 'success');
 				})
 			}
 		})
 	})
+}
+//保存地址都本地
+function setPositionInfo(type, res) {
+	let longitude = '',
+		latitude = '',
+		address = '',
+		positionInfo = {};
+	if(type == 'gps') {
+		address = res.formattedAddress;
+		longitude = res['position']['lng'];
+		latitude = res['position']['lat'];
+	} else {
+		let city = res.city ? res.city : '深圳市'
+		address = res.province + city;
+		longitude = res['center'][0];
+		latitude = res['center'][1]
+	}
+	positionInfo = {
+		address,
+		longitude,
+		latitude
+	};
+	Tools.setLocalStorage('positionInfo', positionInfo);
 }

@@ -142,7 +142,7 @@ const store = new Vuex.Store({
 		 */
 		initShopCart(state, id) {
 			if(Tools.getLocalStorage('shopCart')) {
-				state.cartList = Tools.getLocalStorage('shopCart')[id];
+				state.cartList = Tools.getLocalStorage('shopCart')[id] || [];
 			} else {
 				state.cartList = []
 			}

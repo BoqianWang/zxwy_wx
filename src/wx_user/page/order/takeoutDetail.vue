@@ -2,13 +2,13 @@
 	<div class="takeout-detial">
 		<div class="takeout-d-title rel">
 			<div class="bg-white title-wrap abs text-center">
-				<div class="color-3 p-t-ten p-b-ten">
+				<div class="color-3 p-t-ten p-b-ten" @click="processTrack">
 					<p class="font-18 p-ten font-b">{{orderStatus[orderDetail['orderStatus']]}}</p>
 					<p class="font-12">感谢您对众享无忧的支持,欢迎下次光临</p>
 				</div>
 				<div class="text-right p-r-ten title-btn">
 					<mt-button class="refund-btn font-15" type="primary" 
-					v-if="orderDetail['orderStatus'] >= 3 && orderDetail['orderStatus'] <= 5"
+					v-if="orderDetail['orderStatus'] == 3 || orderDetail['orderStatus'] == 5"
 					@click="refundOrder">申请退款</mt-button>
 
 					<mt-button class="refund-btn font-15" type="primary" 
@@ -18,6 +18,17 @@
 					<mt-button 
 					v-if="orderDetail['orderStatus'] == 1" 
 					class="takeout-btn font-15" type="primary" @click="restartToPay">点击支付</mt-button>
+
+					<mt-button 
+					v-if="orderDetail['orderStatus'] == 3" 
+					class="takeout-btn font-15" type="primary" @click="confirmAcciept">确认收货</mt-button>
+					
+					<!-- <mt-button 
+					v-if="orderDetail['orderStatus'] == 5" 
+					class="takeout-btn font-15" type="primary" @click="confirmAcciept">确认收货</mt-button> -->
+					<!-- <mt-button 
+					v-if="orderDetail['orderStatus'] != 6" 
+					class="takeout-btn font-15" type="primary" @click="processTrack">查看进度</mt-button> -->
 
 					<router-link :to="'/takeout/takeOutShop?shopAuthenticateId=' + orderDetail['shopAuthenticateId']">
 						<mt-button class="takeout-btn font-15" type="primary">再来一单</mt-button>
@@ -43,14 +54,6 @@
 							<span class="font-15 color-3 text-right" style="width: .7rem; display: inline-block;">¥{{info['subTotal']}}</span>
 						</div>
 					</li>
-					<!-- <li class="flex-box justify-s-b p-ten m-b-ten">
-						<div>
-							<p class="color-3 font-15">小锅焖面</p>
-							<p class="color-9 font-12">小/微辣/不要葱花</p>
-						</div>
-						<p class="color-9 font-12">x1</p>
-						<p class="font-15 color-3 p-r-ten">¥42</p>
-					</li> -->
 
 				</div>
 				<div class="p-l-ten p-r-ten p-t-ten font-12 color-3">
@@ -179,6 +182,7 @@
 				</p>
 			</div>
 		</div>
+
 	</div>
 </template>
 <style scoped lang="scss">
@@ -255,6 +259,7 @@
 <script>
 	import fetch from '@/config/fetch.js';
 	import { payType, WeixinPay, AliPay, AliFromPay } from '@/assets/js/Pay.js';
+	// import 
 	export default {
 		data() {
 			return {
@@ -288,6 +293,20 @@
 			this.getOrderDetail();
 		},
 		methods: {
+			//查看进度
+			processTrack() {
+				fetch.fetchPost('/order/v3.2/processTrack', this.params).then(res => {
+					console.log(1)	
+				})
+			},
+			// 确认收货
+			confirmAcciept() {
+				fetch.fetchPost('/order/v3.2/confirmAcciept', this.params).then(res => {
+					this.orderDetail['orderStatus'] = 6;
+				}).catch(res => {
+
+				})
+			},
 			//立马支付
 			restartToPay() {
 				fetch.fetchPost('/order/v3.2/restartToPay', this.params).then(res => {

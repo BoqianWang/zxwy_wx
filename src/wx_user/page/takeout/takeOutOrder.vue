@@ -580,7 +580,7 @@
 			paySuccess() {
 				this.$store.commit('clearShopCart');
 				this.$router.replace({
-					path: '/takeoutDetail',
+					path: '/pay/takeoutDetail',
 					query: {
 						orderId: this.payDetail['orderId']
 					}

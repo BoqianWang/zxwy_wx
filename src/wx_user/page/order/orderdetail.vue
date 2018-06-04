@@ -2,7 +2,7 @@
   <div class="orderdetail_body">
     <div class="detail_section">
       <img :src='orderdetail.shopLogo' alt="">
-      <p>{{orderdetail.orderRemark}}</p>
+      <p>{{orderdetail.shopName}}</p>
     </div>
     <div class="ordermessage_section">
       <mt-cell title="订单信息"></mt-cell>
@@ -33,6 +33,8 @@
       </div>
       <mt-cell title="积分抵扣" :value="'-￥'+orderdetail.deductedCost"></mt-cell>
       <mt-cell title="返积分" :value="orderdetail.retPersonal"></mt-cell>
+      <mt-cell title="随机减" :value="orderdetail.randomCut"></mt-cell>
+      <mt-cell title="清风费" :value="orderdetail.qffFee"></mt-cell>
       <mt-cell title="实付" :value="'￥'+orderdetail.actualCost"></mt-cell>
     </div>
   </div>

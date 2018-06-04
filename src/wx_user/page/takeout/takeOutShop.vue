@@ -4,8 +4,6 @@
 			<div class="takeout-shop-t-w" @click="showShopDetial">
 				<!-- 头部 -->
 				<div class="shop-title rel" :style="{backgroundImage: 'url(' + defaultImg + ')'}">
-					<!-- <p class="abs" style="background-image: url(https://fuss10.elemecdn.com/e/7d/9854d2f95050092a008b4e3ee29e6png.png?imageMogr/format/webp/thumbnail/!130x130r/gravity/Center/crop/130x130/);">
-					</p> -->
 					<p class="abs" v-if="shopInfo['shopLogo']" :style="'background-image: url(' + shopInfo['shopLogo'] + ');'">
 					</p>
 				</div>
@@ -206,14 +204,12 @@
 									<span class="cell-server color-9 iconfont icon-shigongrenyuan p-r-ten"></span>
 									<span class="color-3 font-15">配送服务: 高品质配送服务</span>
 								</p>
-								<!-- <p class="iconfont icon-more color-9"></p> -->
 							</div>
 							<div class="flex-box align-justify p-t-ten p-b-ten shop-cell-list">
 								<p class="flex-box align-center">
 									<span class="cell-server color-9 iconfont icon-task-management p-r-ten"></span>
 									<span class="color-3 font-15">配送时间: {{shopInfo['distributionTime']}}</span>
 								</p>
-								<!-- <p class=" color-9 iconfont icon-more"></p> -->
 							</div>
 						</div>
 					</div>
@@ -225,10 +221,6 @@
 			  	  <span class="shop-d-close abs iconfont icon-close p-ten"  @click="showShopDetial"></span>
 			  	  <p class="color-3 font-15 p-b-ten m-t-ten">优惠</p>
 			  	  <div class="color-3 font-12" style="max-height: 400px; overflow: auto;">
-			  	  	<!-- <p class="p-b-ten">
-			  	  		<span class="tips tips-first"></span>
-			  	  		<span class="color-6 font-12">新用户首单立减(不与其他活动同享)</span>
-			  	  	</p> -->
 			  	  	  <li v-for="info in shopInfo['activitysList']">
 						 <p class="flex-box align-center p-b-ten" v-if="info['activityType'] == 0" v-for="item in info['activitys']">
 						 	<span class="tips tips-sub"></span>{{item['activityDescription']}}
@@ -236,10 +228,6 @@
 						 <p class="flex-box align-center p-b-ten" v-if="info['activityType'] >= 8" v-for="item in info['activitys']">
 						 	<span class="tips tips-ticket"></span>{{item['activityDescription']}}
 						 </p>
-
-						 <!-- <p>
-						 	<span class="tips tips-intergral"></span>现金积分
-						 </p> -->
 					  </li>
 				  	  <p class="color-3 font-15 shop-d-top">配送</p>
 					  <div class="color-6 font-12">
@@ -281,16 +269,6 @@
 								<shopCartAddMenu :menu-data-detail="item"></shopCartAddMenu>
 							</span>
 						</li>
-						<!-- <li class="flex-box align-center justify-s-b p-t-ten p-b-ten">
-							<div>
-								<p>小锅焖面</p>
-								<span class="font-12 color-9">加辣/大份/</span>
-							</div>
-							<span>
-								<span class="moeny price">¥38.5</span>
-								<add-menu></add-menu>
-							</span>
-						</li> -->
 					</div>
 					<p class="p-t-ten" style="background: #F9F9F9;"></p>
 					<div class="flex-box align-center justify-s-b p-ten">
@@ -334,7 +312,7 @@
 				//菜单列表数据
 				MenuListDate: [],
 				bounce: false,
-				itemMenudata: {},
+				// itemMenudata: {},
 				//是不在在营业中
 				isInBussiness: {
 					is: true,
@@ -373,11 +351,15 @@
 				} else if(shopInfo['shopStatus'] == 0 || shopInfo['shopStatus'] == 3) {
 					this.isInBussiness['is'] = false;
 					this.isInBussiness['tips'] = '该商家休息中,暂不营业!';
+				} else if(shopInfo['isDistributionTime'] == 0) {
+					this.isInBussiness['is'] = false;
+					this.isInBussiness['tips'] = '不在配送时间内!';
 				}
 			},
 			//选择属性规格
 			choseAttributeHanlde(date) {
-				this.itemMenudata = date;
+				// alert(1)
+				// this.itemMenudata = date;
 				this.$refs.choseAttribute.initShopCart();
 			},
 			//购物车特效
@@ -519,19 +501,14 @@
 				this.timer = setInterval(() => {
 					let speed = (target  - element.scrollTop) / 12;
 					speed = speed > 0 ? Math.ceil(speed) : Math.floor(speed);
-					// if((speed > 0 && element.scrollTop >= target) 
-						// ||(speed < 0 && element.scrollTop <= target)) {
 					if(element.scrollTop == target) {
 						clearInterval(this.timer);
-						// element.scrollTop = target;	
 						return;
 					}
 					console.log(speed, element.scrollTop, target);
 					element.scrollTop = element.scrollTop + speed;
 				}, 16);
-				// setTimeout(() => {
-				// 	clearInterval(this.timer);
-				// }, 1000)
+
 			}
 		}
 	}

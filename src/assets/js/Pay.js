@@ -61,15 +61,16 @@ export function AliPay(tradeNo, callback) {
 }
 
 function tradePay(tradeNo, callback) {
-	AlipayJSBridge.call("tradePay", {
-        tradeNO: tradeNO
-    },  (data) => {
-       if ("9000" == data.resultCode) {
-           callback('success')
-       } else {
-           callback('error')
-       }
-   });
+  alert(AlipayJSBridge)
+  	AlipayJSBridge.call("tradePay", {
+          tradeNO: tradeNO
+      }, (data) => {
+         if ("9000" == data.resultCode) {
+             callback('success')
+         } else {
+             callback('error')
+         }
+     })
 }
 /**
  * 支付宝网页支付

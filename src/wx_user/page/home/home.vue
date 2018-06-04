@@ -417,20 +417,22 @@
 			},
 			//定位回调
 			positionCallBack(type, result) {
-				let positionInfo = {};
-				if(type == 'gps') {
-					positionInfo['address'] = result['formattedAddress']
-					positionInfo['longitude'] = result['position']['lng'];
-					positionInfo['latitude'] = result['position']['lat'];
-				} else {
-					let city = result['city'] ? result['city'] : '深圳市'
-					positionInfo['address'] =  result['province'] +  city;
-					positionInfo['longitude'] = result['center'][0];
-					positionInfo['latitude'] = result['center'][1];
+				// let positionInfo = {};
+				// if(type == 'gps') {
+				// 	positionInfo['address'] = result['formattedAddress']
+				// 	positionInfo['longitude'] = result['position']['lng'];
+				// 	positionInfo['latitude'] = result['position']['lat'];
+				// } else {
+				// 	let city = result['city'] ? result['city'] : '深圳市'
+				// 	positionInfo['address'] =  result['province'] +  city;
+				// 	positionInfo['longitude'] = result['center'][0];
+				// 	positionInfo['latitude'] = result['center'][1];
+				// }
+				// Tools.setLocalStorage('positionInfo', positionInfo);
+				if(result == 'success') {
+					sessionStorage.geoHash = 'finishLocation';
+					this.getLocalStoragePosition();
 				}
-				Tools.setLocalStorage('positionInfo', positionInfo);
-				sessionStorage.geoHash = 'finishLocation';
-				this.getLocalStoragePosition();
 			},
 			//地理位置定位
 			getPositon() {
