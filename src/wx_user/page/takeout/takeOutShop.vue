@@ -42,9 +42,9 @@
 			<div class="p-l-ten p-r-ten m-t-ten flex-box text-center selected">
 				<span class="flex-1" 
 				:class="{actived: switchSelectType == 'shop'}" 
-				@click="switchSelect('shop')">商品</span>
+				@touchstart="switchSelect('shop')">商品</span>
 				<span class="flex-1">评价</span>
-				<span class="flex-1" :class="{actived: switchSelectType == 'merchant'}"  @click="switchSelect('merchant')">商家</span>
+				<span class="flex-1" :class="{actived: switchSelectType == 'merchant'}"  @touchstart="switchSelect('merchant')">商家</span>
 			</div>
 			<!-- 菜单详情 -->
 			<div class="shop-container">
@@ -71,8 +71,15 @@
 								</p>
 								<div>
 									<div class="wrap-block flex-box p-t-ten p-b-ten" v-for="info in item['goodsList']">
-										<div class="menu-img" :style="'background-image: url(' + info['goodsPic'] + ');'">
-											
+										<div class="menu-img font-15" :style="'background-image: url(' + info['goodsPic'] + ');'">
+											<div v-if="info['isAvailable'] == 0" 
+											class="goods-is-available white-f text-center">
+												不可售
+											</div>
+											<div v-if="info['shelves'] == 0" 
+											class="goods-is-available white-f text-center">
+												已下架
+											</div>
 										</div>
 										<div class="flex-1 p-l-ten menu-detail">
 											<p class="color-3 menu-d-title text_over">
@@ -82,7 +89,8 @@
 												<span>{{info.goodsDescribe}}</span>
 											</p>
 											<p class="font-12 color-6">
-												<span>销量{{info.goodsSales}}</span>
+												<span v-if="info['sku'][0].inventory != -1">库存{{info['sku'][0].inventory}}</span>
+												<span>销量{{info.goodsSales}} </span>
 											</p>
 											<!-- <p class="menu-d-tag"> -->
 												<!-- <span class="tag-desc">商品标签</span> -->
@@ -505,7 +513,6 @@
 						clearInterval(this.timer);
 						return;
 					}
-					console.log(speed, element.scrollTop, target);
 					element.scrollTop = element.scrollTop + speed;
 				}, 16);
 
@@ -516,6 +523,7 @@
 <style scoped lang="scss">
 @import "../../style/mixin";
 @import "../../style/iconfont/iconfont.css";
+
 	.blur {
 		-webkit-filter: grayscale(100%); /* Chrome, Safari, Opera */
 	    filter: grayscale(100%);
@@ -832,6 +840,12 @@
 			height: .8rem;
 			background-size: cover;
 			border-radius: 2px;
+			.goods-is-available {
+				width: 100%;
+				height: 100%;
+				line-height: .8rem;
+				background: rgba(0, 0, 0, .5);
+			}
 		}
 		.menu-detail {
 			width: 1.6rem;

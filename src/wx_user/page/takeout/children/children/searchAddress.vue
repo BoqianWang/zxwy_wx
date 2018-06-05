@@ -1,6 +1,6 @@
 <template>
 	<div class="search-address bg-white">
-		<!-- <router-script @loadFinsh="" src=""></router-script> -->
+		<router-script @load-finsh="AmapFinsh" src="https://webapi.amap.com/maps?v=1.4.6&key=e50ead2320592e7db5bb32cb484c180b"></router-script>
 		<div class="p-ten">
 			<div class="search-title p-ten bg-white">
 				<div class="fixed-wrap flex-box align-center p-l-ten">
@@ -63,12 +63,12 @@
 	}
 </style>
 <script>
-	// import routerScript from '@/components/routerScript.vue';
+	import routerScript from '@/components/routerScript.vue';
 	import { autoComplete } from '@/assets/js/AMap.js';
 	export default {
-		// components: {
-		// 	routerScript
-		// },
+		components: {
+			routerScript
+		},
 		data() {
 			return {
 				address: '',
@@ -80,12 +80,16 @@
 				this.toSearch(currenValue);
 			}
 		},
+
 		mounted() {
 			this.$store.commit('editAddress', null);
 			// this.autoComplete();
-			this.toSearch(this.address);
 		},
+
 		methods: {
+			AmapFinsh() {
+				this.toSearch(this.address);
+			},
 			comfirmAddress(info) {
 				let addressInfo = {
 					recipientAddress: `${info['district']}${info['address']}(${info['name']})`,

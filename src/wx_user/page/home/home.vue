@@ -1,5 +1,6 @@
 <template>
 	<div class="bg-white home-wrap">
+		<router-script src="https://webapi.amap.com/maps?v=1.4.6&key=e50ead2320592e7db5bb32cb484c180b" @load-finsh="AmapFinsh"></router-script>
 		<div class="home-title rel">
 			<!-- 轮播图 -->
 			<mt-swipe class="swiper-wrap" :auto="3000">
@@ -127,13 +128,15 @@
 							 	<span v-if="item.isWm == 1">配送¥{{item.expressFee}}</span>
 							 </p>
 						</div>
-						 <div class="color-3 font-12 block-list-active rel" :class="{'click-item': item['showActive']}" @click="showItemActive(item)">
+						 <div class="color-3 font-12 block-list-active rel" 
+						 :class="{'click-item': item['showActive']}"
+						  v-if="item['activitysVO'].length > 0" 
+						  @click="showItemActive(item)">
 							 	<!-- <span>
 							 		<span class="tips tips-first"></span>
 							 		新用户首单立减
 							 	</span> -->
-						 	<p v-if="item['activitysVO'].length > 0" 
-						 		class="abs l-a-icon flex-box align-center p-ten"
+						 	<p class="abs l-a-icon flex-box align-center p-ten"
 						 		:class="{'icon-sanjiaoxing-up': item['showActive']}">
 						 	    <span class="iconfont icon-sanjiaoxing-down"></span>
 						 	    <span>{{item['activitysVO'].length}}个活动</span>
@@ -310,9 +313,14 @@
 	}
 </style>
 <script>
+	import routerScript from '@/components/routerScript.vue';
 	import fetch from '@/config/fetch.js';
 	import { getCurrentPosition } from '@/assets/js/Amap.js';
+
 	export default {
+		components: {
+			routerScript
+		},
 		data() {
 			return {
 				imgDate: [
@@ -337,10 +345,12 @@
 
 		},
 		mounted() {
-			this.getPositon();
+			// this.getPositon();
 		},
 		methods: {
-
+			AmapFinsh() {
+				this.getPositon();
+			},
 			showItemActive(info) {
 				if(info['showActive']) {
 					this.$set(info, 'showActive', false)
@@ -378,7 +388,8 @@
 								query: {
 									longitude: this.params['longitude'],
 									latitude: this.params['latitude'],
-									shopAuthenticateId: info['shopAuthenticateId']
+									shopAuthenticateId: info['shopAuthenticateId'],
+									// bizId: info['bizId']
 								}
 							})
 						} else {

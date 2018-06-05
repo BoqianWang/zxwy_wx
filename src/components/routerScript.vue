@@ -26,7 +26,7 @@
            	   let script = document.createElement('script');
            	   script.src = this.src;
            	   script.onload = () => {
-           	   	  this.$emit('loadFinsh', true)
+           	   	  this.$emit('load-finsh', true)
            	   }
            	   document.getElementsByTagName('head')[0].appendChild(script);
            }

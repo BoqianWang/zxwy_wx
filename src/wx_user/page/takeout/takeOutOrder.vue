@@ -84,28 +84,28 @@
 					<span class="circle"></span>
 				</div>
 				<div class="p-r-ten p-l-ten">
-					<p class="flex-box justify-s-b m-b-ten font-12">
+					<p class="flex-box justify-s-b m-b-ten font-12" v-if="integral['discount'] > 0">
 						<span>
 							<span class="tips-intergral tips"></span>
 							<span>积分抵扣</span>
 						</span>
 						<span>-¥ {{integral['discount']}}</span>
 					</p>
-					<p class="flex-box justify-s-b m-b-ten font-12">
+					<p class="flex-box justify-s-b m-b-ten font-12" v-if="moneyOff['discount'] > 0">
 						<span>
 							<span class="tips-sub tips"></span>
 							<span>满减</span>
 						</span>
 						<span>-¥ {{moneyOff['discount']}}</span>
 					</p>
-					<p class="flex-box justify-s-b m-b-ten font-12">
+					<p class="flex-box justify-s-b m-b-ten font-12" v-if="randomCut > 0">
 						<span>
 							<span class="tips-random tips"></span>
 							<span>随机减</span>
 						</span>
 						<span>-¥ {{randomCut}}</span>
 					</p>
-					<p class="flex-box justify-s-b m-b-ten align-center font-12">
+					<p class="flex-box justify-s-b m-b-ten align-center font-12" v-if="serverMoney > 0">
 						<span>
 							<span class="tips-server tips"></span>
 							<span>清分费</span>
@@ -360,6 +360,8 @@
 				errorMessage: '',
 				//随机减
 				randomCut: 0,
+				//满减
+				randomCutOrigin: 0
 			}
 		},
 		created() {
@@ -386,7 +388,15 @@
 					this.moneyOff['discount'] = 0;
 				}
 				//随机减
-				surePay -= this.randomCut;
+				// surePay -= this.randomCut;
+				if(surePay < this.randomCutOrigin) {
+					this.randomCut = surePay;
+					surePay = 0;
+				} else {
+					this.randomCut = this.randomCutOrigin;
+					surePay -= this.randomCutOrigin;
+				}
+
 				//代金券
 				if(this.voucher['discount']) {
 					surePay -= this.voucher['discount'];
@@ -567,9 +577,10 @@
 				            } else {
 				              //支付宝浏览器api支付
 				              // document.addEventListener('AlipayJSBridgeReady', this.tradePay(res.data.tradeNo), false);
-				              AliPay(res.data.tradeNo, (res) => {
-				              	 this.paySuccess()
-				              })
+				              this.Alipay(res.data.tradeNo);
+				              // AliPay(res.data.tradeNo, (res) => {
+				              // 	 this.paySuccess()
+				              // })
 				            }
 						}
 					}
@@ -577,6 +588,18 @@
 					
 				})
 			},
+			//支付宝支付
+		    Alipay(tradeNO) {
+		       AlipayJSBridge.call("tradePay", {
+		            tradeNO: tradeNO
+		       },  (data) => {
+		           if ("9000" == data.resultCode) {
+		               this.paySuccess();
+		           } else {
+		               this.paySuccess();
+		           }
+		       });
+		    },
 			paySuccess() {
 				this.$store.commit('clearShopCart');
 				this.$router.replace({
@@ -612,7 +635,7 @@
 
 			//获取代金券
 			getVoucherList() {
-				fetch.fetchPost('personal/voucherList', {
+				fetch.fetchPost('/personal/voucherList', {
 					pageNo: 1,
 					canUse: true
 				}).then(res => {
@@ -624,9 +647,13 @@
 			//获取随机减
 			//随机减
 			getRanDomSub() {
-				fetch.fetchPost('/order/v3.2/randomSub', {}).
+				fetch.fetchPost('/order/v3.2/randomSub', {
+					bizId: this.shopInfo['bizId'],
+					// merNo: ''
+				}).
 				then(res => {
-					this.randomCut = res.data;
+					// this.randomCut = res.data;
+					this.randomCutOrigin = res.data;
 				})
 			},
 		}

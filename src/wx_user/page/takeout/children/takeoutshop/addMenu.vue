@@ -3,7 +3,7 @@
 		<div class="flex-box add-menu text-center">
 			<p class="subtract iconfont icon-subtract" v-show="count > 0" @click="delMenu"></p>
 			<p class="menu-num color-3" v-show="count > 0">{{count}}</p>
-			<p class="add iconfont icon-add white-f" @click="addMenu"></p>
+			<p class="add iconfont icon-add white-f" v-if="menuData['isAvailable'] == 1" @click="addMenu"></p>
 			<!-- <p @click="size">选规格</p> -->
 		</div>
 		<!-- <mt-popup
@@ -174,6 +174,7 @@
 			},
 			//点击添加按钮
 			addMenu() {
+
 				if((this.menuData['sku'] && this.menuData['sku'].length > 1) || this.goodsAttribute.length > 0) {
 					// this.popupVisible = true;
 					this.$store.commit('itemMenuDetail', this.menuData)

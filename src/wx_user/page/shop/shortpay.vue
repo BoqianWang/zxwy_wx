@@ -288,7 +288,13 @@
 				// 是否显示实付
 				isShowSureMoney: false,
 				//随机减
-				randomCut: 0
+				randomCut: 0,
+				//随机减原价
+				randomCutOrigin: 0,
+				params: {
+					bizId: this.$route.query.bizId || '',
+					merNo: this.$route.query.merNo || ''
+				}
 			}
 		},
 		computed: {
@@ -297,7 +303,7 @@
 		watch: {
 			money(currenValue) {
 				//监听能够使用的代金券;
-				this.canUserVoucherList(this.voucherList, currenValue);
+				this.canUserVoucherList(this.voucherList, currenValue, this.surePayMoney);
 				//监听适合的满减
 				this.canUserMoneyOff(currenValue);
 				//实付金额
@@ -333,14 +339,16 @@
 					deductedCost = this.integral['discount'],
 					// 随机减
 					randomCut = this.randomCut,
+					//代金券减免
+					choseVocherDiscount = this.choseVocher['discount'] || 0,
 					//满减 + 代金券 
-					discount = (this.moneyOff['discount'] + this.choseVocher['discount'] + randomCut).toFixed(2),
+					discount = (this.moneyOff['discount'] + choseVocherDiscount + randomCut).toFixed(2),
 
 					activityBelong = this.moneyOffGather['activityBelong'] || '',
 					activityId = this.moneyOff['activityId'] || '',
 					//1表示微信, 2表示支付宝, 0表示余额
 					paymentMode = payType == 'WeiXin' ? 1 :  2,
-					// paymentMode = 2,
+					// paymentMode = 0,
 					orderSource = payType == 'WeiXin' ? 1 :  2,
 					shareGiftsId = this.choseVocher['shareGiftsId'] || '',
 					receiveId = this.choseVocher['receiveId'] || '',
@@ -365,8 +373,6 @@
 					receiveId,
 					qffFee,
 				})
-				// api.orderSubmit(bizId, originalCost, actualCost, deductedCost, discount, activityBelong, activityId,
-				// 	paymentMode, randomDisAmount, shareGiftsId, receiveId, marketServiceCost)
 				.then(res => {
 					this.afterDataVO = res.data.afterDataVO;
 					if(res.data.orderStatus == 6) {
@@ -393,13 +399,22 @@
 				            } else {
 				              //支付宝浏览器api支付
 				              // document.addEventListener('AlipayJSBridgeReady', this.tradePay(res.data.tradeNo), false);
-				              AliPay(res.data.tradeNo, res => {
-				              	  if(res == 'success') {
-				              	  	 this.paySuccess();
-				              	  } else {
-				              	  	 this.isClick = true;
-				              	  }
-				              })
+				              this.Alipay(res.data.tradeNo)
+				              // AliPay(res.data.tradeNo, res => {
+				              // 		alert(res);
+					             //  	if(res == 'success') {
+					             //  	  	 this.paySuccess();
+					             //  	  } else {
+					             //  	  	 this.isClick = true;
+					             //  	}
+				              // })
+				              // this.tradePay(res.data.tradeNo, res => {
+				              // 	  if(res == 'success') {
+				              // 	  	 this.paySuccess();
+				              // 	  } else {
+				              // 	  	 this.isClick = true;
+				              // 	  }
+				              // })
 				            }
 						}
 					}
@@ -408,51 +423,18 @@
 				})
 			},
 			//支付宝支付
-		    // tradePay(tradeNO) {
-		    //    AlipayJSBridge.call("tradePay", {
-		    //         tradeNO: tradeNO
-		    //    },  (data) => {
-		    //        if ("9000" == data.resultCode) {
-		    //            this.paySuccess();
-		    //        } else {
-		    //            this.isClick = true;
-		    //        }
-		    //    });
-		    // },
-		    //微信支付
-			// weixinPay(data){
-		 //        if (typeof WeixinJSBridge == "undefined") {//微信浏览器内置对象。参考微信官方文档
-		 //          if(document.addEventListener) {
-		 //            document.addEventListener('WeixinJSBridgeReady', this.onBridgeReady(data), false);
-		 //          }
-		 //          else if (document.attachEvent) {
-		 //            document.attachEvent('WeixinJSBridgeReady', this.onBridgeReady(data));
-		 //            document.attachEvent('onWeixinJSBridgeReady',this.onBridgeReady(data));
-		 //          }
-		 //        } 
-		 //        else{
-		 //          this.onBridgeReady(data);
-		 //        }
-		 //      },
-		 //      onBridgeReady(data){
-		 //        WeixinJSBridge.invoke(
-		 //          'getBrandWCPayRequest',{
-		 //            "appId": data.appId,     //公众号名称，由商户传入
-		 //            "timeStamp": data.timeStamp, //时间戳，自1970年以来的秒数
-		 //            "nonceStr": data.nonceStr, //随机串
-		 //            "package": data.package,
-		 //            "signType": data.signType, //微信签名方式：
-		 //            "paySign": data.paySign //微信签名
-		 //          },(res) => {
-		 //            // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-		 //            if(res.err_msg == "get_brand_wcpay_request:ok"){
-		 //                  this.paySuccess();
-		 //            }else{
-		 //              this.isClick = true;
-		 //            }
-		 //          }
-		 //        );
-		 //    },
+		    Alipay(tradeNO) {
+		       AlipayJSBridge.call("tradePay", {
+		            tradeNO: tradeNO
+		       },  (data) => {
+		           if ("9000" == data.resultCode) {
+		               this.paySuccess();
+		           } else {
+		           	   // callback('error')
+		               this.isClick = true;
+		           }
+		       });
+		    },
 			//支付成功后跳转
 		    paySuccess() {
 		          this.$router.push({
@@ -475,14 +457,23 @@
 					this.moneyOff.discount = 0;
 				}
 
-				// this.surePayMoney = currenValue - moneyOffDiscount;
 				this.surePayMoney = currenValue - this.moneyOff.discount;
 
 				// 随机减
-				this.surePayMoney -= this.randomCut;
+				if(this.surePayMoney < this.randomCutOrigin) {
+					this.randomCut = this.surePayMoney;
+					this.surePayMoney = 0;
+				} else {
+					this.randomCut = this.randomCutOrigin;
+					this.surePayMoney -= this.randomCutOrigin;
+				}
 				// 使用代金券
 				if(this.choseVocher['isUserful'] == 1) {
 					this.surePayMoney -= this.choseVocher['discount'];
+					if(this.surePayMoney < this.choseVocher['discount']) {
+						this.$toast('实付金额小于代金券金额');
+						this.choseVocher = {}
+					}
 				} 
 				else {
 					this.choseVocher['discount'] = 0;
@@ -571,7 +562,7 @@
 				}
 			},
 			// 监听适合能用的代金券
-			canUserVoucherList(list,currentMoney) {
+			canUserVoucherList(list,currentMoney, surePayMoney) {
 				for(let item of list) {
 					if(currentMoney >= item.fullMoney) {
 						//等级为5, 店铺别代金券
@@ -631,11 +622,8 @@
 			},
 			//获取店铺信息
 			getShopDetail() {
-				let params = {
-					bizId: this.$route.query.bizId || '',
-					merNo: this.$route.query.merNo || ''
-				}
-				fetch.fetchPost('/order/ShopDetails', params).then(res => {
+				
+				fetch.fetchPost('/order/ShopDetails', this.params).then(res => {
 					this.shopInfo = res.data;
 					this.integral['all'] = this.shopInfo['personalIntegralMoney'];
 
@@ -669,9 +657,10 @@
 			},
 			//随机减
 			getRanDomSub() {
-				fetch.fetchPost('/order/v3.2/randomSub', {}).
+				fetch.fetchPost('/order/v3.2/randomSub', this.params).
 				then(res => {
-					this.randomCut = res.data;
+					// this.randomCut = res.data;
+					this.randomCutOrigin = res.data;
 				})
 			},
 		}

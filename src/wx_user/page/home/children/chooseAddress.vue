@@ -1,5 +1,6 @@
 <template lang="html">
   <div class="choose-address">
+  	 <router-script @load-finsh="AmapFinsh" src="https://webapi.amap.com/maps?v=1.4.6&key=e50ead2320592e7db5bb32cb484c180b"></router-script>
      <div class="search-title-wrap p-ten bg-white">
      	<div class="search-title flex-box p-t-ten p-b-ten">
 	     	<span class="iconfont icon-search font-b color-7"></span>
@@ -110,9 +111,13 @@
 </style>
 
 <script>
+import routerScript from '@/components/routerScript.vue';
 import {autoComplete, getCurrentPosition} from '@/assets/js/Amap.js';
 import fetch from '@/config/fetch.js';
 export default {
+	components: {
+			routerScript
+	},
 	data() {
 		return {
 			addressList: [],
@@ -120,7 +125,8 @@ export default {
 			keyword: '',
 			currentAddress: '定位到当前位置',
 			showMyAddress: true,
-			autoCompleteAddress: []
+			autoCompleteAddress: [],
+			scirptIsLoad: false
 		}
 	},
 	watch: {
@@ -142,6 +148,9 @@ export default {
 		this.getAddressList();
 	},
 	methods: {
+		AmapFinsh() {
+			this.scirptIsLoad = true;
+		},
 		//选择提示的收货地址
 		choseAutoCompleteAddress(info) {
 			this.setPositionInfo(info['district'] + info['address'], info['location']['lng'], info['location']['lat']);
@@ -162,6 +171,10 @@ export default {
 		},
 		//定位
 		locationPosition() {
+			if(!this.scirptIsLoad) {
+				this.$toast('地图资源加载中...');
+				return;
+			}
 			this.currentAddress = '正在定位中...';
 			getCurrentPosition((type, res) => {
 				if(res == 'success') {

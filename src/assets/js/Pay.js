@@ -19,7 +19,6 @@ export const payType = brower.IsWeixinOrAlipay() == 'false' ? 'Alipay' : brower.
  * @return {[type]}      [description]
  */
 export function WeixinPay(data, callback) {
-	console.log(data)
 	if (typeof WeixinJSBridge == "undefined") {//微信浏览器内置对象。参考微信官方文档
       if(document.addEventListener) {
         document.addEventListener('WeixinJSBridgeReady', onBridgeReady(data, callback), false);
@@ -57,27 +56,23 @@ function onBridgeReady(data, callback) {
  * 支付宝api支付
  */
 export function AliPay(tradeNo, callback) {
-	document.addEventListener('AlipayJSBridgeReady', tradePay(tradeNo, callback), false);
-}
-
-function tradePay(tradeNo, callback) {
-  alert(AlipayJSBridge)
-  	AlipayJSBridge.call("tradePay", {
-          tradeNO: tradeNO
-      }, (data) => {
+    // document.addEventListener('AlipayJSBridgeReady', tradePay(tradeNo, callback), false);
+    AlipayJSBridge.call("tradePay", {
+        tradeNO: tradeNO
+    }, (data) => {
          if ("9000" == data.resultCode) {
              callback('success')
          } else {
              callback('error')
          }
-     })
+    })
+
 }
 /**
  * 支付宝网页支付
  * @param {[type]} formDate [description]
  */
 export function AliFromPay(formDate) {
-    console.log(formDate)
 	  const div = document.createElement('div');
     div.innerHTML = formDate;
     document.body.appendChild(div);

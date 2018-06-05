@@ -3,25 +3,40 @@
 		<div class="takeout-d-title rel">
 			<div class="bg-white title-wrap abs text-center">
 				<div class="color-3 p-t-ten p-b-ten" @click="processTrack">
-					<p class="font-18 p-ten font-b">{{orderStatus[orderDetail['orderStatus']]}}</p>
+					<p class="font-18 p-ten font-b">
+						{{orderStatus[orderDetailStatus]}}
+						<!-- <span v-if="orderDetail['distributionType'] == 1">
+							{{orderStatus[orderDetail['dadaStatus']]}}
+						</span>
+						<span v-else>
+							{{orderStatus[orderDetail['orderStatus']]}}
+						</span> -->
+					</p>
 					<p class="font-12">感谢您对众享无忧的支持,欢迎下次光临</p>
 				</div>
 				<div class="text-right p-r-ten title-btn">
-					<mt-button class="refund-btn font-15" type="primary" 
-					v-if="orderDetail['orderStatus'] == 3 || orderDetail['orderStatus'] == 5"
-					@click="refundOrder">申请退款</mt-button>
-
-					<mt-button class="refund-btn font-15" type="primary" 
-					v-if="orderDetail['orderStatus'] == 2" 
-					@click="cancelOrder">取消订单</mt-button>
-
 					<mt-button 
-					v-if="orderDetail['orderStatus'] == 1" 
+					v-if="orderDetailStatus == 1" 
 					class="takeout-btn font-15" type="primary" @click="restartToPay">点击支付</mt-button>
 
-					<mt-button 
-					v-if="orderDetail['orderStatus'] == 3" 
-					class="takeout-btn font-15" type="primary" @click="confirmAcciept">确认收货</mt-button>
+					<mt-button class="refund-btn font-15" type="primary" 
+					v-if="orderDetailStatus == 2" 
+					@click="cancelOrder">取消订单</mt-button>
+
+					<mt-button class="refund-btn font-15" type="primary" 
+					v-if="canRefundGoods"
+					@click="refundOrder">申请退款</mt-button>
+
+					<!-- <span v-if="orderDetail['distributionType'] == 1"> -->
+						<!-- <mt-button 
+						v-if="orderDetail['dadaStatus'] == 31" 
+						class="takeout-btn font-15" type="primary" @click="confirmAcciept">确认收货</mt-button> -->
+					<!-- </span> -->
+					<!-- <span v-else> -->
+						<mt-button 
+						v-if="canAccieptGoods" 
+						class="takeout-btn font-15" type="primary" @click="confirmAcciept">确认收货</mt-button>
+					<!-- </span> -->
 					
 					<!-- <mt-button 
 					v-if="orderDetail['orderStatus'] == 5" 
@@ -37,7 +52,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="takeout-container  p-r-ten p-l-ten">
+		<div class="takeout-container p-r-ten p-l-ten">
 			<div class="bg-white">
 				<div class="p-ten order-shop flex-box align-center">
 					<div v-if="orderDetail['shopLogo']" class="shop-img m-r-ten" :style="'background-image: url(' + orderDetail['shopLogo'] + ');'"></div>
@@ -73,7 +88,7 @@
 					<span class="circle"></span>
 				</div>
 				<div class="p-r-ten p-l-ten">
-					<p class="flex-box justify-s-b p-b-ten align-center font-12">
+					<p class="flex-box justify-s-b p-b-ten align-center font-12" v-if="orderDetail['deductedCost'] > 0">
 						<span>
 							<span class="tips-intergral tips"></span>
 							<span>积分抵扣</span>
@@ -87,28 +102,28 @@
 						</span>
 						<span>-¥ {{3}}</span>
 					</p> -->
-					<p class="flex-box justify-s-b p-b-ten align-center font-12">
+					<p class="flex-box justify-s-b p-b-ten align-center font-12" v-if="orderDetail['activityCost'] > 0">
 						<span>
 							<span class="tips-sub tips"></span>
 							<span>满减</span>
 						</span>
 						<span>-¥ {{orderDetail['activityCost']}}</span>
 					</p>
-					<p class="flex-box justify-s-b p-b-ten align-center font-12">
+					<p class="flex-box justify-s-b p-b-ten align-center font-12" v-if="orderDetail['randomCut'] > 0">
 						<span>
 							<span class="tips-random tips"></span>
 							<span>随机减</span>
 						</span>
 						<span>-¥ {{orderDetail['randomCut']}}</span>
 					</p>
-					<p class="flex-box justify-s-b p-b-ten align-center font-12">
+					<p class="flex-box justify-s-b p-b-ten align-center font-12" v-if="orderDetail['shareGiftsCost'] > 0">
 						<span>
 							<span class="tips-ticket tips"></span>
 							<span>代金券</span>
 						</span>
 						<span>-¥ {{orderDetail['shareGiftsCost']}}</span>
 					</p>
-					<p class="flex-box justify-s-b p-b-ten align-center font-12">
+					<p class="flex-box justify-s-b p-b-ten align-center font-12" v-if="orderDetail['qffFee'] > 0">
 						<span>
 							<span class="tips-server tips"></span>
 							<span>清分费</span>
@@ -175,14 +190,20 @@
 					</span>
 				</p>
 				<p class="flex-box p-b-ten">
+					<span class="color-7">配送方式</span>
+					<span class="flex-1 color-3">
+						{{ distribution[orderDetail['distributionType']] }}
+					</span>
+				</p>
+				<p class="flex-box p-b-ten">
 					<span class="color-7">备注</span>
 					<span class="flex-1 color-3">
-						{{orderDetail['wmRemark']}}
+						{{ orderDetail['wmRemark'] }}
 					</span>
 				</p>
 			</div>
 		</div>
-
+		<order-status ref="orderStatus" :process-track="processList"></order-status>
 	</div>
 </template>
 <style scoped lang="scss">
@@ -257,10 +278,15 @@
 	}
 </style>
 <script>
+	import orderStatus from './takeoutDetail/orderStatus.vue';
 	import fetch from '@/config/fetch.js';
 	import { payType, WeixinPay, AliPay, AliFromPay } from '@/assets/js/Pay.js';
+	const a = AliPay;
 	// import 
 	export default {
+		components: {
+			orderStatus
+		},
 		data() {
 			return {
 				params: {
@@ -277,8 +303,29 @@
 					7: '申请退款',
 					8: '退款成功',
 					9: '拒退款',
-					0: '订单已取消'
+					0: '订单已取消',
+					//达达
+					31: '等待骑手接单',
+					32: '骑手已接单',
+					33: '配送中',
+					34: '已完成',
+					35: '骑手接单已取消',
+					37: '已过期',
+					38: '指派单',
+					39: '妥投异常之物品返回中',
+					310: '妥投物品异常之返回完成',
+					1000: '创建达达运单失败'
 				},
+				distribution: {
+					0: '商家',
+					1: '达达'
+				},
+				processList: [],
+				processListLength: 0,
+				//确认收货
+				canAccieptGoods: false,
+				// 申请退款
+				canRefundGoods: false
 			}
 		},
 		computed: {
@@ -287,16 +334,52 @@
 					let num = this.orderDetail['tel'].split(',');
 					return num[0];
 				}
+			},
+			orderDetailStatus() {
+				let status = this.orderDetail['orderStatus'];
+				if(status == 3 ||  status == 5 || (status >= 31 && status <= 35)) {
+					this.canAccieptGoods = true;
+					this.canRefundGoods = true
+				} 
+				else if(status == 7 || status == 9) {
+					this.canAccieptGoods = true;
+					this.canRefundGoods = false;
+				} else {
+					this.canAccieptGoods = false;
+					this.canRefundGoods = false
+				}
+				return status;
 			}
 		},
 		mounted() {
 			this.getOrderDetail();
+
 		},
 		methods: {
 			//查看进度
 			processTrack() {
+				this.$refs.orderStatus.showHidePoppup();
+				this.getProcess();
+				// fetch.fetchPost('/order/v3.2/processTrack', this.params).then(res => {
+				// 	this.processList = res.data['params'];
+				// 	this.processListLength = this.processList.length;
+				// 	this.orderDetail['orderStatus'] = this.processList[this.processListLength - 1]['orderStatus'];
+				// 	this.orderDetail['distributionType'] = res.data['distributionType'];
+				// })
+			},
+			getProcess() {
 				fetch.fetchPost('/order/v3.2/processTrack', this.params).then(res => {
-					console.log(1)	
+					this.processList = res.data['params'].reverse();
+					this.processListLength = this.processList.length;
+					this.orderDetail['orderStatus'] = this.processList[0]['orderStatus'];
+					this.orderDetail['distributionType'] = res.data['distributionType'];
+					// if(this.orderDetail['orderStatus'] == 3 
+					// 	|| (this.orderDetail['orderStatus'] >= 31 
+					// 	&& this.orderDetail['orderStatus'] <= 34)) {
+					// 	this.canAccieptGoods = true
+					// } else {
+					// 	this.canAccieptGoods = false
+					// }
 				})
 			},
 			// 确认收货
@@ -324,18 +407,48 @@
 							if(result.form) {
 								AliFromPay();
 							} else {
-								AliPay(result.tradeNo, res => {
+
+
+								// AliPay(result.tradeNo, res => {
+								// 	alert('AliPay');
+								// });
+
+								this.AliPay(result.tradeNo, res => {
 									if(res == 'success') {
 										this.paySuccess();
 									} else {
 										this.canselPay();
 									}
 								})
+								// this.tradePay(result.tradeNo)
 							}
 						}
 					// }
 				})
 			},
+			AliPay(tradeNO, callback) {
+				AlipayJSBridge.call("tradePay", {
+			        tradeNO: tradeNO
+			    }, (data) => {
+			         if ("9000" == data.resultCode) {
+			             callback('success')
+			         } else {
+			             callback('error')
+			         }
+			    })
+			},
+			//支付宝支付
+			// tradePay(tradeNO) {
+		 //       AlipayJSBridge.call("tradePay", {
+		 //            tradeNO: tradeNO
+		 //       },  (data) => {
+		 //           if ("9000" == data.resultCode) {
+		 //               this.paySuccess();
+		 //           } else {
+		 //           	   this.canselPay();
+		 //           }
+		 //       });
+		 //    },
 			paySuccess() {
 				this.getOrderDetail();
 			},
@@ -361,6 +474,7 @@
 				fetch.fetchPost('/personal/v3.2/orderDetail', this.params).
 				then(res => {
 					this.orderDetail = res.data;
+					this.getProcess();
 				}).catch(res => {
 
 				})
