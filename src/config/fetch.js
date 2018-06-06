@@ -63,7 +63,7 @@ export default {
             axios.post(url, params)
                 .then(response => {
                   Indicator.close();
-                    if(response.data.code==0){
+                    if(response.data.code == 0){
                       resolve(response.data);
                     }else {
                       Toast(response.data.msg);
@@ -94,7 +94,7 @@ export default {
                 })
                 .then(response => {
                   Indicator.close();
-                    if(response.data.code==0){
+                    if(response.data.code == 0){
                       resolve(response.data);
                     }else {
                       Toast(response.data.msg);

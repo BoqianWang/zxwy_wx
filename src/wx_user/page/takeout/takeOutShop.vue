@@ -18,7 +18,7 @@
 							<!-- <span>4.7</span> -->
 							<span>销量{{shopInfo['goodsSales']}}</span>
 							<span>{{shopInfo['businessName']}}</span>
-							<span>{{shopInfo['distance']}} {{shopInfo['expectTime']}}分钟</span>
+							<span>{{shopInfo['distance']}} {{shopInfo['expectTime'] > 0 ? shopInfo['expectTime'] : '40'}}分钟</span>
 						</div>
 						<div class="p-t-ten font-12 color-7">
 							<!-- 欢迎光临，用餐高峰期请提前下单，谢谢	 -->

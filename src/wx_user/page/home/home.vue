@@ -4,7 +4,8 @@
 		<div class="home-title rel">
 			<!-- 轮播图 -->
 			<mt-swipe class="swiper-wrap" :auto="3000">
-			  <mt-swipe-item v-for="item in imgDate" 
+			  <mt-swipe-item 
+			  v-for="item in imgDate" 
 			  :style="{backgroundImage: 'url(' + item.url + ')'}">
 			  </mt-swipe-item>
 			</mt-swipe>
@@ -100,7 +101,7 @@
 				<span class="color-3">距离优先</span>
 				<span>销量最高</span>
 			</div>
-			<div class="home-shop-list p-ten" 
+			<!-- <div class="home-shop-list p-ten" 
 			infinite-scroll-disabled="loadding" 
 			infinite-scroll-distance="100"
 			v-infinite-scroll="loadMore">
@@ -114,7 +115,6 @@
 							</p>
 							<p class="color-3 font-12 flex-box justify-s-b block-list-order">
 								<span>
-								 	 <!-- <span class="p-r-ten">4.7</span> -->
 								 	 <span>月售{{item.monthSaleCount}}单</span>
 								</span>	
 							 	 <span class="color-7">
@@ -132,10 +132,6 @@
 						 :class="{'click-item': item['showActive']}"
 						  v-if="item['activitysVO'].length > 0" 
 						  @click="showItemActive(item)">
-							 	<!-- <span>
-							 		<span class="tips tips-first"></span>
-							 		新用户首单立减
-							 	</span> -->
 						 	<p class="abs l-a-icon flex-box align-center p-ten"
 						 		:class="{'icon-sanjiaoxing-up': item['showActive']}">
 						 	    <span class="iconfont icon-sanjiaoxing-down"></span>
@@ -148,25 +144,15 @@
 								 <p class="flex-box align-center" v-if="info['activityType'] >= 8" v-for="item in info['activitys']">
 								 	<span class="tips tips-ticket"></span>{{item['activityDescription']}}
 								 </p>
-								 <!-- <p>
-								 	<span class="tips tips-intergral"></span>现金积分
-								 </p> -->
 							 </li>
-							 <!-- <p>
-								 <span class="tips tips-intergral"></span>现金积分
-							 </p> -->
-							 <!-- <p>
-							 	<span class="tips tips-ticket"></span>代金券优惠
-							 </p>
-							 <p>
-							 	<span class="tips tips-intergral"></span>现金积分
-							 </p> -->
+
 						 </div>
 					</div>
 				</div>
-			</div>
+			</div> -->
+			<shop-list :biz-list="shopListData" @load-more="loadMore" ref="shopList"></shop-list>
 		</div>
-		<div class="font-15 color-3 text-center p-t-ten">{{tips}}</div>
+		<!-- <div class="font-15 color-3 text-center p-t-ten">{{tips}}</div> -->
 	</div>
 </template>
 <style lang="scss">
@@ -316,10 +302,12 @@
 	import routerScript from '@/components/routerScript.vue';
 	import fetch from '@/config/fetch.js';
 	import { getCurrentPosition } from '@/assets/js/Amap.js';
+	import shopList from '@/wx_user/page/home/children/shopList.vue';
 
 	export default {
 		components: {
-			routerScript
+			routerScript,
+			shopList
 		},
 		data() {
 			return {
@@ -338,7 +326,8 @@
 				industryList: {},
 				bizList: [],
 				loadding: true,
-				totalPage: 1
+				totalPage: 1,
+				shopListData: {}
 			}
 		},
 		created() {
@@ -348,24 +337,30 @@
 			// this.getPositon();
 		},
 		methods: {
+			//地图加载完毕
 			AmapFinsh() {
 				this.getPositon();
 			},
-			showItemActive(info) {
-				if(info['showActive']) {
-					this.$set(info, 'showActive', false)
-				} else {
-					this.$set(info, 'showActive', true)
-				}
-			},
+			// showItemActive(info) {
+			// 	if(info['showActive']) {
+			// 		this.$set(info, 'showActive', false)
+			// 	} else {
+			// 		this.$set(info, 'showActive', true)
+			// 	}
+			// },
 			//加载更多
-			loadMore() {
-				this.loadding = true;
-				if(this.params['pageNo'] >= this.totalPage) {
-					this.tips = '没有更多内容了~~'
-					return;
-				}
-				this.params['pageNo']++;
+			// loadMore() {
+			// 	this.loadding = true;
+			// 	if(this.params['pageNo'] >= this.totalPage) {
+			// 		this.tips = '没有更多内容了~~'
+			// 		return;
+			// 	}
+			// 	this.params['pageNo']++;
+			// 	this.getIndexList();
+			// },
+			// 加载更多
+			loadMore(pageNo) {
+				this.params['pageNo'] = pageNo;
 				this.getIndexList();
 			},
 			// 点击跳转
@@ -381,26 +376,26 @@
 							path: '/searchShop'
 						})
 					break;
-					case 'shop':
-						if(info.isWm == 1) {
-							this.$router.push({
-								path: '/takeout/takeOutShop',
-								query: {
-									longitude: this.params['longitude'],
-									latitude: this.params['latitude'],
-									shopAuthenticateId: info['shopAuthenticateId'],
-									// bizId: info['bizId']
-								}
-							})
-						} else {
-							this.$router.push({
-								path: '/bizdetail',
-								query: {
-									bizId: info['bizId']
-								}
-							})
-						}
-					break;
+					// case 'shop':
+					// 	if(info.isWm == 1) {
+					// 		this.$router.push({
+					// 			path: '/takeout/takeOutShop',
+					// 			query: {
+					// 				longitude: this.params['longitude'],
+					// 				latitude: this.params['latitude'],
+					// 				shopAuthenticateId: info['shopAuthenticateId'],
+					// 			}
+					// 		})
+					// 		location.href = './index.html#/takeout/takeOutShop?shopAuthenticateId=' + info['shopAuthenticateId'];
+					// 	} else {
+					// 		this.$router.push({
+					// 			path: '/bizdetail',
+					// 			query: {
+					// 				bizId: info['bizId']
+					// 			}
+					// 		})
+					// 	}
+					// break;
 				}
 
 			},
@@ -412,8 +407,14 @@
 						this.industryList = res.data.industryList;
 					}
 					this.bizList = this.bizList.concat(result.bizList);
-					this.totalPage = result.totalPage;
-					this.loadding = false;
+
+					this.$set(this.shopListData, 'shopList', this.bizList);
+					this.$set(this.shopListData, 'page', {
+						pageNo: res.data.pageNo,
+						totalPage: res.data.totalPage
+					})
+					this.$refs.shopList.canLoadMore();
+
 				}).catch(res => {
 
 				})

@@ -123,7 +123,7 @@
 						</span>
 						<span>-¥ {{orderDetail['shareGiftsCost']}}</span>
 					</p>
-					<p class="flex-box justify-s-b p-b-ten align-center font-12" v-if="orderDetail['qffFee'] > 0">
+					<p class="flex-box justify-s-b p-b-ten align-center font-12" v-if="orderDetail['qffFee'] > 0 && orderDetail['qffSource'] == 0">
 						<span>
 							<span class="tips-server tips"></span>
 							<span>清分费</span>
@@ -156,7 +156,7 @@
 						<span class="iconfont icon-phone"></span>
 						<span>联系商家</span>
 					</a>
-					<a class="flex-1 color-3" :href="'tel: '+ tel">
+					<a class="flex-1 color-3" :href="'tel: '+ '18664336845'">
 						<span class="iconfont icon-kefu"></span>
 						<span>联系客服</span>
 					</a>
@@ -281,7 +281,6 @@
 	import orderStatus from './takeoutDetail/orderStatus.vue';
 	import fetch from '@/config/fetch.js';
 	import { payType, WeixinPay, AliPay, AliFromPay } from '@/assets/js/Pay.js';
-	const a = AliPay;
 	// import 
 	export default {
 		components: {

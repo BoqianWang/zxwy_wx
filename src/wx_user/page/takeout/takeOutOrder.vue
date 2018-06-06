@@ -24,7 +24,7 @@
 				<div class="p-ten flex-box align-center justify-s-b send">
 					<div class="font-15">
 						<span class="color-3">立即送出</span>
-						<span class="color-main">(大约{{shopInfo['expectTime']}}分钟后送达)</span>
+						<span class="color-main">(大约{{shopInfo['expectTime'] > 0 ? shopInfo['expectTime'] : 40}}分钟后送达)</span>
 					</div>
 					<!-- <span class="iconfont icon-more font-15"></span> -->
 				</div>
@@ -321,6 +321,7 @@
 	import remark from './children/takeoutorder/remark.vue';
 	import brower from '@/config/browser';
 	import { payType, WeixinPay, AliPay, AliFromPay } from '@/assets/js/Pay.js';
+	import { canUserMoneyOff, calculateRandomCut, calculateServerMoney, calculateIntegral } from '@/assets/js/ActiveCalculcate.js';
 	export default {
 		components: {
 			voucher,
@@ -380,22 +381,29 @@
 				this.money = this.shopCartDetail['money'] + this.shopInfo['expressFee']
 				let surePay = this.money;
 
-				this.moneyOff = this.canUserMoneyOff(surePay, this.moneyOffGather['activitys']);
+				// this.moneyOff = this.canUserMoneyOff(surePay, this.moneyOffGather['activitys']);
+				this.moneyOff = canUserMoneyOff(surePay, this.moneyOffGather['activitys'])
 				//满减
-				if(this.moneyOff['discount']) {
-					surePay -= this.moneyOff['discount']; 
-				} else {
-					this.moneyOff['discount'] = 0;
-				}
+				// if(this.moneyOff['discount']) {
+				// 	surePay -= this.moneyOff['discount']; 
+				// } else {
+				// 	this.moneyOff['discount'] = 0;
+				// }
+				surePay -= this.moneyOff['discount']; 
+
 				//随机减
 				// surePay -= this.randomCut;
-				if(surePay < this.randomCutOrigin) {
-					this.randomCut = surePay;
-					surePay = 0;
-				} else {
-					this.randomCut = this.randomCutOrigin;
-					surePay -= this.randomCutOrigin;
-				}
+				// if(surePay < this.randomCutOrigin) {
+				// 	this.randomCut = surePay;
+				// 	surePay = 0;
+				// } else {
+				// 	this.randomCut = this.randomCutOrigin;
+				// 	surePay -= this.randomCutOrigin;
+				// }
+				// 随机减
+				let randomObj = calculateRandomCut(surePay, this.randomCutOrigin);
+				surePay = randomObj['surePayMoney'];
+				this.randomCut = randomObj['random'];
 
 				//代金券
 				if(this.voucher['discount']) {
@@ -403,27 +411,39 @@
 				} else {
 					this.voucher['discount'] = 0;
 				}
-
+				// if(this.choseVocher['isUserful'] == 1) {
+				// 	if(this.surePayMoney < this.choseVocher['discount']) {
+				// 		this.$toast('实付金额小于代金券金额');
+				// 		this.choseVocher = {};
+				// 	} else {
+				// 		this.surePayMoney -= this.choseVocher['discount'];
+				// 	}
+				// } 
 				surePay = Tools.ToCurrency(surePay, 2);
 
 				if(surePay <= 0) {
 					surePay = 0;
 				}
 				// 积分
-				if(this.personalIntegral['integral'] > 0 && surePay > 0) {
-					if(surePay >= this.personalIntegral['integral']) {
-						surePay -= this.personalIntegral['integral'];
-						this.integral['discount'] = this.personalIntegral['integral'];
-					} 
-					else {
-						this.integral['discount'] = surePay;
-						// this.$set(this.integral, 'count', surePay);
-						surePay = 0;
-					}
-				}
-				//清风费
-				this.serverMoney = this.calculateServerMoney(this.integral['discount'], this.voucher['discount'], this.shopInfo);
+				// if(this.personalIntegral['integral'] > 0 && surePay > 0) {
+				// 	if(surePay >= this.personalIntegral['integral']) {
+				// 		surePay -= this.personalIntegral['integral'];
+				// 		this.integral['discount'] = this.personalIntegral['integral'];
+				// 	} 
+				// 	else {
+				// 		this.integral['discount'] = surePay;
+				// 		surePay = 0;
+				// 	}
+				// }
+				let IntegralObj = calculateIntegral(this.integral['all'], surePay);
+				this.integral['discount'] = IntegralObj['intergralDiscount'];
+				surePay = IntegralObj['surePayMoney'];
 
+				//清风费
+				// this.serverMoney = this.calculateServerMoney(this.integral['discount'], this.voucher['discount'], this.shopInfo);
+				// console.log(this.voucher['discount']);
+				this.serverMoney = calculateServerMoney(this.integral['discount'], this.voucher['discount'], this.shopInfo);
+				
 				surePay += this.serverMoney;
 				this.allDiscount = Tools.ToCurrency(this.money - surePay + this.serverMoney);
 				return surePay;
@@ -440,21 +460,22 @@
 				this.remark = work;
 			},
 			//计算清风费
-			calculateServerMoney(integralDiscount, voucherDiscount, shopInfo) {
-				let serverMoney = integralDiscount + voucherDiscount,
-					calServerMoney = 0;
-				if(shopInfo['serviceFeeObject'] == 0 && serverMoney >= shopInfo['standardFee']) {
-					if(shopInfo['marketType'] == 0) {
-						calServerMoney = parseFloat(shopInfo['serviceRate']);
-					} 
-					else if(shopInfo['marketType'] == 1) {
-						calServerMoney = (parseFloat(shopInfo['serviceRate']) * serverMoney).toFixed(2);
-					}
-				} else {
-					calServerMoney = 0;
-				}
-				return calServerMoney;
-			},
+			// calculateServerMoney(integralDiscount, voucherDiscount, shopInfo) {
+			// 	let serverMoney = integralDiscount + voucherDiscount,
+			// 		calServerMoney = 0;
+			// 	console.log(serverMoney)
+			// 	if(shopInfo['serviceFeeObject'] == 0 && serverMoney >= shopInfo['standardFee']) {
+			// 		if(shopInfo['marketType'] == 0) {
+			// 			calServerMoney = parseFloat(shopInfo['serviceRate']);
+			// 		} 
+			// 		else if(shopInfo['marketType'] == 1) {
+			// 			calServerMoney = (parseFloat(shopInfo['serviceRate']) * serverMoney).toFixed(2);
+			// 		}
+			// 	} else {
+			// 		calServerMoney = 0;
+			// 	}
+			// 	return calServerMoney;
+			// },
 			getMoneyOffList() {
 				for(let item of this.shopInfo['activitysList']) {
 					// 满减
@@ -464,23 +485,23 @@
 				}
 			},
 			// 监听适合的满减活动
-			canUserMoneyOff(currentMoney, moneyOffLsit) {
-				let moneyOff = {};
-				if(moneyOffLsit) {
-					for(let item of moneyOffLsit) {
-						if(currentMoney >= item.fullMoney ) {
-							if(moneyOff.discount) {
-								if(moneyOff.discount < item.discount) {
-									moneyOff = item;
-								}
-							}else{
-								moneyOff = item;
-							}
-						}
-					}
-				}
-				return moneyOff;
-			},
+			// canUserMoneyOff(currentMoney, moneyOffLsit) {
+			// 	let moneyOff = {};
+			// 	if(moneyOffLsit) {
+			// 		for(let item of moneyOffLsit) {
+			// 			if(currentMoney >= item.fullMoney ) {
+			// 				if(moneyOff.discount) {
+			// 					if(moneyOff.discount < item.discount) {
+			// 						moneyOff = item;
+			// 					}
+			// 				}else{
+			// 					moneyOff = item;
+			// 				}
+			// 			}
+			// 		}
+			// 	}
+			// 	return moneyOff;
+			// },
 			//选择使用的代金券
 			choseVocherHandle(info) {
 				this.voucher = info;

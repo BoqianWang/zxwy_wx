@@ -43,7 +43,7 @@
         </li>
       </ul>
     </div>
-    <div class="second_section" v-show='bizdata.activitysVO.length>0'>
+    <div class="second_section" v-show='bizdata.activitysVO && bizdata.activitysVO.length>0'>
       <p class="ac_title">优惠活动</p>
       <div class="ac_cell">
         <div v-for="acitem in bizdata.activitysVO" class="ac_div">

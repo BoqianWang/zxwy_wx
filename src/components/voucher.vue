@@ -85,6 +85,7 @@
 	 * 代金券组件
 	 * <vuecher :voucher-list="data" :shop-info="data" :current-money="data"></vuecher>
 	 */
+	import { canUserVoucherList } from '@/assets/js/ActiveCalculcate.js';
 	export default {
 		props: {
 			voucherList: {
@@ -111,7 +112,8 @@
 		},
 		computed: {
 			computedVoucherList() {
-				let voucherList = this.canUserVoucherList(this.voucherList, this.currentMoney),
+				// let voucherList = this.canUserVoucherList(this.voucherList, this.currentMoney),
+				let voucherList = canUserVoucherList(this.currentMoney, this.voucherList, this.shopInfo),
 					arrList = voucherList['list'];
 				this.$emit('voucherCount', voucherList['count']);
 				return arrList;
@@ -142,51 +144,51 @@
 
 				
 			},
-			canUserVoucherList(list, currentMoney) {
-				let arr = [],
-					count = 0;
-				for(let item of list) {
-					if(currentMoney >= item.fullMoney) {
-						//等级为5, 店铺别代金券
-						if(item.activityLevel == 5) {
-							for(let info of item['districtCodeVOs']) {
-								if(this.shopInfo['bizId'] == info['districtCode']) {
-									item['isUserful'] = 1;
-									break;
-								}
-							}	
-						// if(this.shopInfo['bizId'] == item['districtCodeVOs'][0]['districtCode']) {
-						// 	item['isUserful'] = 1;
-						}  
-						//等级为0, 全平台别代金券
-						else if(item.activityLevel == 0) {
-							item['isUserful'] = 1;
-						}
-						//等级为4, 商家级别代金券
-						else if(item.activityLevel == 4) {
-							for(let info of item['districtCodeVOs']) {
-								if(info['districtCode'] == this.shopInfo['businessCode']) {
-									item['isUserful'] = 1;
-									break;
-								}
-							}
-						}
+			// canUserVoucherList(list, currentMoney) {
+			// 	let arr = [],
+			// 		count = 0;
+			// 	for(let item of list) {
+			// 		if(currentMoney >= item.fullMoney) {
+			// 			//等级为5, 店铺别代金券
+			// 			if(item.activityLevel == 5) {
+			// 				for(let info of item['districtCodeVOs']) {
+			// 					if(this.shopInfo['bizId'] == info['districtCode']) {
+			// 						item['isUserful'] = 1;
+			// 						break;
+			// 					}
+			// 				}	
+			// 			// if(this.shopInfo['bizId'] == item['districtCodeVOs'][0]['districtCode']) {
+			// 			// 	item['isUserful'] = 1;
+			// 			}  
+			// 			//等级为0, 全平台别代金券
+			// 			else if(item.activityLevel == 0) {
+			// 				item['isUserful'] = 1;
+			// 			}
+			// 			//等级为4, 商家级别代金券
+			// 			else if(item.activityLevel == 4) {
+			// 				for(let info of item['districtCodeVOs']) {
+			// 					if(info['districtCode'] == this.shopInfo['businessCode']) {
+			// 						item['isUserful'] = 1;
+			// 						break;
+			// 					}
+			// 				}
+			// 			}
 						
-					} else {
-						item['isUserful'] = 0;
-					}
-					if(item['isUserful'] == 1) {
-						count++;
-						arr.unshift(item)
-					} else {
-						arr.push(item);
-					}
-				}
-				return {
-					count: count,
-					list: arr
-				};
-			}
+			// 		} else {
+			// 			item['isUserful'] = 0;
+			// 		}
+			// 		if(item['isUserful'] == 1) {
+			// 			count++;
+			// 			arr.unshift(item)
+			// 		} else {
+			// 			arr.push(item);
+			// 		}
+			// 	}
+			// 	return {
+			// 		count: count,
+			// 		list: arr
+			// 	};
+			// }
 		}
 	}
 </script>

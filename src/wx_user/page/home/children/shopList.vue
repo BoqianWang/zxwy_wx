@@ -26,8 +26,11 @@
 							 	<span v-if="item.isWm == 1">配送¥{{item.expressFee}}</span>
 							 </p>
 						</div>
-						 <div class="color-3 font-12 block-list-active rel" :class="{'click-item': item['showActive']}" @click="showItemActive(item)">
-						 	<p v-if="item['activitysVO'].length > 0" 
+						 <div class="color-3 font-12 block-list-active rel" 
+						 :class="{'click-item': item['showActive']}" 
+						 @click="showItemActive(item)"
+						  v-if="item['activitysVO'].length > 0">
+						 	<p 
 						 		class="abs l-a-icon flex-box align-center p-ten"
 						 		:class="{'icon-sanjiaoxing-up': item['showActive']}">
 						 	    <span class="iconfont icon-sanjiaoxing-down"></span>
@@ -87,6 +90,10 @@
 	}
 </style>
 <script>
+	/**
+	 * 商品列表组件
+	 * <shop-list :biz-list="..." @load-more="..."></shop-list>
+	 */
 	export default {
 		props: {
 			bizList: {
@@ -118,18 +125,18 @@
 
 		},
 		methods: {
+			//点击跳转
 			toLink(type, info) {
 				switch(type) {
 					case 'shop':
 						if(info.isWm == 1) {
-							this.$router.push({
-								path: '/takeout/takeOutShop',
-								query: {
-									longitude: '',
-									latitude: '',
-									shopAuthenticateId: info['shopAuthenticateId']
-								}
-							})
+							// this.$router.push({
+							// 	path: '/takeout/takeOutShop',
+							// 	query: {
+							// 		shopAuthenticateId: info['shopAuthenticateId']
+							// 	}
+							// })
+							location.href = './index.html#/takeout/takeOutShop?shopAuthenticateId=' + info['shopAuthenticateId'];
 						} else {
 							this.$router.push({
 								path: '/bizdetail',
@@ -142,6 +149,7 @@
 				}
 
 			},
+			//显示或隐藏
 			showItemActive(info) {
 				if(info['showActive']) {
 					this.$set(info, 'showActive', false)
@@ -149,7 +157,7 @@
 					this.$set(info, 'showActive', true)
 				}
 			},
-
+			//允许下拉加载
 			canLoadMore() {
 				this.loadding = false;
 			},
@@ -157,7 +165,6 @@
 			//加载更多
 			loadMore() {
 				this.loadding = true;
-				console.log(this.pageNo, this.totalPage)
 				if(this.pageNo >= this.totalPage) {
 					this.tips = '没有找到更多内容了~~';
 					return;

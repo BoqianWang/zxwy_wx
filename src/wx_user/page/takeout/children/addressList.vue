@@ -100,7 +100,7 @@
 	export default {
 		data() {
 			return {
-				addressList: {},
+				addressList: [],
 				address: Tools.getLocalStorage('address') || {}
 			}
 		},

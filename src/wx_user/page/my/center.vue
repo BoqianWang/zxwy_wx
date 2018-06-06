@@ -38,7 +38,7 @@
           </router-link>
         </div>
         <div class="body_userList">
-          <mt-cell title="收货地址" is-link>
+          <mt-cell title="收货地址" is-link to="/takeout/addressList">
             <img slot="icon" src="../../images/icon_dz@2x.png" width="24" height="24">
           </mt-cell>
           <mt-cell title="修改手机号" v-if='mydata.username && mydata.username.length==11' is-link to="/settel">
@@ -51,9 +51,9 @@
           <mt-cell title="客服" is-link>
             <img slot="icon" src="../../images/icon_kf@2x.png" width="24" height="24">
           </mt-cell>
-          <mt-cell is-link to="./static/zxwy_intergral_origin/intergralLogin.html" title="移动积分兑换" >
+          <!-- <mt-cell is-link to="./static/zxwy_intergral_origin/intergralLogin.html" title="移动积分兑换" >
             <img slot="icon" src="../../images/icon_dz@2x.png" width="24" height="24">
-          </mt-cell>
+          </mt-cell> -->
         </div>
         <!-- <div class="body_exit">
           退出登录

@@ -1,11 +1,20 @@
-import login from '../page/login.vue'
-import index from '../page/index.vue'
-import orderm from '../page/orderM.vue'
-import centerm from  '../page/centerM.vue'
-import finance from '../page/financeHome.vue'
-import yuetixian from '../page/yuetixian.vue'
-import yuelist from '../page/yueList.vue'
-import bankdetail from '../page/bankdetail.vue';
+// import login from '../page/login.vue';
+// import index from '../page/index.vue'
+// import orderm from '../page/orderM.vue'
+// import centerm from  '../page/centerM.vue'
+// import finance from '../page/financeHome.vue'
+// import yuetixian from '../page/yuetixian.vue'
+// import yuelist from '../page/yueList.vue'
+// import bankdetail from '../page/bankdetail.vue';
+
+const login = r => require.ensure([], () => r(require('../page/login.vue')), 'login');
+const index = r => require.ensure([], () => r(require('../page/index.vue')), 'index');
+const orderm = r => require.ensure([], () => r(require('../page/orderM.vue')), 'orderm');
+const centerm = r => require.ensure([], () => r(require('../page/centerM.vue')), 'centerm');
+const finance = r => require.ensure([], () => r(require('../page/financeHome.vue')), 'finance');
+const yuetixian = r => require.ensure([], () => r(require('../page/yuetixian.vue')), 'yuetixian');
+const yuelist = r => require.ensure([], () => r(require('../page/yueList.vue')), 'yuelist');
+const bankdetail = r => require.ensure([], () => r(require('../page/bankdetail.vue')), 'bankdetail');
 //营销协议
 // import marketProtocol from '../page/marketProtocol.vue';
 const marketProtocol = r => require.ensure([], () => r(require('../page/marketProtocol.vue')), 'marketProtocol');
@@ -14,7 +23,10 @@ const marketProtocol = r => require.ensure([], () => r(require('../page/marketPr
 const registerProtocol = r => require.ensure([], () => r(require('../page/registerProtocol.vue')), 'registerProtocol');
 //结算协议
 const accountProtocol = r => require.ensure([], () => r(require('../page/accountProtocol.vue')), 'accountProtocol');
-
+//外卖费用
+const takeoutFree = r => require.ensure([], () => r(require('../page/takeout/takeoutFree.vue')), 'takoutFree');
+//打印使用说明
+const printExplain = r => require.ensure([], () => r(require('../page/takeout/printExplain.vue')), 'printExplain');
 export default{
   routes:[
     {
@@ -65,6 +77,16 @@ export default{
       //注册协议
       path: '/accountProtocol',
       component: accountProtocol
+    },
+    {
+      //注册协议
+      path: '/takeout/takeoutFree',
+      component: takeoutFree
+    },
+    {
+      //注册协议
+      path: '/takeout/printExplain',
+      component: printExplain
     }
   ]
 }
