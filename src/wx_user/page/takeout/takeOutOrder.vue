@@ -48,7 +48,7 @@
 								<span class="font-12 color-9">{{item['goodsNum']}}份</span>
 							</p>
 						</div>
-						<p class="font-15 color-3 p-r-ten">¥{{item['goodsNum'] * item['discountPrice']}}</p>
+						<p class="font-15 color-3 p-r-ten">¥{{(item['goodsNum'] * item['discountPrice']).toFixed(2)}}</p>
 					</li>
 					<!-- <li class="flex-box menu-list justify-s-b p-l-ten p-r-ten m-b-ten">
 						<div class="flex-box">
