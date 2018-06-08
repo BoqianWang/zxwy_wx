@@ -19,12 +19,13 @@
 		 </div>
 		 <div class="chose-list-wrap p-l-ten p-r-ten bg-white">
 		 	<li class="font-15 p-t-ten p-b-ten" v-for="item in addressList" @click="choseAddress(item)">
-		 		<p class="color-3 text_over">{{item.recipientAddress}}</p>
+		 		<p class="color-3 text_over">{{item.recipientAddress}} {{item.houseNumber ? item.houseNumber : ''}}</p>
 		 		<p class="color-7">
 		 			<span>{{item.recipientName}}</span> 
 		 			<span>{{item.recipientPhone}}</span>
 		 		</p>
 		 	</li>
+		 	
 		 	<!-- <li class="font-15 p-t-ten p-b-ten">
 		 		<p class="color-3 text_over">广东省深圳市罗湖区中民时代广场B座2013楼三点发水电费</p>
 		 		<p class="color-7">

@@ -5,7 +5,7 @@
 				<span class="iconfont icon-search font-b"></span>
 				<input autofocus="autofocus" class="p-l-ten width-100" type="search" v-model="params['keyword']" @keyup.enter="toSearch" placeholder="请输入搜索名称">
 			</div>
-			<input class="p-l-ten p-r-ten search-btn bg-white color-main font-15" type="button" @click="toSearch" value="搜索">
+			<button class="p-l-ten p-r-ten search-btn bg-white color-main font-15" type="button" @click="toSearch">搜索</button>
 		</div>
 		<div class="searh-container">
 			<shopList :biz-list="shopListData" @load-more="loadMore" ref="shopList"></shopList>
@@ -36,7 +36,6 @@
 	.searh-container {
 		padding-top: .76rem;
 	}
-
 </style>
 <script>
 	import fetch from '@/config/fetch.js';

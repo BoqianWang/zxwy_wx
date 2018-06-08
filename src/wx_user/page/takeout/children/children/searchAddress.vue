@@ -92,7 +92,8 @@
 			},
 			comfirmAddress(info) {
 				let addressInfo = {
-					recipientAddress: `${info['district']}${info['address']}(${info['name']})`,
+					recipientAddress: `${info['address']}(${info['name']})`,
+					// recipientAddress: `${info['district']}${info['address']}(${info['name']})`,
 					recipientLon: info['location']['lng'],
 					recipientLat: info['location']['lat']
 				}

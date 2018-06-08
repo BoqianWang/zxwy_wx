@@ -68,9 +68,9 @@
 			address() {
 				let addressInfo = this.$store.state.addressInfo;
 				if(addressInfo) {
-					this.formDate['recipientAddress'] = this.$store.state.addressInfo['recipientAddress'];
-					this.formDate['recipientLon'] = this.$store.state.addressInfo['recipientLon'];
-					this.formDate['recipientLat'] = this.$store.state.addressInfo['recipientLat'];
+					this.formDate['recipientAddress'] = addressInfo['recipientAddress'];
+					this.formDate['recipientLon'] = addressInfo['recipientLon'];
+					this.formDate['recipientLat'] = addressInfo['recipientLat'];
 					return this.formDate['recipientAddress'];
 				} else {
 					return '';

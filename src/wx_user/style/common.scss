@@ -20,7 +20,9 @@ html,body{
     font-size: 16px;
     user-select: none;
 }
-
+button {
+  /*-webkit-appearance: none;*/
+}
 .mint-cell-wrapper{
   background-size: 0;
 }
