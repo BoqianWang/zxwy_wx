@@ -4,7 +4,7 @@ module.exports = {
         outputPath: path.resolve(__dirname, '../static'),
         outputPublicPath: '/',
         port: 8080,
-        host: '192.169.18.140'
+        host: 'testpage.zhongxiang51.com'
     },
     prod: {
         outputPath: path.resolve(__dirname, '../static'),

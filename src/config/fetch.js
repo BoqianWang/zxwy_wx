@@ -19,16 +19,23 @@ axios.interceptors.request.use((config) => {
     config.headers = {
       'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'
     }
-    // console.log(localStorage.zx_token);
-    if(Tools.getCookie('zx_token')) {
-    // if(localStorage.zx_token){
-         config.headers['zx_token']  = Tools.getCookie('zx_token');//localStorage.zx_token;
-    }
+    // if(Tools.getCookie('zx_token')) {
+         // config.headers['zx_token']  = Tools.getCookie('zx_token');;
+    // }
     return config;
 }, (error) => {
     alert("错误的传参");
     return Promise.reject(error);
 });
+
+axios.defaults.baseURL = 'https://userside.zhongxiang51.com'; //正式配置接口地址
+
+//本地配置接口地址
+// axios.defaults.baseURL = 'http://192.169.18.77:8082/zxwy-userside'; 
+
+// 测试配置接口地址
+// axios.defaults.baseURL = 'https://test.zhongxiang51.com/zxwy-userside'; 
+
 
 //返回状态判断(添加响应拦截器)
 // axios.interceptors.response.use((res) =>{

@@ -70,9 +70,9 @@
 				<mt-button v-show="sureBtn" class="pay-sure white-f" type="default" @click="surePay">确认支付</mt-button>
 			</div>
 		</div>
-		<div class="text-center" style="margin-top: 20px;">
+		<!-- <div class="text-center" style="margin-top: 20px;">
 		    <mt-button type="danger" @click='clearCookie'>清除cookies(用于测试)</mt-button>
-		</div>
+		</div> -->
 		<!-- 代金券 -->
 		<mt-popup class="popup" v-model="popupVisible" position="right" :modal="false">
 			<mt-header fixed title="选择代金券" style="height: 44px;">
@@ -329,10 +329,10 @@
 		methods:{
 
 			// 清除cookies
-		    clearCookie() {
-		        alert('已清除缓存');
-		        Tools.clearCookies('zx_token');
-		    },
+		    // clearCookie() {
+		    //     alert('已清除缓存');
+		    //     Tools.clearCookies('zx_token');
+		    // },
 			//显示或者隐藏代金券
 			showHidePopup(type) {
 				this.popupVisible = !this.popupVisible

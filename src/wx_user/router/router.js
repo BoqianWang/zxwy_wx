@@ -61,6 +61,8 @@ const addAddress = r => require.ensure([], () => r(require('@/wx_user/page/takeo
 const searchAddress = r => require.ensure([], () => r(require('@/wx_user/page/takeout/children/children/searchAddress.vue')), 'searchAddress');
 //外卖订单
 const takeoutDetail = r => require.ensure([], () => r(require('@/wx_user/page/order/takeoutDetail.vue')), 'takeoutDetail');
+//外卖订单
+const author = r => require.ensure([], () => r(require('@/wx_user/page/wxAuth/author.vue')), 'author');
 // 店铺首页搜索
 // const takeoutDetail = r => require.ensure([], () => r(require('@/wx_user/page/order/takeoutDetail.vue')), 'takeoutDetail');
 
@@ -204,7 +206,9 @@ export default{
     {
       path:'/oneThousand',
       component:oneThousand,
-      meta:{title:'领取1000积分'}
+      meta:{
+        title:'领取1000积分'
+      }
     },
     {
       path: '/takeout/takeOutShop',
@@ -243,13 +247,13 @@ export default{
          }
       ]
     },
-    // {
-    //   path: '/newHome',
-    //   component: newHome,
-    //   meta: {
-    //     title: '首页'
-    //   }
-    // }
+    {
+      path: '/author',
+      component: author,
+      meta: {
+           title: '正在登陆...'
+      }
+    }
   ],
   scrollBehavior(to, from, savedPosition) {
      return { x: 0, y: 0 }

@@ -84,10 +84,10 @@
 					<span class="circle"></span>
 				</div>
 				<div class="p-r-ten p-l-ten">
-					<p class="flex-box justify-s-b m-b-ten font-12" v-if="integral['discount'] > 0">
+					<p class="flex-box justify-s-b m-b-ten font-12" v-if="integral['all'] > 0">
 						<span>
 							<span class="tips-intergral tips"></span>
-							<span>积分抵扣</span>
+							<span>积分抵扣(总{{integral['all']}}分)</span>
 						</span>
 						<span>-¥ {{integral['discount']}}</span>
 					</p>
@@ -349,8 +349,9 @@
 				//总金额
 				money: 0,
 				//个人积分
-				personalIntegral: {},
+				// personalIntegral: {},
 				integral: {
+					all: 0,
 					discount: 0
 				},
 				//清风费
@@ -411,12 +412,12 @@
 				} else {
 					this.voucher['discount'] = 0;
 				}
-				// if(this.choseVocher['isUserful'] == 1) {
-				// 	if(this.surePayMoney < this.choseVocher['discount']) {
+				// if(this.voucher['isUserful'] == 1) {
+				// 	if(surePay < this.voucher['discount']) {
 				// 		this.$toast('实付金额小于代金券金额');
-				// 		this.choseVocher = {};
+				// 		this.voucher = {};
 				// 	} else {
-				// 		this.surePayMoney -= this.choseVocher['discount'];
+				// 		surePay -= this.voucher['discount'];
 				// 	}
 				// } 
 				surePay = Tools.ToCurrency(surePay, 2);
@@ -450,7 +451,7 @@
 			},
 		},
 		mounted() {
-			this.getIntegral();
+			// this.getIntegral();
 			this.getMoneyOffList();
 			this.getVoucherList();
 			this.getRanDomSub();
@@ -484,26 +485,9 @@
 					}
 				}
 			},
-			// 监听适合的满减活动
-			// canUserMoneyOff(currentMoney, moneyOffLsit) {
-			// 	let moneyOff = {};
-			// 	if(moneyOffLsit) {
-			// 		for(let item of moneyOffLsit) {
-			// 			if(currentMoney >= item.fullMoney ) {
-			// 				if(moneyOff.discount) {
-			// 					if(moneyOff.discount < item.discount) {
-			// 						moneyOff = item;
-			// 					}
-			// 				}else{
-			// 					moneyOff = item;
-			// 				}
-			// 			}
-			// 		}
-			// 	}
-			// 	return moneyOff;
-			// },
 			//选择使用的代金券
 			choseVocherHandle(info) {
+				console.log(info)
 				this.voucher = info;
 			},
 			//获取可用代金券数量
@@ -648,7 +632,7 @@
 				fetch.fetchPost('/personal/personalCenter', {
 
 				}).then(res => {
-					this.personalIntegral = res.data;
+					this.integral['all'] = res.data.integral;
 				}).catch(res => {
 
 				})

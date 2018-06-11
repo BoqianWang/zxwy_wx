@@ -20,44 +20,48 @@ import 'mint-ui/lib/style.css'
 import './style/common.scss'
 
 // import api from '../config/api'
-import fetch from '@/config/fetch.js'
+// import fetch from '@/config/fetch.js'
 
-import axios from 'axios'
+// import axios from 'axios'
 
 
-// axios.defaults.baseURL = 'https://userside.zhongxiang51.com'; //正式配置接口地址
 
-//本地配置接口地址
-// axios.defaults.baseURL = 'http://192.169.18.77:8082/zxwy-userside'; 
-
-// 测试配置接口地址
-axios.defaults.baseURL = 'https://test.zhongxiang51.com/zxwy-userside'; 
 
 var router = new VueRouter(routerConfig)
 Vue.use(VueRouter);
 Vue.use(MintUI);
 Vue.use(wcKeyBoard);
 
+// Tools.setCookies('zx_token', 'oV3Y2s_Wi_GMbZnEN7x0rRFuKov8');
+
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title;
   if(Tools.getCookie('zx_token')) {
     next()
   }else{
-    if(to.query.openid){
-      Tools.setCookies('zx_token', to.query.openid);
-      next()
-    }else {
-      var url =  to.fullPath;
-      // fetch.fetchPost('/grant/auth',{
-      //   authorUrl: url
-      // }).then(res => {
-      //   window.location.href = res.data;
-      // })
+    if(to.path != '/author' && !to.query.openid) {
+       Tools.setCookies('beforeLoginUrl', to.fullPath);
+       next('/author');
 
-      Tools.setCookies('zx_token', 'oV3Y2s_Wi_GMbZnEN7x0rRFuKov8');
-      // Tools.setCookies('zx_token', '2088702608497683');
-      next();
+    } else {
+      // console.log(to);
+       next();
     }
+    // if(to.query.openid){
+    //   Tools.setCookies('zx_token', to.query.openid);
+    //   next()
+    // }else {
+    //   var url =  to.fullPath;
+    //   // fetch.fetchPost('/grant/auth',{
+    //   //   authorUrl: url
+    //   // }).then(res => {
+    //   //   window.location.href = res.data;
+    //   // })
+
+    //   Tools.setCookies('zx_token', 'oV3Y2s_Wi_GMbZnEN7x0rRFuKov8');
+    //   // Tools.setCookies('zx_token', '2088702608497683');
+    //   next();
+    // }
   }
 
 
