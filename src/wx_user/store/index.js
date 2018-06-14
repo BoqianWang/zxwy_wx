@@ -109,16 +109,19 @@ const store = new Vuex.Store({
 		delShopCart(state, info) {
 			let arrList = state.cartList,
 				shopCart = {};
+			console.log(arrList)
 			for(let i = arrList.length - 1; i >= 0; i--) {
 				let item = arrList[i]
-				if(item['skuId'] == info['skuId'] 
-					&& (item['goodsTaste'] == info['goodsTaste'] 
-					|| info['num'] == 1)) {
+				if(item['skuId'] == info['skuId'] && item['goodsTaste'] == info['goodsTaste']) {
 					if(item['goodsNum'] > 1) {
 						item['goodsNum']--;
 					} else {
 						arrList.splice(i, 1);
 					}
+					break;
+				} else if(item['goodsId'] == info['goodsId'] && info['isFirst'] == 1) {
+					arrList.splice(i, 1);
+					break;
 				}
 			}
 			shopCart[info['shopAuthenticateId']] = arrList;

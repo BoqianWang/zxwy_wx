@@ -248,7 +248,7 @@ export default{
       ]
     },
     {
-      path: '/author',
+      path: '/pay/author',
       component: author,
       meta: {
            title: '正在登陆...'

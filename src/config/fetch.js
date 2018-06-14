@@ -28,13 +28,13 @@ axios.interceptors.request.use((config) => {
     return Promise.reject(error);
 });
 
-axios.defaults.baseURL = 'https://userside.zhongxiang51.com'; //正式配置接口地址
+// axios.defaults.baseURL = 'https://userside.zhongxiang51.com'; //正式配置接口地址
 
 //本地配置接口地址
 // axios.defaults.baseURL = 'http://192.169.18.77:8082/zxwy-userside'; 
 
 // 测试配置接口地址
-// axios.defaults.baseURL = 'https://test.zhongxiang51.com/zxwy-userside'; 
+axios.defaults.baseURL = 'https://test.zhongxiang51.com/zxwy-userside'; 
 
 
 //返回状态判断(添加响应拦截器)
@@ -110,7 +110,7 @@ export default {
                 })
                 .catch((error) => {
                    Indicator.close();
-                   Toast(error);
+                    Toast(error);
                     reject(error)
                 });
         })

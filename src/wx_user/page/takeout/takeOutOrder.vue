@@ -379,7 +379,7 @@
 				return this.$store.getters.shopCartDetail;
 			},
 			surePayMoney() {
-				this.money = this.shopCartDetail['money'] + this.shopInfo['expressFee']
+				this.money = Tools.ToCurrency(this.shopCartDetail['money'] + this.shopInfo['expressFee'])
 				let surePay = this.money;
 
 				// this.moneyOff = this.canUserMoneyOff(surePay, this.moneyOffGather['activitys']);
@@ -451,7 +451,7 @@
 			},
 		},
 		mounted() {
-			// this.getIntegral();
+			this.getIntegral();
 			this.getMoneyOffList();
 			this.getVoucherList();
 			this.getRanDomSub();
@@ -628,6 +628,7 @@
 					path: '/takeout/addressList'
 				})
 			},
+			//获取积分
 			getIntegral() {
 				fetch.fetchPost('/personal/personalCenter', {
 

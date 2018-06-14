@@ -1,9 +1,9 @@
 <template>
 	<div style="display: inline-block;">
-		<div class="flex-box add-menu text-center">
+		<div class="flex-box add-menu text-center" v-if="menuData['isAvailable'] == 1">
 			<p class="subtract iconfont icon-subtract" v-show="count > 0" @click="delMenu"></p>
 			<p class="menu-num color-3" v-show="count > 0">{{count}}</p>
-			<p class="add iconfont icon-add white-f" v-if="menuData['isAvailable'] == 1" @click="addMenu"></p>
+			<p class="add iconfont icon-add white-f" @click="addMenu"></p>
 			<!-- <p @click="size">选规格</p> -->
 		</div>
 		<!-- <mt-popup
@@ -165,7 +165,8 @@
 					if(this.count > 1) {
 						this.$toast('多规格商品只能在购物车删除');
 					} else {
-						delData['num'] = 1;
+						delData['goodsId'] = this.menuData['goodsId'];
+						delData['isFirst'] = 1;
 						this.$store.commit('delShopCart', delData);
 					}
 				} else {

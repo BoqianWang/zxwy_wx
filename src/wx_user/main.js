@@ -39,9 +39,9 @@ router.beforeEach((to, from, next) => {
   if(Tools.getCookie('zx_token')) {
     next()
   }else{
-    if(to.path != '/author' && !to.query.openid) {
+    if(to.path != '/pay/author' && !to.query.openid) {
        Tools.setCookies('beforeLoginUrl', to.fullPath);
-       next('/author');
+       next('/pay/author');
 
     } else {
       // console.log(to);

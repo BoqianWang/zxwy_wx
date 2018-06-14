@@ -303,7 +303,7 @@
 		},
 		data() {
 			return {
-				defaultImg: 'http://chuantu.biz/t6/313/1526552904x-1404793429.png',
+				defaultImg: 'http://chuantu.biz/t6/328/1528940745x-1404775455.png',
 				height: 0,
 				popupVisible: false,
 				shopCartVisible: false,

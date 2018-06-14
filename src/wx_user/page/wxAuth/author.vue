@@ -35,18 +35,12 @@
 				}
 			},
 			toLogin() {
+				// console.log(this.$route)
 				// setTimeout(() => {
-					
-				// 	window.location.href = 'http://localhost:8080/#/author?openid=oV3Y2s_Wi_GMbZnEN7x0rRFuKov8';
-				// }, 10000)
+				// 	window.location.href = 'http://localhost:8080/#/pay/author?openid=oV3Y2s_Wi_GMbZnEN7x0rRFuKov8';
+				// }, 50000)
 				 // window.location.replace('http://localhost:8080/#/author?openid=oV3Y2s_Wi_GMbZnEN7x0rRFuKov8')
-				 // this.$router.push({
-				 // 	path: '/author',
-				 // 	query: {
-				 // 		openid: 'oV3Y2s_Wi_GMbZnEN7x0rRFuKov8'
-				 // 	}
-				 // })
-				let url = '/author';
+				let url = this.$route.fullPath;
 				fetch.fetchPost('/grant/auth', {
 					authorUrl: url
 				}).then(res => {
