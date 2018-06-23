@@ -1,5 +1,6 @@
 <template>
 	<div class="bg-white" :class="{'blur': !isInBussiness['is']}">
+		<router-script src="https://webapi.amap.com/maps?v=1.4.6&key=e50ead2320592e7db5bb32cb484c180b" @load-finsh="AmapFinsh"></router-script>
 		<div class="takeout-wrap" id="takeout-wrap">
 			<div class="takeout-shop-t-w" @click="showShopDetial">
 				<!-- 头部 -->
@@ -291,15 +292,18 @@
 </template>
 
 <script>
+	import routerScript from '@/components/routerScript.vue';
 	import addMenu from './children/takeoutshop/addMenu.vue';
 	import shopCartAddMenu from './children/takeoutshop/shopCartAddMenu.vue';
 	import choseAttribute from './children/takeoutshop/choseAttribute.vue';
 	import fetch from '@/config/fetch.js';
+	import { getCurrentPosition } from '@/assets/js/Amap.js';
 	export default {
 		components: {
 		    addMenu,
 		    shopCartAddMenu,
-		    choseAttribute
+		    choseAttribute,
+		    routerScript
 		},
 		data() {
 			return {
@@ -308,10 +312,10 @@
 				popupVisible: false,
 				shopCartVisible: false,
 				switchSelectType: 'shop',
-				positionInfo: Tools.getLocalStorage('positionInfo'),
+				// positionInfo: Tools.getLocalStorage('positionInfo'),
 				params: {
-					longitude: '114',
-					latitude: '22',
+					longitude: this.$route.query.longitude,
+					latitude: this.$route.query.latitude,
 					shopAuthenticateId: this.$route.query.shopAuthenticateId
 				},
 				shopInfo: {},
@@ -400,7 +404,7 @@
 				this.shopCartVisible = !this.shopCartVisible;
 			},
 			init() {
-				this.getTakeOutShop();
+				// this.getTakeOutShop();
 				
 			},
 			//获取外卖菜单
@@ -434,12 +438,34 @@
 
 				})
 			},
+			AmapFinsh() {
+				if(this.params['longitude'] || sessionStorage.geoHash) {
+					this.getTakeOutShop();
+				} else {
+					this.$indicator.open('定位中...');
+					getCurrentPosition((type, res) => {
+						if(res == 'success') {
+							sessionStorage.geoHash = 'finishLocation';
+							this.getTakeOutShop();
+						}
+					})
+				}
+			},
+			//获取店铺位置
+			// getShopPosition() {
+			// 	if(this.params['longitude']) {
+			// 		this.getTakeOutShop();
+			// 	} else {
+
+			// 	}
+			// },
 			//获取店铺资料
 			getTakeOutShop() {
-				if(this.positionInfo) {
-					this.params['longitude'] = this.positionInfo['longitude'];
-					this.params['latitude'] = this.positionInfo['latitude']
-				}
+				// if(this.positionInfo) {
+				let positionInfo = Tools.getLocalStorage('positionInfo');
+				this.params['longitude'] = positionInfo['longitude'];
+				this.params['latitude'] = positionInfo['latitude']
+				// }
 				fetch.fetchPost('/index/v3.2/toBizPage', this.params).then(res => {
 					this.getTakeoutMenu();
 					this.shopInfo = res.data;

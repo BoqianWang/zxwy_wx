@@ -5,6 +5,7 @@
 				<div class="color-3 p-t-ten p-b-ten" @click="processTrack">
 					<p class="font-18 p-ten font-b">
 						{{orderStatus[orderDetailStatus]}}
+						<span class="iconfont icon-more"></span>
 						<!-- <span v-if="orderDetail['distributionType'] == 1">
 							{{orderStatus[orderDetail['dadaStatus']]}}
 						</span>

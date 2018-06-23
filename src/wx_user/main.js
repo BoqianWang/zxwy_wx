@@ -23,7 +23,8 @@ import './style/common.scss'
 // import fetch from '@/config/fetch.js'
 
 // import axios from 'axios'
-
+import VConsole from '../config/vconsole.min.js';
+var cons = new VConsole();
 
 
 
@@ -32,7 +33,7 @@ Vue.use(VueRouter);
 Vue.use(MintUI);
 Vue.use(wcKeyBoard);
 
-// Tools.setCookies('zx_token', 'oV3Y2s_Wi_GMbZnEN7x0rRFuKov8');
+Tools.setCookies('zx_token', 'oV3Y2s-I9d9HoEphk0712a0VqYX8');
 
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title;

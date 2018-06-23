@@ -28,7 +28,7 @@
            	   script.onload = () => {
            	   	  this.$emit('load-finsh', true)
            	   }
-           	   document.getElementsByTagName('head')[0].appendChild(script);
+           	   document.head.appendChild(script);
            }
 		}
 	}

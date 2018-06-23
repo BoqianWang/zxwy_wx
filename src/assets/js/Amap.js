@@ -1,5 +1,5 @@
 /**
- * 地图模块
+ * 高德地图模块
  * author wzh
  * created 2018-5-23 15:58
  * 
@@ -32,6 +32,7 @@ export function getCurrentPosition(callBack) {
 			timeout: 10000,
 		});
 		geolocation.getCurrentPosition((status, result) => {
+			console.log(result);
 			if(status == 'complete') {
 				setPositionInfo('gps', result)
 				callBack('gps', 'success')
@@ -51,11 +52,13 @@ function setPositionInfo(type, res) {
 		address = '',
 		positionInfo = {};
 	if(type == 'gps') {
-		address = res.formattedAddress;
+		let addressComponent = res.addressComponent;
+		address = addressComponent['district'] + addressComponent['township'] + 
+				  addressComponent['street'] + addressComponent['streetNumber'];
 		longitude = res['position']['lng'];
 		latitude = res['position']['lat'];
 	} else {
-		let city = res.city ? res.city : '深圳市'
+		let city = res.city ? res.city : ''
 		address = res.province + city;
 		longitude = res['center'][0];
 		latitude = res['center'][1]
@@ -67,3 +70,10 @@ function setPositionInfo(type, res) {
 	};
 	Tools.setLocalStorage('positionInfo', positionInfo);
 }
+
+
+/**
+ * 逆地理编码
+ */
+
+// export function getAddress

@@ -1,6 +1,7 @@
 <template>
 	<div class="bg-white home-wrap">
-		<router-script src="https://webapi.amap.com/maps?v=1.4.6&key=e50ead2320592e7db5bb32cb484c180b" @load-finsh="AmapFinsh"></router-script>
+		<!-- <router-script src="https://webapi.amap.com/maps?v=1.4.6&key=e50ead2320592e7db5bb32cb484c180b" @load-finsh="AmapFinsh"></router-script> -->
+		<router-script src="https://api.map.baidu.com/api?v=2.0&ak=kEAyTt64d9z6arhHfsop3yXK&s=1&callback=init" @load-finsh="AmapFinsh"></router-script>
 		<div class="home-title rel">
 			<!-- 轮播图 -->
 			<mt-swipe class="swiper-wrap" :auto="3000">
@@ -301,7 +302,8 @@
 <script>
 	import routerScript from '@/components/routerScript.vue';
 	import fetch from '@/config/fetch.js';
-	import { getCurrentPosition } from '@/assets/js/Amap.js';
+	// import { getCurrentPosition } from '@/assets/js/Amap.js';
+	import { getCurrentPosition } from '@/assets/js/Bmap.js';
 	import shopList from '@/wx_user/page/home/children/shopList.vue';
 
 	export default {
@@ -312,11 +314,11 @@
 		data() {
 			return {
 				imgDate: [
-					{url: 'http://chuantu.biz/t6/311/1526372344x-1404795840.jpg'},
-					{url: 'http://chuantu.biz/t6/311/1526372482x-1404792897.jpg'},
-					{url: 'http://chuantu.biz/t6/311/1526372570x-1404792897.jpg'},
-					{url: 'http://chuantu.biz/t6/311/1526372600x-1404792897.jpg'},
-					{url: 'http://chuantu.biz/t6/311/1526372628x-1404792897.jpg'},
+					{url: 'https://ico.zhongxiang51.com/20180515161817.jpg'},
+					{url: 'https://ico.zhongxiang51.com/20180515161824.jpg'},
+					{url: 'https://ico.zhongxiang51.com/20180515161829.jpg'},
+					{url: 'https://ico.zhongxiang51.com/20180515161839.jpg'},
+					{url: 'https://ico.zhongxiang51.com/20180515161834.jpg'}
 				],
 				address: '正在定位...',
 				params: {
@@ -339,7 +341,15 @@
 		methods: {
 			//地图加载完毕
 			AmapFinsh() {
-				this.getPositon();
+				// this.getPositon();
+				window.init = () => {
+					this.getPositon();
+				}
+				// setTimeout(() => {
+				// 	alert('准备定位')
+				// 	this.getPositon();
+				// }, 2000)
+				// console.log(1);
 			},
 			// showItemActive(info) {
 			// 	if(info['showActive']) {
@@ -428,7 +438,7 @@
 				this.getIndexList();
 			},
 			//定位回调
-			positionCallBack(type, result) {
+			positionCallBack(result) {
 				// let positionInfo = {};
 				// if(type == 'gps') {
 				// 	positionInfo['address'] = result['formattedAddress']
