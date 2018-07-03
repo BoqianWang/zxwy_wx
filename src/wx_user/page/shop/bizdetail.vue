@@ -50,8 +50,8 @@
           <img src="../../images/pic_shou1@2x.png" alt="" v-if="acitem.activityType==7">
           <img src="../../images/pic_jian1@2x.png" alt="" v-if="acitem.activityType==0">
           <img src="../../images/pic_zeng1@2x.png" alt="" v-if="acitem.activityType==8||acitem.activityType==9">
-          <span v-for='subacitem in acitem.activitys'>
-            {{subacitem.activityDescription}}
+          <span v-for='(subacitem, index) in acitem.activitys' v-if="index <= 2">
+            {{subacitem.activityDescription}}&nbsp;&nbsp;
           </span>
         </div>
       </div>

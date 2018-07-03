@@ -52,7 +52,7 @@
 				<div v-show="switchSelectType == 'shop'">
 					<div class="shop-con-wrap flex-box" :style="{height: height - 42 + 'px'}">
 						<ul class="font-12 color-7" id="classify-list">
-							<li v-for="(item, index) in categoryListDate" @click="changeScroll(index)">
+							<li v-for="(item, index) in menuList" @click="changeScroll(index)">
 								<span style="-webkit-box-orient: vertical;">{{item.categoryName}}</span>
 								<mt-badge v-show="shopCartDetail['goodsCategoryId'][item['categoryId']]" class="abs category-tips" type="error" size="small" >
 									{{shopCartDetail['goodsCategoryId'][item['categoryId']]}}
@@ -65,7 +65,7 @@
 						-->
 						</ul>
 						<section class="flex-1 p-ten section-menu" id="section-menu">
-							<div class="scoller-list" v-for="item in MenuListDate">
+							<div class="scoller-list" v-for="item in menuList">
 								<p class="color-3 con-wrap-title">
 									{{item.categoryName}}
 									<span class="color-9 font-12">{{item.categoryDescribe}}</span>
@@ -103,7 +103,9 @@
 												<div v-if="info['sku'].length == 1">
 													<span class="price">¥{{info['sku'][0].discountPrice}}</span>
 													<span class="color-7" style="font-size: 8px;">
-														/份 <del>¥{{info['sku'][0].price}}</del>
+														/
+														<span>{{info.goodsUnit}}</span> 
+														<del v-if="info['sku'][0].price != info['sku'][0].discountPrice">¥{{info['sku'][0].price}}</del>
 													</span>
 												</div>
 												<div v-else>
@@ -231,7 +233,7 @@
 			  	  <p class="color-3 font-15 p-b-ten m-t-ten">优惠</p>
 			  	  <div class="color-3 font-12" style="max-height: 400px; overflow: auto;">
 			  	  	  <li v-for="info in shopInfo['activitysList']">
-						 <p class="flex-box align-center p-b-ten" v-if="info['activityType'] == 0" v-for="item in info['activitys']">
+						 <p class="flex-box align-center p-b-ten" v-if="info['activityType'] <= 2" v-for="item in info['activitys']">
 						 	<span class="tips tips-sub"></span>{{item['activityDescription']}}
 						 </p>
 						 <p class="flex-box align-center p-b-ten" v-if="info['activityType'] >= 8" v-for="item in info['activitys']">
@@ -243,7 +245,7 @@
 					   	 <p>
 					   	 	<span>起送¥{{shopInfo['startSendFee']}} </span>
 					   	 	<span>配送¥{{shopInfo['expressFee']}} </span>  
-					   	 	<span>{{shopInfo['expectTime']}}分钟</span>
+					   	 	<span>{{shopInfo['expectTime'] > 0 ? shopInfo['expectTime'] : '40'}}分钟</span>
 					   	 </p>
 					   	 <p>
 					   	 	配送时间: 
@@ -307,7 +309,7 @@
 		},
 		data() {
 			return {
-				defaultImg: 'http://chuantu.biz/t6/328/1528940745x-1404775455.png',
+				defaultImg: 'https://ico.zhongxiang51.com/sj_pic_tp@2x.png',
 				height: 0,
 				popupVisible: false,
 				shopCartVisible: false,
@@ -323,6 +325,9 @@
 				categoryListDate: [],
 				//菜单列表数据
 				MenuListDate: [],
+				//菜单列表
+				menuList: [],
+
 				bounce: false,
 				// itemMenudata: {},
 				//是不在在营业中
@@ -333,7 +338,7 @@
 			}
 		},
 		mounted() {
-			this.init();
+			// this.init();
 		},
 		created() {
 			this.$store.commit('initShopCart', this.params['shopAuthenticateId']);
@@ -403,10 +408,10 @@
 				}
 				this.shopCartVisible = !this.shopCartVisible;
 			},
-			init() {
-				// this.getTakeOutShop();
+			// init() {
+			// 	// this.getTakeOutShop();
 				
-			},
+			// },
 			//获取外卖菜单
 			getTakeoutMenu() {
 				fetch.fetchPost('/goods/v3.2/toGoodsList', {
@@ -431,6 +436,7 @@
 						this.MenuListDate.push(MenuListItem);
 
 					}
+					this.menuList = this.menuListSort(data)
 					setTimeout(() => {					
 						this.DOMOptions();
 					}, 10)
@@ -438,8 +444,26 @@
 
 				})
 			},
+			//排序
+			menuListSort(arr) {
+				let tem = null,
+					len = arr.length;
+				for(var i = 0; i < len; i++) {
+					if(arr[i]['goodsList'] && arr[i]['goodsList'].length) {
+						this.menuListSort(arr[i]['goodsList']);
+					}
+					for(var j = 0; j < len - 1; j++) {
+						if(arr[j]['sequence'] > arr[j + 1]['sequence']) {
+							tem = arr[j];
+							arr[j] = arr[j + 1];
+							arr[j + 1] = tem;
+						}
+					}
+				}
+				return arr;
+			},
 			AmapFinsh() {
-				if(this.params['longitude'] || sessionStorage.geoHash) {
+				if(sessionStorage.geoHash) {
 					this.getTakeOutShop();
 				} else {
 					this.$indicator.open('定位中...');

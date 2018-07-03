@@ -4,7 +4,7 @@
 			infinite-scroll-distance="100"
 			v-infinite-scroll="loadMore">
 				<div class="shop-list-block flex-box p-ten bg-white" v-for="item in list['shopList']">
-					<div class="block-list-img" :style="'background-image: url(' + item.shopLogo + ');'"></div>
+					<div @click="toLink('shop', item)" class="block-list-img" :style="'background-image: url(' + item.shopLogo + ');'"></div>
 					<div class="p-l-ten flex-1">
 						<div @click="toLink('shop', item)">
 							<p>
@@ -127,16 +127,11 @@
 		methods: {
 			//点击跳转
 			toLink(type, info) {
+				this.$emit('shop-info', info);
 				switch(type) {
 					case 'shop':
 						if(info.isWm == 1) {
 							let positionInfo = Tools.getLocalStorage('positionInfo');
-							// this.$router.push({
-							// 	path: '/takeout/takeOutShop',
-							// 	query: {
-							// 		shopAuthenticateId: info['shopAuthenticateId']
-							// 	}
-							// })
 							location.href = `./index.html#/takeout/takeOutShop?shopAuthenticateId=${info['shopAuthenticateId']}&longitude=${positionInfo['longitude']}&latitude=${positionInfo['latitude']}`;
 						} else {
 							this.$router.push({

@@ -1,7 +1,7 @@
 <template>
 	<div class="bg-white home-wrap">
-		<!-- <router-script src="https://webapi.amap.com/maps?v=1.4.6&key=e50ead2320592e7db5bb32cb484c180b" @load-finsh="AmapFinsh"></router-script> -->
-		<router-script src="https://api.map.baidu.com/api?v=2.0&ak=kEAyTt64d9z6arhHfsop3yXK&s=1&callback=init" @load-finsh="AmapFinsh"></router-script>
+		<router-script src="https://webapi.amap.com/maps?v=1.4.6&key=e50ead2320592e7db5bb32cb484c180b" @load-finsh="AmapFinsh"></router-script>
+		<!-- <router-script src="https://api.map.baidu.com/api?v=2.0&ak=kEAyTt64d9z6arhHfsop3yXK&s=1&callback=init" @load-finsh="AmapFinsh"></router-script> -->
 		<div class="home-title rel">
 			<!-- 轮播图 -->
 			<mt-swipe class="swiper-wrap" :auto="3000">
@@ -15,15 +15,17 @@
 				<div class="a-wrap-input flex-box align-center" @click="toLink('location')">
 					<span class="iconfont icon-map font-b"></span>
 					<input readonly="readonly" class="white-f font-15 font-b flex-1 p-r-ten" type="text" :value="address">
+					<!-- <input readonly="readonly" class="white-f font-15 font-b flex-1 p-r-ten" type="text" :value="'中民时代广场成功中民时代广场成功'"> -->
 				</div>
-				<div class="search-button font-b text-center" @click="toLink('searchShop')">
-					<span class="iconfont icon-search"></span>
+				<div class="search-button p-l-ten flex-box align-center" @click="toLink('searchShop')">
+					<span class="iconfont icon-search font-b"></span>
+					<span class="font-12 font-b" style="padding-left: .05rem;">搜索商家</span>
 				</div>
 			</div>
 		</div>
 		<!-- 导航栏 -->
 		<div class="home-nav p-ten clearfix font-12 color-3 text-center">
-			<li class="p-ten" v-for="item in industryList">
+			<li class="p-ten" v-for="item in industryList" @click="toLink('industry', item)">
 				<div class="nav-img-wrap">
 					<img :src="item.industryUrl">
 				</div>
@@ -153,7 +155,6 @@
 			</div> -->
 			<shop-list :biz-list="shopListData" @load-more="loadMore" ref="shopList"></shop-list>
 		</div>
-		<!-- <div class="font-15 color-3 text-center p-t-ten">{{tips}}</div> -->
 	</div>
 </template>
 <style lang="scss">
@@ -172,19 +173,21 @@
 		top: 0;
 		padding: .05rem .1rem;
 		.a-wrap-input {
-			width: 3rem;
+			width: 2rem;
 			border-radius: .4rem;
 			.icon-map {
 				padding: 0 .05rem;
 			}
 			input {
+				width: 1.8rem;
 				background: none;
 			}
 		}
 		.search-button {
-			width: .3rem;
-			border-radius: 50%;
-			line-height: 30px;
+			width: 1.2rem;
+			/*border-radius: 50%;*/
+			border-radius: .4rem;
+			/*line-height: 30px;*/
 		}
 	}
 	.block-list-order {
@@ -302,8 +305,8 @@
 <script>
 	import routerScript from '@/components/routerScript.vue';
 	import fetch from '@/config/fetch.js';
-	// import { getCurrentPosition } from '@/assets/js/Amap.js';
-	import { getCurrentPosition } from '@/assets/js/Bmap.js';
+	import { getCurrentPosition } from '@/assets/js/Amap.js';
+	// import { getCurrentPosition } from '@/assets/js/Bmap.js';
 	import shopList from '@/wx_user/page/home/children/shopList.vue';
 
 	export default {
@@ -341,33 +344,11 @@
 		methods: {
 			//地图加载完毕
 			AmapFinsh() {
-				// this.getPositon();
-				window.init = () => {
-					this.getPositon();
-				}
-				// setTimeout(() => {
-				// 	alert('准备定位')
+				this.getPositon();
+				// window.init = () => {
 				// 	this.getPositon();
-				// }, 2000)
-				// console.log(1);
+				// }
 			},
-			// showItemActive(info) {
-			// 	if(info['showActive']) {
-			// 		this.$set(info, 'showActive', false)
-			// 	} else {
-			// 		this.$set(info, 'showActive', true)
-			// 	}
-			// },
-			//加载更多
-			// loadMore() {
-			// 	this.loadding = true;
-			// 	if(this.params['pageNo'] >= this.totalPage) {
-			// 		this.tips = '没有更多内容了~~'
-			// 		return;
-			// 	}
-			// 	this.params['pageNo']++;
-			// 	this.getIndexList();
-			// },
 			// 加载更多
 			loadMore(pageNo) {
 				this.params['pageNo'] = pageNo;
@@ -386,26 +367,24 @@
 							path: '/searchShop'
 						})
 					break;
-					// case 'shop':
-					// 	if(info.isWm == 1) {
-					// 		this.$router.push({
-					// 			path: '/takeout/takeOutShop',
-					// 			query: {
-					// 				longitude: this.params['longitude'],
-					// 				latitude: this.params['latitude'],
-					// 				shopAuthenticateId: info['shopAuthenticateId'],
-					// 			}
-					// 		})
-					// 		location.href = './index.html#/takeout/takeOutShop?shopAuthenticateId=' + info['shopAuthenticateId'];
-					// 	} else {
-					// 		this.$router.push({
-					// 			path: '/bizdetail',
-					// 			query: {
-					// 				bizId: info['bizId']
-					// 			}
-					// 		})
-					// 	}
-					// break;
+					case 'industry': 
+						let industryType = '';
+						if(info.industryCode == '101') {
+							industryType = 1;
+						}  
+						else if(info.industryCode == '103') {
+							industryType = 0;
+						} else {
+							return;
+						}
+
+						this.$router.push({
+							path: '/searchShop',
+							query: {
+								industryType: industryType
+							}
+						})
+					break;
 				}
 
 			},
@@ -438,19 +417,7 @@
 				this.getIndexList();
 			},
 			//定位回调
-			positionCallBack(result) {
-				// let positionInfo = {};
-				// if(type == 'gps') {
-				// 	positionInfo['address'] = result['formattedAddress']
-				// 	positionInfo['longitude'] = result['position']['lng'];
-				// 	positionInfo['latitude'] = result['position']['lat'];
-				// } else {
-				// 	let city = result['city'] ? result['city'] : '深圳市'
-				// 	positionInfo['address'] =  result['province'] +  city;
-				// 	positionInfo['longitude'] = result['center'][0];
-				// 	positionInfo['latitude'] = result['center'][1];
-				// }
-				// Tools.setLocalStorage('positionInfo', positionInfo);
+			positionCallBack(type, result) {
 				if(result == 'success') {
 					sessionStorage.geoHash = 'finishLocation';
 					this.getLocalStoragePosition();

@@ -109,7 +109,6 @@ const store = new Vuex.Store({
 		delShopCart(state, info) {
 			let arrList = state.cartList,
 				shopCart = {};
-			console.log(arrList)
 			for(let i = arrList.length - 1; i >= 0; i--) {
 				let item = arrList[i]
 				if(item['skuId'] == info['skuId'] && item['goodsTaste'] == info['goodsTaste']) {

@@ -30,7 +30,7 @@ const login = r => require.ensure([], () => r(require('../page/my/login.vue')), 
 const points = r => require.ensure([], () => r(require('../page/my/points/points.vue')), 'points');
 const balance = r => require.ensure([], () => r(require('../page/my/balance/balance.vue')), 'balance');
 
-const bizdetail = r => require.ensure([], () => r(require('../page/shop/shopdetail.vue')), 'bizdetail');
+const bizdetail = r => require.ensure([], () => r(require('../page/shop/bizdetail.vue')), 'bizdetail');
 const shortpay = r => require.ensure([], () => r(require('../page/shop/shortpay.vue')), 'shortpay');
 
 const pay = r => require.ensure([], () => r(require('../page/shop/pay.vue')), 'pay');
@@ -63,6 +63,9 @@ const searchAddress = r => require.ensure([], () => r(require('@/wx_user/page/ta
 const takeoutDetail = r => require.ensure([], () => r(require('@/wx_user/page/order/takeoutDetail.vue')), 'takeoutDetail');
 //外卖订单
 const author = r => require.ensure([], () => r(require('@/wx_user/page/wxAuth/author.vue')), 'author');
+const redPacket = r => require.ensure([], () => r(require('@/wx_user/page/my/youhui/redPacket.vue')), 'redPacket');
+//旅游
+const travel = r => require.ensure([], () => r(require('@/wx_user/page/travel/travel.vue')), 'travel');
 // 店铺首页搜索
 // const takeoutDetail = r => require.ensure([], () => r(require('@/wx_user/page/order/takeoutDetail.vue')), 'takeoutDetail');
 
@@ -252,6 +255,20 @@ export default{
       component: author,
       meta: {
            title: '正在登陆...'
+      }
+    },
+    {
+      path: '/redPacket',
+      component: redPacket,
+      meta: {
+           title: '红包'
+      }
+    },
+    {
+      path: '/travel',
+      component: travel,
+      meta: {
+           title: '众享旅游'
       }
     }
   ],

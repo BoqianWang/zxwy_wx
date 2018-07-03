@@ -157,4 +157,25 @@ export function calculateIntegral(intergral, surePayMoney) {
 	}
 }
 
+/**
+ * 计算减免的配送费
+ * @param  {[type]} surePayMoney [description]
+ * @param  {[type]} expressFree  [description]
+ * @param  {[type]} activityItem [description]
+ * @return {[type]}              [description]
+ */
+export function calculateExpressFree(surePayMoney, expressFree, activityItem) {
+	let expressFreeDiscount = 0,
+		activitys = {};
+	if(Object.keys(activityItem).length && surePayMoney >= activityItem['activitys'][0]['fullMoney']) {
+		activitys = activityItem['activitys'][0];
+		expressFreeDiscount = activitys['discount'];
+		surePayMoney -= expressFreeDiscount;
+	};
+	return {
+		sureMoney: surePayMoney,
+		dispatchDiscount: activitys,
+		expressFreeDiscount: expressFreeDiscount
+	}
+}
 

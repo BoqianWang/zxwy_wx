@@ -33,7 +33,7 @@ Vue.use(VueRouter);
 Vue.use(MintUI);
 Vue.use(wcKeyBoard);
 
-Tools.setCookies('zx_token', 'oV3Y2s-I9d9HoEphk0712a0VqYX8');
+// Tools.setCookies('zx_token', 'oV3Y2s-I9d9HoEphk0712a0VqYX8');
 
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title;

@@ -84,6 +84,7 @@
 					<span class="circle"></span>
 				</div>
 				<div class="p-r-ten p-l-ten">
+					<!-- 积分抵扣 -->
 					<p class="flex-box justify-s-b m-b-ten font-12" v-if="integral['all'] > 0">
 						<span>
 							<span class="tips-intergral tips"></span>
@@ -91,6 +92,7 @@
 						</span>
 						<span>-¥ {{integral['discount']}}</span>
 					</p>
+					<!-- 满减 -->
 					<p class="flex-box justify-s-b m-b-ten font-12" v-if="moneyOff['discount'] > 0">
 						<span>
 							<span class="tips-sub tips"></span>
@@ -98,6 +100,15 @@
 						</span>
 						<span>-¥ {{moneyOff['discount']}}</span>
 					</p>
+					<!-- 减配送费 -->
+					<p class="flex-box justify-s-b m-b-ten font-12" v-if="dispatch.discount">
+						<span>
+							<span class="tips-sub tips"></span>
+							<span>{{ dispatch['activityDescription'] }}</span>
+						</span>
+						<span>-¥ {{dispatch['discount']}}</span>
+					</p>
+					<!-- 随机减 -->
 					<p class="flex-box justify-s-b m-b-ten font-12" v-if="randomCut > 0">
 						<span>
 							<span class="tips-random tips"></span>
@@ -105,6 +116,7 @@
 						</span>
 						<span>-¥ {{randomCut}}</span>
 					</p>
+					<!-- 清分费 -->
 					<p class="flex-box justify-s-b m-b-ten align-center font-12" v-if="serverMoney > 0">
 						<span>
 							<span class="tips-server tips"></span>
@@ -112,6 +124,7 @@
 						</span>
 						<span>+¥ {{serverMoney}}</span>
 					</p>
+					<!-- 代金券 -->
 					<div v-if="voucherNum > 0" class="flex-box align-center justify-s-b m-t-ten" @click="showVoucher('voucher')">
 						<div class="font-15">
 							<span class="tips-ticket tips"></span>
@@ -131,7 +144,7 @@
 					<span class="circle"></span>
 				</div>
 				<div class="p-l-ten p-r-ten p-b-ten flex-box align-center justify-s-b">
-					<!-- <span class="color-9 font-12">已优惠5元</span> -->
+					<span class="color-9 font-12">已优惠{{allDiscount}}元</span>
 					<span></span>
 					<p class="font-15">
 						小计
@@ -321,7 +334,7 @@
 	import remark from './children/takeoutorder/remark.vue';
 	import brower from '@/config/browser';
 	import { payType, WeixinPay, AliPay, AliFromPay } from '@/assets/js/Pay.js';
-	import { canUserMoneyOff, calculateRandomCut, calculateServerMoney, calculateIntegral } from '@/assets/js/ActiveCalculcate.js';
+	import { canUserMoneyOff, calculateRandomCut, calculateServerMoney, calculateIntegral, calculateExpressFree } from '@/assets/js/ActiveCalculcate.js';
 	export default {
 		components: {
 			voucher,
@@ -363,7 +376,13 @@
 				//随机减
 				randomCut: 0,
 				//满减
-				randomCutOrigin: 0
+				randomCutOrigin: 0,
+				//优惠金额
+				allDiscount: 0,
+				//减配送费集合
+				dispatchGather: {},
+				//减配送费
+				dispatch: {}
 			}
 		},
 		created() {
@@ -379,28 +398,20 @@
 				return this.$store.getters.shopCartDetail;
 			},
 			surePayMoney() {
-				this.money = Tools.ToCurrency(this.shopCartDetail['money'] + this.shopInfo['expressFee'])
+				this.money = Tools.ToCurrency(this.shopCartDetail['money'] + this.shopInfo['expressFee']);
 				let surePay = this.money;
 
-				// this.moneyOff = this.canUserMoneyOff(surePay, this.moneyOffGather['activitys']);
-				this.moneyOff = canUserMoneyOff(surePay, this.moneyOffGather['activitys'])
+
+				//减配送费
+				// let expressFeeObject = calculateExpressFree(surePay, this.shopInfo['expressFee'], this.dispatchGather);
+				// surePay = expressFeeObject['sureMoney'];
+				// this.dispatch = expressFeeObject['dispatchDiscount']
+
 				//满减
-				// if(this.moneyOff['discount']) {
-				// 	surePay -= this.moneyOff['discount']; 
-				// } else {
-				// 	this.moneyOff['discount'] = 0;
-				// }
+				this.moneyOff = canUserMoneyOff(surePay, this.moneyOffGather['activitys']);
 				surePay -= this.moneyOff['discount']; 
 
-				//随机减
-				// surePay -= this.randomCut;
-				// if(surePay < this.randomCutOrigin) {
-				// 	this.randomCut = surePay;
-				// 	surePay = 0;
-				// } else {
-				// 	this.randomCut = this.randomCutOrigin;
-				// 	surePay -= this.randomCutOrigin;
-				// }
+
 				// 随机减
 				let randomObj = calculateRandomCut(surePay, this.randomCutOrigin);
 				surePay = randomObj['surePayMoney'];
@@ -426,23 +437,11 @@
 					surePay = 0;
 				}
 				// 积分
-				// if(this.personalIntegral['integral'] > 0 && surePay > 0) {
-				// 	if(surePay >= this.personalIntegral['integral']) {
-				// 		surePay -= this.personalIntegral['integral'];
-				// 		this.integral['discount'] = this.personalIntegral['integral'];
-				// 	} 
-				// 	else {
-				// 		this.integral['discount'] = surePay;
-				// 		surePay = 0;
-				// 	}
-				// }
 				let IntegralObj = calculateIntegral(this.integral['all'], surePay);
 				this.integral['discount'] = IntegralObj['intergralDiscount'];
 				surePay = IntegralObj['surePayMoney'];
 
 				//清风费
-				// this.serverMoney = this.calculateServerMoney(this.integral['discount'], this.voucher['discount'], this.shopInfo);
-				// console.log(this.voucher['discount']);
 				this.serverMoney = calculateServerMoney(this.integral['discount'], this.voucher['discount'], this.shopInfo);
 				
 				surePay += this.serverMoney;
@@ -460,28 +459,15 @@
 			remarkHandle(work) {
 				this.remark = work;
 			},
-			//计算清风费
-			// calculateServerMoney(integralDiscount, voucherDiscount, shopInfo) {
-			// 	let serverMoney = integralDiscount + voucherDiscount,
-			// 		calServerMoney = 0;
-			// 	console.log(serverMoney)
-			// 	if(shopInfo['serviceFeeObject'] == 0 && serverMoney >= shopInfo['standardFee']) {
-			// 		if(shopInfo['marketType'] == 0) {
-			// 			calServerMoney = parseFloat(shopInfo['serviceRate']);
-			// 		} 
-			// 		else if(shopInfo['marketType'] == 1) {
-			// 			calServerMoney = (parseFloat(shopInfo['serviceRate']) * serverMoney).toFixed(2);
-			// 		}
-			// 	} else {
-			// 		calServerMoney = 0;
-			// 	}
-			// 	return calServerMoney;
-			// },
 			getMoneyOffList() {
 				for(let item of this.shopInfo['activitysList']) {
 					// 满减
 					if(item.activityType == 0) {
 						this.moneyOffGather = item;
+					}
+					// 减配送费
+					else if(item.activityType == 2) {
+						this.dispatchGather = item;
 					}
 				}
 			},
@@ -498,8 +484,12 @@
 					//积分抵扣金额
 				let deductedCost = this.integral['discount'] || 0,
 					randomCut = this.randomCut,
+					//减配送费id
+					deliverActivityId = this.dispatch['activityId'] || '',
+					//减免配送费金额
+					disExpressFee = this.dispatch['discount'] || 0,
 					//总优惠
-					discount = Tools.ToCurrency(this.moneyOff['discount'] + this.voucher['discount'] + randomCut),
+					discount = Tools.ToCurrency(this.moneyOff['discount'] + this.voucher['discount'] + randomCut + disExpressFee),
 					activityId = this.moneyOff['activityId'] || '',
 					activityBelong = this.moneyOffGather['activityBelong'] || '',
 					shareGiftsId = this.voucher['shareGiftsId'] || '',
@@ -536,7 +526,9 @@
 					orderSource,
 					qffFee,
 					detailList,
-					randomCut
+					randomCut,
+					// deliverActivityId,
+					// disExpressFee
 				};
 			},
 			//处理菜单列表
@@ -607,12 +599,13 @@
 		    },
 			paySuccess() {
 				this.$store.commit('clearShopCart');
-				this.$router.replace({
-					path: '/pay/takeoutDetail',
-					query: {
-						orderId: this.payDetail['orderId']
-					}
-				})
+				location.replace('./index.html#/pay/takeoutDetail?orderId=' + this.payDetail['orderId']);
+				// this.$router.replace({
+				// 	path: '/pay/takeoutDetail',
+				// 	query: {
+				// 		orderId: this.payDetail['orderId']
+				// 	}
+				// })
 			},
 			//选择代金券
 			showVoucher(type) {
@@ -638,20 +631,28 @@
 
 				})
 			},
-
-			//获取代金券
 			getVoucherList() {
-				fetch.fetchPost('/personal/voucherList', {
-					pageNo: 1,
-					canUse: true
+				fetch.fetchPost('/personal/v3.3/shopAvailableVoucherList', {
+					bizId: this.shopInfo['bizId'],
+					orderType: 2
 				}).then(res => {
 					this.voucherList = res.data.lists;
 				}).catch(res => {
 
 				})
 			},
+			//获取代金券
+			// getVoucherList() {
+			// 	fetch.fetchPost('/personal/voucherList', {
+			// 		pageNo: 1,
+			// 		canUse: true
+			// 	}).then(res => {
+			// 		this.voucherList = res.data.lists;
+			// 	}).catch(res => {
+
+			// 	})
+			// },
 			//获取随机减
-			//随机减
 			getRanDomSub() {
 				fetch.fetchPost('/order/v3.2/randomSub', {
 					bizId: this.shopInfo['bizId'],

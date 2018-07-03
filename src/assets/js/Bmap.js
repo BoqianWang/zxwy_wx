@@ -16,22 +16,9 @@ export function getCurrentPosition(callback) {
 	var geolocation = new BMap.Geolocation();
 	var geoc = new BMap.Geocoder();
 	var addressInfo = {} 
-	geolocation.getCurrentPosition(function(r){
+	geolocation.getCurrentPosition(function(r) {
 		if(this.getStatus() == BMAP_STATUS_SUCCESS){
-			console.log(r);
-			if(r.accuracy) {
-				addressInfo = {
-					district: r.address.district,
-					street: r.address.street,
-					streetNumber: r.address.streetNumber,
-					lng: r.point.lng,
-					lat: r.point.lat
-				}
-				setPositionInfo(addressInfo);
-				callBack('gps', 'success')
-			} else {
 				geoc.getLocation(r.point, function(res) {
-					console.log(res);
 					let addressComponents = res.addressComponents
 					addressInfo = {
 						district: addressComponents.district,
@@ -41,9 +28,9 @@ export function getCurrentPosition(callback) {
 						lat: res.point.lat
 					}
 					setPositionInfo(addressInfo);
-					callBack('ip', 'success');
+					callback('ip', 'success');
 				})
-			}
+			// }
 			
 		}
 		else {
@@ -51,6 +38,21 @@ export function getCurrentPosition(callback) {
 		}        
 	},{ enableHighAccuracy: true });
 }
+//百度坐标转成高德坐标
+function bd_decrypt(bd_lng, bd_lat) {  
+    var X_PI = Math.PI * 3000.0 / 180.0;  
+    var x = bd_lng - 0.0065;  
+    var y = bd_lat - 0.006;  
+    var z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * X_PI);  
+    var theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * X_PI);  
+    var gg_lng = z * Math.cos(theta);  
+    var gg_lat = z * Math.sin(theta); 
+    return {
+    	lng: gg_lng, 
+    	lat: gg_lat
+    };
+}  
+
 //保存地址都本地
 function setPositionInfo(res) {
 	let longitude = '',
@@ -58,9 +60,11 @@ function setPositionInfo(res) {
 		address = '',
 		positionInfo = {};
 		address = res['district'] + res['street'] + 
-				  res['streetNumber'];
-		longitude = res['lng'];
-		latitude = res['lat'];
+				  res['streetNumber'],
+		//百度坐标转成高德坐标
+		bd_decrypt = bd_decrypt(res['lng'], res['lat']);
+		longitude = bd_decrypt['lng'];
+		latitude = bd_decrypt['lat'];
 	positionInfo = {
 		address,
 		longitude,

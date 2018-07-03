@@ -53,7 +53,7 @@ function setPositionInfo(type, res) {
 		positionInfo = {};
 	if(type == 'gps') {
 		let addressComponent = res.addressComponent;
-		address = addressComponent['district'] + addressComponent['township'] + 
+		address = addressComponent['township'] + 
 				  addressComponent['street'] + addressComponent['streetNumber'];
 		longitude = res['position']['lng'];
 		latitude = res['position']['lat'];

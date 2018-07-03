@@ -4,7 +4,7 @@
 			<div class="bg-white title-wrap abs text-center">
 				<div class="color-3 p-t-ten p-b-ten" @click="processTrack">
 					<p class="font-18 p-ten font-b">
-						{{orderStatus[orderDetailStatus]}}
+						<span>{{orderStatus[orderDetailStatus]}}</span>
 						<span class="iconfont icon-more"></span>
 						<!-- <span v-if="orderDetail['distributionType'] == 1">
 							{{orderStatus[orderDetail['dadaStatus']]}}
@@ -46,7 +46,7 @@
 					v-if="orderDetail['orderStatus'] != 6" 
 					class="takeout-btn font-15" type="primary" @click="processTrack">查看进度</mt-button> -->
 
-					<router-link :to="'/takeout/takeOutShop?shopAuthenticateId=' + orderDetail['shopAuthenticateId']">
+					<router-link :to="'/takeout/takeOutShop?shopAuthenticateId=' + orderDetail['shopAuthenticateId'] +'&longitude=114&latitude=22'">
 						<mt-button class="takeout-btn font-15" type="primary">再来一单</mt-button>
 					</router-link>
 					<!-- <mt-button class="font-15" type="primary">评价</mt-button> -->
@@ -458,6 +458,10 @@
 			},
 			//取消订单
 			cancelOrder() {
+				var r = confirm('确定取消退款吗?');
+				if(!r) {
+					return;
+				}
 				fetch.fetchPost('/order/v3.2/cancelOrder', this.params).then(res => {
 					this.orderDetail['orderStatus'] = 0;
 					this.$toast('取消订单成功');
@@ -465,6 +469,10 @@
 			},
 			//申请退款
 			refundOrder() {
+				var r = confirm('确定申请退款吗');
+				if(!r) {
+					return;
+				}
 				fetch.fetchPost('/order/v3.2/applyRefund', this.params).then(res => {
 					this.orderDetail['orderStatus'] = 7;
 					this.$toast('申请退款成功');

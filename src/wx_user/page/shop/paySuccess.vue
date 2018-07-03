@@ -1,138 +1,131 @@
-<template lang="html">
-  <div class="cg_body">
-    <img src="../../images/icon_txcg@2x.png" alt="">
-    <p>已支付成功，本次消费</p>
-    <p>实付<span style="color:#ff6e15;font-size:24px;">{{actualCost}}</span>元，欢迎下次消费!</p>
-    <!-- <router-link to="/mycenter" class="login_btn">
-        积分查看
-    </router-link> -->
-    <div class="text_line_div">
-      <div class="line_div"></div>
-      <div class="">本次消费获得</div>
-      <div class="line_div"></div>
-    </div>
-    <div class="get_div">
-      <router-link to="/mycenter" class="getpoint_div">
-        <p style="color:#333;">赠送积分</p>
-        <p style="color:#D51B1B;">{{getIntegral}}</p>
-        <!-- <router-link to="/mycenter" style="color:#666;margin-top:10px;">已有积分{{personalIntegral}} ></router-link> -->
-      </router-link>
-      <div class="getdjj_div" v-if="vouchersCount>0">
-        <p style="color:#fff;">代金券</p>
-        <p style="color:#fff;">{{vouchersCount}}张</p>
-        <router-link to="/youhui" class="chakandjj">查看</router-link>
-      </div>
-    </div>
-  </div>
+<template>
+	<div class="pay-success bg-white">
+		<div class="pay-container p-l-ten p-r-ten">
+			<div class="pay-title text-center">
+				<img src="../../images/paySuccess/icon_txcg@2x.png" alt="">
+				<p class="font-15 color-main">支付成功</p>
+			</div>
+			<div class="text-center">
+				<p>
+					<span class="font-12">¥</span>
+					<span class="color-3" style="font-size: .4rem;">{{ params.originalCost }}</span>
+				</p>
+				<p class="font-12 color-7" v-if="params.actualCost != params.originalCost">
+					实付金额 {{ params.actualCost }}
+				</p>
+			</div>
+			<div class="pay-line text-center color-9 rel">
+				<span class="p-l-ten p-r-ten bg-white font-12">本次消费获得</span>
+			</div>
+			<div class="repacket-wrap p-t-ten">
+					<div class="img-wrap p-t-ten rel" v-if="redPacketMoney">
+						<p class="get-redpacket abs width-100 text-center font-15 color-3">
+							获得<span class="font-b" style="color: #D53125;">{{ redPacketMoney }}元</span>外卖红包
+						</p>
+						<router-link  to="/redPacket">
+							<img src="../../images/paySuccess/redpacket.jpg" width="100%;">
+						</router-link>
+					</div>
+			</div>
+			<div class="text-center font-15">
+				<p class="p-t-five" v-if="params.getIntegral > 0">
+					<router-link to="/points" class="color-3">
+						本次消费您获得{{params.getIntegral}}积分
+					</router-link>
+				</p>
+				<p class="p-t-five" v-if="params.vouchersCount > 0">
+					<router-link to="/youhui" class="color-3">
+						获得{{ params.vouchersCount }}张商户代金券【查看】
+					</router-link>
+				</p>
+			</div>
+		</div>
+	</div>
 </template>
-
-<script>
-export default {
-  data(){
-    return{
-      getIntegral:0,
-      actualCost:0,
-      personalIntegral:0,
-      vouchersCount:0
-    }
-  },
-  mounted(){
-      this.getIntegral = this.$route.query.getIntegral;
-      this.actualCost = this.$route.query.actualCost;
-      this.personalIntegral = this.$route.query.personalIntegral;
-      this.vouchersCount = this.$route.query.vouchersCount;
-  }
-}
-</script>
-
-<style lang="scss">
-@import "../../style/mixin";
-.cg_body{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: white;
-  height: 100%;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  top: 0;
-  img{
-    width: 0.915rem;
-    height: 0.915rem;
-    margin: 0.72rem 0 0.2rem 0;
-  }
-  p{
-    width: 100%;
-    color:#666;
-    font-size: 0.14rem;
-    text-align: center;
-  }
-  .login_btn{
-    width: 1.5rem;
-    height: 0.36rem;
-    line-height: 0.36rem;
-    text-align: center;
-    background-color:rgba(0,0,0,0.2);
-    border-radius: 0.04rem ;
-    color: white;
-    font-size: 0.15rem;
-    background: linear-gradient(to right, $mainColor , rgba(255,185,17,1));
-    box-shadow: 0.014rem 0.014rem 0.14rem rgba(233,91,5,0.3);
-  }
-  .text_line_div{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
-    margin-top: 0.8rem;
-    color: #999999;
-    .line_div{
-      height: 1px;
-      width: 100px;
-      background-color: #EEEEEE;
-
-    }
-  }
-  .get_div{
-    display: flex;
-    flex-direction: row;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    .getpoint_div{
-      width: 1.29rem;
-      height: 1.25rem;
-      background-color: #FEF5EA;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.12rem;
-    }
-    .getdjj_div{
-      width: 1.29rem;
-      height: 1.25rem;
-      background-color: #F85252;
-      margin-left: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.12rem;
-      color: white;
-      .chakandjj{
-        width:0.5rem;
-        height:0.22rem;
-        line-height: 0.22rem;
-        background:rgba(255,185,17,1);
-        border-radius: 0.11rem ;
-        margin-top:10px;
-        font-size:0.12rem;
-        color:rgba(213,27,27,1);
-        text-align: center;
-      }
-    }
-  }
-}
+<style scoped>
+	.p-t-five {
+		padding-top: 0.05rem;
+	}
+	.pay-success {
+		position: fixed;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+	}
+	.pay-container > .pay-title {
+		padding-top: .4rem;
+	}
+	.pay-container > .pay-title > img {
+		width: .7rem;
+		height: .7rem;
+	}
+	.pay-container > .pay-line {
+		margin-top: .3rem;
+	}
+	.pay-container > .pay-line:after {
+		content: "";
+		position: absolute;
+		width: 100%;
+		height: 1px;
+		background: #eee;
+		z-index: -1;
+		left: 0;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+	.repacket-wrap .img-wrap {
+		width: 2.2rem;
+		margin: 0 auto;
+	}
+	.repacket-wrap .get-redpacket {
+		top: .7rem;
+	}
 </style>
+<script>
+	import fetch from '@/config/fetch.js';
+	export default {
+		data() {
+			return {
+				params: {
+					getIntegral: this.$route.query.getIntegral,
+					personalIntegral: this.$route.query.personalIntegral,
+					vouchersCount: this.$route.query.vouchersCount,
+					actualCost:  Tools.ToCurrency(this.$route.query.actualCost).toFixed(2),
+					originalCost: Tools.ToCurrency(this.$route.query.originalCost).toFixed(2)
+				},
+				uselist:[],
+			    bizId: this.$route.query.bizId || '',
+			    redPacketMoney: 0
+			}
+		},
+		mounted() {
+			this.getRedPacket();
+		},
+		methods: {
+			getRedPacket() {
+		  		fetch.fetchPost('/personal/v3.3/reveivePlatVouchers', {
+		  			bizId: this.bizId,
+		  			conditions: 0
+		  		}).then(res => {
+		  			if(res.code == 0) {
+		  				this.getRadPacketList();
+		  			}
+		  		}).catch(res => {
+
+		  		})
+		  	},
+		  	//获取红包列表
+		  	getRadPacketList() {
+		  		fetch.fetchPost('/personal/v3.3/shopAvailableVoucherList', {}).then(res => {
+		  			this.uselist = res.data.lists;
+		  			for(let item of this.uselist) {
+		  				this.redPacketMoney += item['discount'];
+		  			}
+		  		}).catch(res => {
+
+		  		})
+		  	}
+		}
+	}
+</script>
