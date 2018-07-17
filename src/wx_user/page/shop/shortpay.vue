@@ -458,7 +458,7 @@
 
 				// 使用代金券
 				if(this.choseVocher['isUserful'] == 1) {
-					if(this.surePayMoney < this.choseVocher['discount'] || this.surePayMoney < this.choseVocher['fullMoney']) {
+					if(this.surePayMoney < this.choseVocher['discount'] || currenValue < this.choseVocher['fullMoney']) {
 						this.$toast('实付金额小于代金券金额,无法使用该代金券!');
 						this.choseVocher = {};
 					} else {
@@ -537,6 +537,7 @@
 			getVoucherList() {
 				fetch.fetchPost('/personal/v3.3/shopAvailableVoucherList', {
 					bizId: this.params['bizId'],
+					merNo: this.params['merNo'],
 					orderType: 1
 				}).then(res => {
 					this.voucherListDate = res.data.lists;

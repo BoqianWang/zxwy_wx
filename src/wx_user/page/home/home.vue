@@ -1,13 +1,13 @@
 <template>
 	<div class="bg-white home-wrap">
 		<router-script src="https://webapi.amap.com/maps?v=1.4.6&key=e50ead2320592e7db5bb32cb484c180b" @load-finsh="AmapFinsh"></router-script>
-		<!-- <router-script src="https://api.map.baidu.com/api?v=2.0&ak=kEAyTt64d9z6arhHfsop3yXK&s=1&callback=init" @load-finsh="AmapFinsh"></router-script> -->
+
 		<div class="home-title rel">
 			<!-- 轮播图 -->
 			<mt-swipe class="swiper-wrap" :auto="3000">
 			  <mt-swipe-item 
 			  v-for="item in imgDate" 
-			  :style="{backgroundImage: 'url(' + item.url + ')'}">
+			  :style="{backgroundImage: 'url(' + item.url + ')'}" @click.native="toLink('img', item)">
 			  </mt-swipe-item>
 			</mt-swipe>
 			<!-- 地址 -->
@@ -317,11 +317,43 @@
 		data() {
 			return {
 				imgDate: [
-					{url: 'https://ico.zhongxiang51.com/20180515161817.jpg'},
-					{url: 'https://ico.zhongxiang51.com/20180515161824.jpg'},
-					{url: 'https://ico.zhongxiang51.com/20180515161829.jpg'},
-					{url: 'https://ico.zhongxiang51.com/20180515161839.jpg'},
-					{url: 'https://ico.zhongxiang51.com/20180515161834.jpg'}
+				{
+						url: 'https://operator-advmainimg.zhongxiang51.com/20180717193011.jpg',
+						shopName: '黄大大',
+						shopUrl: './index.html#/takeout/takeOutShop?shopAuthenticateId=bcd8f10d6be9404cb64886cb136cdf9a'
+					},
+					{
+						url: 'https://operator-advmainimg.zhongxiang51.com/20180717192958.jpg',
+						shopName: '家常菜',
+						shopUrl: './index.html#/takeout/takeOutShop?shopAuthenticateId=e0c8c48b9bdc41a08ed2c32fe62fcbc6',
+					},
+					{
+						url: 'https://operator-advmainimg.zhongxiang51.com/20180717193018.jpg',
+						shopName: '广顺荷叶蒸菜',
+						shopUrl: './index.html#/takeout/takeOutShop?shopAuthenticateId=d12a210c0e1c4ff6a1682070a34ad045'
+					},
+					{
+						url: 'https://operator-advmainimg.zhongxiang51.com/20180717193023.jpg',
+						shopName: '潮尚小吃',
+						shopUrl: './index.html#/takeout/takeOutShop?shopAuthenticateId=d895770b1c9e4549bb3c5828da68ddeb'
+					},
+					{
+						url: 'https://operator-advmainimg.zhongxiang51.com/20180717193026.jpg',
+						shopName: '红包',
+						shopUrl: './index.html#/newPersonVouch'
+					}
+					// {
+					// 	url: 'https://ico.zhongxiang51.com/20180515161824.jpg',
+					// },
+					// {
+					// 	url: 'https://ico.zhongxiang51.com/20180515161829.jpg',
+					// },
+					// {
+					// 	url: 'https://ico.zhongxiang51.com/20180515161839.jpg',
+					// },
+					// {
+					// 	url: 'https://ico.zhongxiang51.com/20180515161834.jpg',
+					// }
 				],
 				address: '正在定位...',
 				params: {
@@ -344,7 +376,12 @@
 		methods: {
 			//地图加载完毕
 			AmapFinsh() {
-				this.getPositon();
+				try {
+					this.getPositon();
+				} catch(e) {
+					this.$toast('资源加载出错, 请刷新重试!');
+					console.log(e);
+				}
 				// window.init = () => {
 				// 	this.getPositon();
 				// }
@@ -384,6 +421,9 @@
 								industryType: industryType
 							}
 						})
+					break;
+					case 'img':
+					    location.href = info['shopUrl'];
 					break;
 				}
 

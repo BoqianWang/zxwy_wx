@@ -1,24 +1,4 @@
 
-// import app from '../app.vue'
-// import index from '../page/index/index.vue'
-// import home from  '../page/home/home.vue'
-// import orderlist from '../page/order/orderlist.vue'
-// import mycenter from '../page/my/center.vue'
-// import orderdetail from '../page/order/orderdetail.vue'
-// import login from '../page/my/login.vue'
-// import points from '../page/my/points/points.vue'
-// import balance from '../page/my/balance/balance.vue'
-// import bizdetail from '../page/shop/shopdetail.vue'
-// import shortpay from '../page/shop/shortpay.vue'
-// import pay from '../page/shop/pay.vue'
-// import paySuccess from '../page/shop/paySuccess.vue'
-// import homeaddress from '../page/home/chooseAddress.vue'
-// import youhuilist  from  '../page/my/youhui/youhuilist.vue'
-// import wuxiaoYH from '../page/my/youhui/wuxiaoyH.vue'
-// import settel from '../page/my/setTel/setTel.vue'
-// import fiveHundred from '../page/activity/fiveHundred.vue'
-// import oneThousand from '../page/activity/toReceiveTen.vue';
-
 const app = r => require.ensure([], () => r(require('../app.vue')), 'app');
 const indexPage = r => require.ensure([], () => r(require('../page/index/index.vue')), 'indexPage');
 
@@ -43,7 +23,7 @@ const fiveHundred = r => require.ensure([], () => r(require('../page/activity/fi
 const oneThousand = r => require.ensure([], () => r(require('../page/activity/toReceiveTen.vue')), 'oneThousand');
 
 // 新用户领取三张券
-const newyouhui = r => require.ensure([], () => r(require('../page/my/youhui/newYouHui.vue')), 'newyouhui');
+// const newyouhui = r => require.ensure([], () => r(require('../page/my/youhui/newYouHui.vue')), 'newyouhui');
 
 //首页选择地址
 const homeaddress = r => require.ensure([], () => r(require('@/wx_user/page/home/children/chooseAddress.vue')), 'homeaddress');
@@ -66,11 +46,27 @@ const author = r => require.ensure([], () => r(require('@/wx_user/page/wxAuth/au
 const redPacket = r => require.ensure([], () => r(require('@/wx_user/page/my/youhui/redPacket.vue')), 'redPacket');
 //旅游
 const travel = r => require.ensure([], () => r(require('@/wx_user/page/travel/travel.vue')), 'travel');
+//平台积分
+const platformIntegral = r => require.ensure([], () => r(require('@/wx_user/page/integral/platform/platformIntegral.vue')), 'platformIntegral');
+
+//平台消费积分
+const consumeIntegral = r => require.ensure([], () => r(require('@/wx_user/page/integral/platform/consumeIntegral.vue')), 'consumeIntegral');
+
+//店铺积分
+const shopIntegral = r => require.ensure([], () => r(require('@/wx_user/page/integral/shop/shopIntegral.vue')), 'shopIntegral');
+//店铺积分详情
+const shopIntegralDetail = r => require.ensure([], () => r(require('@/wx_user/page/integral/shop/shopIntegralDetail.vue')), 'shopIntegralDetail');
+//邀请有礼
+const invite = r => require.ensure([], () => r(require('@/wx_user/page/integral/invite/invite.vue')), 'invite');
+
+//我的下线
+const offLine = r => require.ensure([], () => r(require('@/wx_user/page/integral/offLine/offLine.vue')), 'offLine');
+
 // 店铺首页搜索
 // const takeoutDetail = r => require.ensure([], () => r(require('@/wx_user/page/order/takeoutDetail.vue')), 'takeoutDetail');
+// 新用户领券
+const newPersonVouch = r => require.ensure([], () => r(require('@/wx_user/page/my/youhui/newPersonVouch.vue')), 'newPersonVouch');
 
-
-// const newShortpay = r => require.ensure([], () => r(require('../page/shop/newShortpay.vue')), 'newShortpay');
 export default{
   routes:[
     {
@@ -143,8 +139,8 @@ export default{
       }
     },
     {
-      path:'/newyouhui',
-      component:newyouhui,
+      path: '/newPersonVouch',
+      component: newPersonVouch,
       meta:{
         title:'新用户领取代金券'
       }
@@ -269,6 +265,48 @@ export default{
       component: travel,
       meta: {
            title: '众享旅游'
+      }
+    },
+    {
+       path: '/platformIntegral',
+       component: platformIntegral,
+       meta: {
+            title: '平台积分'
+       }
+    },
+    {
+      path: '/platformIntegral/consumeIntegral',
+      component: consumeIntegral,
+      meta: {
+            title: '平台消费积分'
+      }
+    },
+    {
+      path: '/shopIntegral',
+      component: shopIntegral,
+      meta: {
+            title: '店铺积分'
+      }
+    },
+    {
+      path: '/shopIntegral/shopIntegralDetail',
+      component: shopIntegralDetail,
+      meta: {
+            title: '店铺积分详情'
+      }
+    },
+    {
+      path: '/invite',
+      component: invite,
+      meta: {
+           title: '邀请有礼'
+      }
+    },
+    {
+      path: '/offLine',
+      component: offLine,
+      meta: {
+        title: '我的下线'
       }
     }
   ],

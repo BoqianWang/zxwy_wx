@@ -58,7 +58,7 @@ function onBridgeReady(data, callback) {
 export function AliPay(tradeNo, callback) {
     // document.addEventListener('AlipayJSBridgeReady', tradePay(tradeNo, callback), false);
     AlipayJSBridge.call("tradePay", {
-        tradeNO: tradeNO
+        tradeNO: tradeNo
     }, (data) => {
          if ("9000" == data.resultCode) {
              callback('success')

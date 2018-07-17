@@ -4,7 +4,7 @@
     </div>
     <div class="main_body">
         <div class="body_userInfo" @click="click_userInfo">
-          <img class="tx_pic" src="../../images/pic_tx@2x.png" alt="头像">
+          <img class="tx_pic" src="../../images/my/pic_tx@2x.png" alt="头像">
           <div>
             <p class="userInfo_name">{{mydata.username}}</p>
             <div class="userInfo_edit">
@@ -20,8 +20,34 @@
           <div class="ct_left ct_div"></div>
           <div class="ct_right ct_div"></div>
         </div>
-        <div class="body_userAsset">
-          <router-link :to="{ path:'/balance',query:{balance:mydata.balance}}" class="asset_cell">
+        <div class="body_userAsset flex-box bg-white align-center justify-center">
+          <router-link 
+          to="/redPacket" 
+          class="asset_cell flex-1 text-center">
+            <img src="../../images/my/icon_qb@2x.png" alt="">
+            <p class="min_p font-12 color-9">红包</p>
+          </router-link>
+          <router-link 
+          :to="{ path: '/youhui', query: {youhui: mydata.vouchersCount} }" 
+          class="asset_cell flex-1 text-center">
+            <img src="../../images/my/icon_yh@2x.png" alt="">
+            <p class="min_p font-12 color-9">代金券</p>
+          </router-link>
+          <router-link 
+          to="/platformIntegral" 
+          class="asset_cell flex-1 text-center">
+            <img src="../../images/my/icon_jf@2x.png" alt="">
+            <p class="min_p font-12 color-9">平台积分</p>
+          </router-link>
+          <router-link 
+           to="/shopIntegral" 
+          class="asset_cell flex-1 text-center">
+            <img src="../../images/my/icon_jf@2x.png" alt="">
+            <p class="min_p font-12 color-9">商家积分</p>
+          </router-link>
+         <!--  <router-link
+          :to="{ path:'/balance',query:{balance:mydata.balance}}" 
+          class="asset_cell flex-1">
             <p class="big_p" v-if='isLogin'><span class="min_span">￥</span>{{mydata.balance}}</p>
             <div class="asset_pic1" v-else></div>
             <p class="min_p">我的钱包</p>
@@ -30,26 +56,29 @@
             <p class="big_p" v-if='isLogin'>{{mydata.vouchersCount}}<span class="min_span">张</span></p>
             <div class="asset_pic2" v-else></div>
             <p class="min_p">我的优惠</p>
-          </router-link>
-          <router-link :to="{path:'/points',query:{points:mydata.integral}}" class="asset_cell">
+          </router-link> -->
+          <!-- <router-link :to="{path:'/points',query:{points:mydata.integral}}" class="asset_cell">
             <p class="big_p" v-if='isLogin'>{{mydata.integral}}</p>
             <div class="asset_pic3" v-else></div>
             <p class="min_p">我的积分</p>
-          </router-link>
+          </router-link> -->
         </div>
         <div class="body_userList">
+          <mt-cell title="邀请有礼" is-link to="/invite">
+            <img slot="icon" src="../../images/my/gift.png" width="24" height="24">
+          </mt-cell>
           <mt-cell title="收货地址" is-link to="/takeout/addressList">
-            <img slot="icon" src="../../images/icon_dz@2x.png" width="24" height="24">
+            <img slot="icon" src="../../images/my/icon_dz@2x.png" width="24" height="24">
           </mt-cell>
-          <mt-cell title="修改手机号" v-if='mydata.username && mydata.username.length==11' is-link to="/settel">
-            <img slot="icon" src="../../images/icon_dh@2x.png" width="24" height="24">
-            <span>{{mydata.username}}</span>
+          <mt-cell title="我的下线" is-link to="/offLine">
+            <img slot="icon" src="../../images/my/icon_xx@2x.png" width="24" height="24">
+            <!-- <span>{{mydata.username}}</span> -->
           </mt-cell>
-          <mt-cell title="绑定手机号" v-else is-link to="/settel">
-            <img slot="icon" src="../../images/icon_dh@2x.png" width="24" height="24">
-          </mt-cell>
+          <!-- <mt-cell title="绑定手机号" v-else is-link to="/settel">
+            <img slot="icon" src="../../images/my/icon_dh@2x.png" width="24" height="24">
+          </mt-cell> -->
           <mt-cell title="客服" is-link>
-            <img slot="icon" src="../../images/icon_kf@2x.png" width="24" height="24">
+            <img slot="icon" src="../../images/my/icon_kf@2x.png" width="24" height="24">
           </mt-cell>
           <!-- <mt-cell is-link to="./static/zxwy_intergral_origin/intergralLogin.html" title="移动积分兑换" >
             <img slot="icon" src="../../images/icon_dz@2x.png" width="24" height="24">
@@ -149,7 +178,7 @@
         width: 100%;
         height: 0.11rem;
         .ct_div{
-          background: url(../../images/mini_ct@2x.png) no-repeat center;
+          background: url(../../images/my/mini_ct@2x.png) no-repeat center;
           background-size:100% 100%;
           width: 0.165rem;
           height: 100%;
@@ -168,8 +197,12 @@
         height: 1.05rem;
         border-radius: 0.04rem;
         box-shadow: 0.045rem 0.025rem 0.12rem rgba(233,91,5,0.22);
-        .asset_cell{
-          float: left;
+        .asset_cell {
+          img {
+            width: .3rem;
+            height: .3rem;
+          }
+          /*float: left;
           width:33.33%;
           height:100%;
           background-color: white;
@@ -178,8 +211,8 @@
           justify-content: center;
           flex-direction: column;
           align-items: center;
-          border-right: 1px solid rgba(255,110,21,0.22);
-          .big_p{
+          border-right: 1px solid rgba(255,110,21,0.22);*/
+          /*.big_p{
             text-align: center;
             width: 100%;
             font-size: 0.3rem;
@@ -189,29 +222,29 @@
               color: $mainColor;
               font-size: 0.09rem;
             }
-          }
-          .min_p{
+          }*/
+          /*.min_p{
             font-size: 0.09rem;
             color: #333;
-          }
-          .asset_pic1{
-            background: url(../../images/icon_qb@2x.png) no-repeat center;
+          }*/
+          /*.asset_pic1{
+            background: url(../../images/my/icon_qb@2x.png) no-repeat center;
             background-size:100% 100%;
             width: 0.4rem;
             height: 0.4rem;
           }
           .asset_pic2{
-            background: url(../../images/icon_yh@2x.png) no-repeat center;
+            background: url(../../images/my/icon_yh@2x.png) no-repeat center;
             background-size:100% 100%;
             width: 0.4rem;
             height: 0.4rem;
           }
           .asset_pic3{
-            background: url(../../images/icon_jf@2x.png) no-repeat center;
+            background: url(../../images/my/icon_jf@2x.png) no-repeat center;
             background-size:100% 100%;
             width: 0.4rem;
             height: 0.4rem;
-          }
+          }*/
         }
       }
       .body_userList{

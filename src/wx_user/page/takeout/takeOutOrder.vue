@@ -1,5 +1,6 @@
 <template>
 	<div class="take-out-order">
+		<router-script src="https://res.wx.qq.com/open/js/jweixin-1.3.2.js" @load-finsh="weixinFinsh"></router-script>
 		<!-- 头部 -->
 		<div class="order-title-wrap res">
 			<div class="abs order-address bg-white">
@@ -329,6 +330,7 @@
 	}
 </style>
 <script>
+	import routerScript from '@/components/routerScript.vue';
 	import fetch from '@/config/fetch.js';
 	import voucher from '@/components/voucher.vue';
 	import remark from './children/takeoutorder/remark.vue';
@@ -338,7 +340,8 @@
 	export default {
 		components: {
 			voucher,
-			remark
+			remark,
+			routerScript
 		},
 		data() {
 			return {
@@ -389,6 +392,9 @@
 			this.$store.commit('initShopCart', this.shopAuthenticateId);
 		},
 		computed: {
+			weixinFinsh() {
+
+			},
 			//备注
 			remark() {
 				return this.$store.state.remark;
@@ -446,7 +452,7 @@
 				
 				surePay += this.serverMoney;
 				this.allDiscount = Tools.ToCurrency(this.money - surePay + this.serverMoney);
-				return surePay;
+				return Tools.ToCurrency(surePay);
 			},
 		},
 		mounted() {
@@ -456,6 +462,15 @@
 			this.getRanDomSub();
 		},
 		methods: {
+			weixinFinsh() {
+
+			},
+			//小程序支付跳转
+			miniProgramPay(orderId) {
+				wx.miniProgram.navigateTo({
+					url: `/pages/pay/pay?orderId=${orderId}&zx_token=${Tools.getCookie('zx_token')}`
+				});
+			},
 			remarkHandle(work) {
 				this.remark = work;
 			},
@@ -554,6 +569,10 @@
 					json: JSON.stringify(this.params)
 				}).then( res => {
 					this.payDetail = res.data;
+					if(window.__wxjs_environment && window.__wxjs_environment === 'miniprogram') {
+						this.miniProgramPay(this.payDetail['orderId']);
+						return;
+					}
 					if(res.data.orderStatus >= 2 ) {
 						this.paySuccess();
 					}

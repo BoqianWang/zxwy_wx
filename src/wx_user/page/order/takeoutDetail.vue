@@ -1,5 +1,6 @@
 <template>
 	<div class="takeout-detial">
+		<router-script src="https://res.wx.qq.com/open/js/jweixin-1.3.2.js" @load-finsh="weixinFinsh"></router-script>
 		<div class="takeout-d-title rel">
 			<div class="bg-white title-wrap abs text-center">
 				<div class="color-3 p-t-ten p-b-ten" @click="processTrack">
@@ -282,16 +283,19 @@
 	import orderStatus from './takeoutDetail/orderStatus.vue';
 	import fetch from '@/config/fetch.js';
 	import { payType, WeixinPay, AliPay, AliFromPay } from '@/assets/js/Pay.js';
-	// import 
+	import routerScript from '@/components/routerScript.vue';
 	export default {
 		components: {
-			orderStatus
+			orderStatus,
+			routerScript
 		},
 		data() {
 			return {
 				params: {
-					orderId: this.$route.query.orderId
+					orderId: this.$route.query.orderId,
 				},
+				//判断是否来有小程序参数
+				miniPay: this.$route.query.miniPay,
 				orderDetail: {},
 				orderStatus: {
 					1: '订单待支付',
@@ -354,19 +358,31 @@
 		},
 		mounted() {
 			this.getOrderDetail();
-
+			// this.weixinFinsh();
 		},
 		methods: {
+			weixinFinsh() {
+				// try {
+				// 	console.log(this.miniPay);
+				// 	if(!this.miniPay) {
+				// 		// this.toMiniProgramPay();
+				// 		alert('跳转了');
+				// 	}
+				// } catch(e) {
+				// 	this.$toast('资源加载出错, 请刷新重试!');
+				// }
+			},
+			toMiniProgramPay() {
+				// if(window.__wxjs_environment && window.__wxjs_environment === 'miniprogram') {
+					wx.miniProgram.navigateTo({
+						url: `/pages/pay/pay?orderId=${this.params.orderId}&zx_token=${Tools.getCookie('zx_token')}`
+					});
+				// }
+			},
 			//查看进度
 			processTrack() {
 				this.$refs.orderStatus.showHidePoppup();
 				this.getProcess();
-				// fetch.fetchPost('/order/v3.2/processTrack', this.params).then(res => {
-				// 	this.processList = res.data['params'];
-				// 	this.processListLength = this.processList.length;
-				// 	this.orderDetail['orderStatus'] = this.processList[this.processListLength - 1]['orderStatus'];
-				// 	this.orderDetail['distributionType'] = res.data['distributionType'];
-				// })
 			},
 			getProcess() {
 				fetch.fetchPost('/order/v3.2/processTrack', this.params).then(res => {
@@ -374,13 +390,6 @@
 					this.processListLength = this.processList.length;
 					this.orderDetail['orderStatus'] = this.processList[0]['orderStatus'];
 					this.orderDetail['distributionType'] = res.data['distributionType'];
-					// if(this.orderDetail['orderStatus'] == 3 
-					// 	|| (this.orderDetail['orderStatus'] >= 31 
-					// 	&& this.orderDetail['orderStatus'] <= 34)) {
-					// 	this.canAccieptGoods = true
-					// } else {
-					// 	this.canAccieptGoods = false
-					// }
 				})
 			},
 			// 确认收货
@@ -393,6 +402,12 @@
 			},
 			//立马支付
 			restartToPay() {
+				//小程序支付
+				if(window.__wxjs_environment && window.__wxjs_environment === 'miniprogram') {
+					this.toMiniProgramPay();
+					return;
+				}
+
 				fetch.fetchPost('/order/v3.2/restartToPay', this.params).then(res => {
 					let result = res.data
 					// if(result.orderStatus == 1) {
@@ -408,48 +423,29 @@
 							if(result.form) {
 								AliFromPay();
 							} else {
-
-
-								// AliPay(result.tradeNo, res => {
-								// 	alert('AliPay');
-								// });
-
-								this.AliPay(result.tradeNo, res => {
+								AliPay(result.tradeNo, res => {
 									if(res == 'success') {
 										this.paySuccess();
 									} else {
 										this.canselPay();
 									}
 								})
-								// this.tradePay(result.tradeNo)
 							}
 						}
 					// }
 				})
 			},
-			AliPay(tradeNO, callback) {
-				AlipayJSBridge.call("tradePay", {
-			        tradeNO: tradeNO
-			    }, (data) => {
-			         if ("9000" == data.resultCode) {
-			             callback('success')
-			         } else {
-			             callback('error')
-			         }
-			    })
-			},
-			//支付宝支付
-			// tradePay(tradeNO) {
-		 //       AlipayJSBridge.call("tradePay", {
-		 //            tradeNO: tradeNO
-		 //       },  (data) => {
-		 //           if ("9000" == data.resultCode) {
-		 //               this.paySuccess();
-		 //           } else {
-		 //           	   this.canselPay();
-		 //           }
-		 //       });
-		 //    },
+			// AliPay(tradeNO, callback) {
+			// 	AlipayJSBridge.call("tradePay", {
+			//         tradeNO: tradeNO
+			//     }, (data) => {
+			//          if ("9000" == data.resultCode) {
+			//              callback('success')
+			//          } else {
+			//              callback('error')
+			//          }
+			//     })
+			// },
 			paySuccess() {
 				this.getOrderDetail();
 			},
@@ -483,6 +479,9 @@
 				fetch.fetchPost('/personal/v3.2/orderDetail', this.params).
 				then(res => {
 					this.orderDetail = res.data;
+					// if(this.orderDetail['orderStatus'] == 1 && !this.miniPay) {
+					// 	this.toMiniProgramPay();
+					// }
 					this.getProcess();
 				}).catch(res => {
 

@@ -23,8 +23,8 @@ import './style/common.scss'
 // import fetch from '@/config/fetch.js'
 
 // import axios from 'axios'
-import VConsole from '../config/vconsole.min.js';
-var cons = new VConsole();
+// import VConsole from '../config/vconsole.min.js';
+// var cons = new VConsole();
 
 
 

@@ -10,7 +10,7 @@
       </div>
       <div class="point_title">
         <mt-cell title="积分规则明细">
-          <img slot="icon" src="../../../images/icon_jf@2x.png" width="26" height="24">
+          <img slot="icon" src="../../../images/my/icon_jf@2x.png" width="26" height="24">
         </mt-cell>
       </div>
       <div class="body_mini_ct">
@@ -158,7 +158,7 @@ import { Toast,Indicator} from 'mint-ui'
       width: 100%;
       height: 0.11rem;
       .ct_div{
-        background: url(../../../images/mini_ct@2x.png) no-repeat center;
+        background: url(../../../images/my/mini_ct@2x.png) no-repeat center;
         background-size:100% 100%;
         width: 0.165rem;
         height: 100%;
