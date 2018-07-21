@@ -53,7 +53,8 @@ export default {
     return{
       pageNo: 1,
       uselist: [],
-      showCode: false
+      showCode: false,
+      sourcesWay: this.$route.query.sourcesWay || 0
     }
   },
   
@@ -66,7 +67,8 @@ export default {
   	},
   	getRedPacket() {
   		fetch.fetchPost('personal/v3.3/firstOrderReceivePlatVouchers', {
-  			conditions: 0
+  			conditions: 0,
+  			sourcesWay: this.sourcesWay
   		}).then(res => {
   			if(res.code == 0) {
   				this.getRadPacketList();

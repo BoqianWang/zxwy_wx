@@ -569,14 +569,14 @@
 					json: JSON.stringify(this.params)
 				}).then( res => {
 					this.payDetail = res.data;
-					if(window.__wxjs_environment && window.__wxjs_environment === 'miniprogram') {
-						this.miniProgramPay(this.payDetail['orderId']);
-						return;
-					}
 					if(res.data.orderStatus >= 2 ) {
 						this.paySuccess();
 					}
 					else if(res.data.orderStatus == 1) {
+						if(window.__wxjs_environment && window.__wxjs_environment === 'miniprogram') {
+							this.miniProgramPay(this.payDetail['orderId']);
+							return;
+						}
 						if(payType == 'WeiXin') {
 							// this.weixinPay(res.data.retMap);
 							WeixinPay(res.data.retMap, (res) => {

@@ -412,6 +412,7 @@
 						else if(info.industryCode == '103') {
 							industryType = 0;
 						} else {
+							this.$toast('小众正在努力开发中~~~');
 							return;
 						}
 

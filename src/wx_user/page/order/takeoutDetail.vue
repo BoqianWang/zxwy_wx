@@ -454,7 +454,7 @@
 			},
 			//取消订单
 			cancelOrder() {
-				var r = confirm('确定取消退款吗?');
+				var r = confirm('确定取消订单吗?');
 				if(!r) {
 					return;
 				}

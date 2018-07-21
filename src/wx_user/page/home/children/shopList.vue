@@ -26,7 +26,7 @@
 							 	<span v-if="item.isWm == 1">配送¥{{item.expressFee}}</span>
 							 </p>
 						</div>
-						 <div class="color-3 font-12 block-list-active rel" 
+						 <!-- <div class="color-3 font-12 block-list-active rel" 
 						 :class="{'click-item': item['showActive']}" 
 						 @click="showItemActive(item)"
 						  v-if="item['activitysVO'].length > 0">
@@ -45,7 +45,7 @@
 								 </p>
 							 </li>
 
-						 </div>
+						 </div> -->
 					</div>
 				</div>
 				<div v-show="tips" class="font-15 color-3 text-center p-t-ten">{{tips}}</div>

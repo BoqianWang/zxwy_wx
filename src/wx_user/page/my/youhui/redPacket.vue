@@ -44,7 +44,8 @@ export default {
     return{
       pageNo:1,
       uselist:[],
-      bizId: this.$route.query.bizId || ''
+      bizId: this.$route.query.bizId || '',
+      sourcesWay: this.$route.query.sourcesWay || 0
     }
   },
   
@@ -55,7 +56,8 @@ export default {
   	getRedPacket() {
   		fetch.fetchPost('/personal/v3.3/reveivePlatVouchers', {
   			bizId: this.bizId,
-  			conditions: 0
+  			conditions: 0,
+        sourcesWay: this.sourcesWay
   		}).then(res => {
   			if(res.code == 0) {
   				this.getRadPacketList();

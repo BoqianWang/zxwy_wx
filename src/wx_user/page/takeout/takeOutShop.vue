@@ -25,7 +25,7 @@
 							<!-- 欢迎光临，用餐高峰期请提前下单，谢谢	 -->
 							{{shopInfo['shopIntro']}}
 						</div>
-						<div class="p-t-ten color-6" v-if="shopInfo['activitysList'] && shopInfo['activitysList'].length > 0">
+						<!-- <div class="p-t-ten color-6" v-if="shopInfo['activitysList'] && shopInfo['activitysList'].length > 0">
 							<span v-if="shopInfo['activitysList'][0]['activityType'] == 0" class="tips tips-sub"></span>
 							<span v-else-if="shopInfo['activitysList'][0]['activityType'] >= 8" class="tips tips-ticket"></span>
 							<span class="p-r-ten">
@@ -35,7 +35,7 @@
 							  <span class="shop-down iconfont icon-sanjiaoxing-down abs"></span>
 							  <span>{{shopInfo['activitysList'].length}}个活动</span>
 							</span>
-						</div>
+						</div> -->
 					</div>
 				</div>
 			</div>
@@ -230,16 +230,16 @@
 			<mt-popup v-model="popupVisible" position="bottom">
 			  <div class="p-ten popup-shop-detail rel">
 			  	  <span class="shop-d-close abs iconfont icon-close p-ten"  @click="showShopDetial"></span>
-			  	  <p class="color-3 font-15 p-b-ten m-t-ten">优惠</p>
+			  	  <!-- <p class="color-3 font-15 p-b-ten m-t-ten">优惠</p> -->
 			  	  <div class="color-3 font-12" style="max-height: 400px; overflow: auto;">
-			  	  	  <li v-for="info in shopInfo['activitysList']">
+			  	  	  <!-- <li v-for="info in shopInfo['activitysList']">
 						 <p class="flex-box align-center p-b-ten" v-if="info['activityType'] <= 2" v-for="item in info['activitys']">
 						 	<span class="tips tips-sub"></span>{{item['activityDescription']}}
 						 </p>
 						 <p class="flex-box align-center p-b-ten" v-if="info['activityType'] >= 8" v-for="item in info['activitys']">
 						 	<span class="tips tips-ticket"></span>{{item['activityDescription']}}
 						 </p>
-					  </li>
+					  </li> -->
 				  	  <p class="color-3 font-15 shop-d-top">配送</p>
 					  <div class="color-6 font-12">
 					   	 <p>
