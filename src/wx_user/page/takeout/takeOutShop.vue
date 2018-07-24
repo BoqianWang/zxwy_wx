@@ -271,7 +271,7 @@
 					</div>
 					<div class="short-cart-block p-l-ten p-r-ten ">
 						<li v-for="item in shopCartDetail['list']" class="flex-box align-center justify-s-b p-t-ten p-b-ten">
-							<div>
+							<div style="max-width: 1.8rem;">
 								<p>{{item['goodsName']}}</p>
 								<span class="font-12 color-9">{{item['goodsTaste']}}</span>
 							</div>

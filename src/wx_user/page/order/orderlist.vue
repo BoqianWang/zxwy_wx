@@ -14,7 +14,7 @@
 								<p class="color-9 order-time">{{item.orderTime}}</p>
 							</div>
 						</div>
-						<p class="color-7 font-12">{{orderStatus[item.orderStatus]}}</p>
+						<p class="color-7 font-12">{{item.orderStatusStr}}</p>
 					</div>
 					<div class="menu-detial order-detail font-12 color-7" v-if="item['takeawayParam']">
 						<div class="flex-box justify-s-b p-t-ten" v-for="info in item['takeawayParam']">
@@ -197,19 +197,19 @@
 					pageNo: 1
 				},
 				list: [],
-				orderStatus: {
-					1: '订单待支付',
-					2: '已支付',
-					3: '已接单',
-					4: '已拒单',
-					5: '已发货',
-					6: '已完成',
-					7: '申请退款',
-					8: '退款成功',
-					9: '拒退款',
-					0: '订单已取消'
+				// orderStatus: {
+				// 	1: '订单待支付',
+				// 	2: '已支付',
+				// 	3: '已接单',
+				// 	4: '已拒单',
+				// 	5: '已发货',
+				// 	6: '已完成',
+				// 	7: '申请退款',
+				// 	8: '退款成功',
+				// 	9: '拒退款',
+				// 	0: '订单已取消'
 
-				},
+				// },
 				positionInfo: Tools.getLocalStorage('positionInfo'),
 				loadding: true,
 				totalPage: 1

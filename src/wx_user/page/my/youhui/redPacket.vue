@@ -53,6 +53,13 @@ export default {
       this.getRedPacket();
   },
   methods: {
+    redirect() {
+        setTimeout(() => {
+            this.$router.push({
+              path: '/home'
+            })
+        }, 2000);
+    },
   	getRedPacket() {
   		fetch.fetchPost('/personal/v3.3/reveivePlatVouchers', {
   			bizId: this.bizId,
@@ -70,6 +77,7 @@ export default {
   	getRadPacketList() {
   		fetch.fetchPost('/personal/v3.3/shopAvailableVoucherList', {}).then(res => {
   			this.uselist = res.data.lists;
+        this.redirect();
   		}).catch(res => {
 
   		})

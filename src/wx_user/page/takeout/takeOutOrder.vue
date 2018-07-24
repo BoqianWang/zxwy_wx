@@ -1,5 +1,6 @@
 <template>
 	<div class="take-out-order">
+		<!-- <router-script src="https://res.wx.qq.com/open/js/jweixin-1.3.2.js" @load-finsh="weixinFinsh"></router-script> -->
 		<router-script src="https://res.wx.qq.com/open/js/jweixin-1.3.2.js" @load-finsh="weixinFinsh"></router-script>
 		<!-- 头部 -->
 		<div class="order-title-wrap res">
@@ -126,12 +127,15 @@
 						<span>+¥ {{serverMoney}}</span>
 					</p>
 					<!-- 代金券 -->
-					<div v-if="voucherNum > 0" class="flex-box align-center justify-s-b m-t-ten" @click="showVoucher('voucher')">
+					<div v-if="voucherNum > 0" class="flex-box align-center justify-s-b m-t-ten">
 						<div class="font-15">
 							<span class="tips-ticket tips"></span>
 							<span class="color-3">代金券</span>
 						</div>
-						<div class="font-15">
+						<div class="font-12 color-main" v-if="tipsVocher">
+							{{tipsVocher}}
+						</div>
+						<div v-else class="font-15" @click="showVoucher('voucher')">
 							<span v-if="voucher['discount']" class="color-main">-¥ {{voucher['discount']}}</span>
 							<span v-else class="white-f tips p-l-ten p-r-ten" style="background: #FF6E15;">{{voucherNum}}张可用</span>
 							<span class="iconfont icon-more"></span>
@@ -192,9 +196,6 @@
 <style scoped lang="scss">
 	@import "../../style/mixin";
 	
-	.menu-wrap {
-
-	}
 	.add-address {
 		/*padding: .2rem 0;*/
 		.add-address-wrap {
@@ -348,6 +349,7 @@
 				address: Tools.getLocalStorage('address') || {},
 				shopInfo: Tools.getLocalStorage('shopInfo') || {},
 				shopAuthenticateId: this.$route.query.shopAuthenticateId,
+				tipsVocher: '',
 				params: {
 				},
 				//代金券列表
@@ -392,9 +394,6 @@
 			this.$store.commit('initShopCart', this.shopAuthenticateId);
 		},
 		computed: {
-			weixinFinsh() {
-
-			},
 			//备注
 			remark() {
 				return this.$store.state.remark;
@@ -429,14 +428,6 @@
 				} else {
 					this.voucher['discount'] = 0;
 				}
-				// if(this.voucher['isUserful'] == 1) {
-				// 	if(surePay < this.voucher['discount']) {
-				// 		this.$toast('实付金额小于代金券金额');
-				// 		this.voucher = {};
-				// 	} else {
-				// 		surePay -= this.voucher['discount'];
-				// 	}
-				// } 
 				surePay = Tools.ToCurrency(surePay, 2);
 
 				if(surePay <= 0) {
@@ -457,13 +448,20 @@
 		},
 		mounted() {
 			this.getIntegral();
+			this.isCanUserVoucher();
 			this.getMoneyOffList();
 			this.getVoucherList();
 			this.getRanDomSub();
 		},
 		methods: {
 			weixinFinsh() {
-
+				console.log('小程序api加载完成')
+			},
+			//检查是否能用代金券
+			isCanUserVoucher() {
+				if(!this.address['recipientId']) {
+					this.tipsVocher = '填写地址使用代金券';
+				}
 			},
 			//小程序支付跳转
 			miniProgramPay(orderId) {
@@ -488,7 +486,6 @@
 			},
 			//选择使用的代金券
 			choseVocherHandle(info) {
-				console.log(info)
 				this.voucher = info;
 			},
 			//获取可用代金券数量
@@ -593,7 +590,10 @@
 				            } else {
 				              //支付宝浏览器api支付
 				              // document.addEventListener('AlipayJSBridgeReady', this.tradePay(res.data.tradeNo), false);
-				              this.Alipay(res.data.tradeNo);
+				              // this.Alipay(res.data.tradeNo);
+				              Alipay(res.data.tradeNo, (res) => {
+				              	  this.paySuccess();
+				              })
 				              // AliPay(res.data.tradeNo, (res) => {
 				              // 	 this.paySuccess()
 				              // })
@@ -605,17 +605,17 @@
 				})
 			},
 			//支付宝支付
-		    Alipay(tradeNO) {
-		       AlipayJSBridge.call("tradePay", {
-		            tradeNO: tradeNO
-		       },  (data) => {
-		           if ("9000" == data.resultCode) {
-		               this.paySuccess();
-		           } else {
-		               this.paySuccess();
-		           }
-		       });
-		    },
+		    // Alipay(tradeNO) {
+		    //    AlipayJSBridge.call("tradePay", {
+		    //         tradeNO: tradeNO
+		    //    },  (data) => {
+		    //        if ("9000" == data.resultCode) {
+		    //            this.paySuccess();
+		    //        } else {
+		    //            this.paySuccess();
+		    //        }
+		    //    });
+		    // },
 			paySuccess() {
 				this.$store.commit('clearShopCart');
 				location.replace('./index.html#/pay/takeoutDetail?orderId=' + this.payDetail['orderId']);
